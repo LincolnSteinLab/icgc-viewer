@@ -16,15 +16,33 @@ function(
 ) {
     return declare(SeqFeatureStore, {
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
+            const CIVIC_LINK = "https://civic.genome.wustl.edu/links/variants/";
+            const CLINVAR_LINK = "https://www.ncbi.nlm.nih.gov/clinvar/variation/";
+            const ICGC_LINK = "https://dcc.icgc.org/mutations/";
+
+            function createLinkWithId(link, id) {
+                if (id !== null) {
+                    return "<a href='" + link + id + "' target='_blank'>" + id + "</a>";
+                } else {
+                    return "n/a";
+                }
+            }
+
+            function getDonorFraction(variant) {
+                if (variant.affectedDonorCountTotal !== null && variant.testedDonorCount !== null) {
+                    return variant.affectedDonorCountTotal + "/" + variant.testedDonorCount;
+                } else {
+                    return "n/a";
+                }
+            }
+
             function fetch() {
                 var start = query.start;
                 var end = query.end;
-                var ref = query.ref
+                var ref = query.ref.replace(/chr/, '');
 
-                // Hacky way of converting GenBank ID to Chr number
-                var chr = parseInt(ref.split('|')[3].split('.')[0].replace(/\D/g,''))-662
-
-                var url = encodeURI('https://dcc.icgc.org/api/v1/mutations?filters={"mutation":{"location":{"is":["' + chr + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=100');
+                var url = encodeURI('https://dcc.icgc.org/api/v1/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=1000');
+                
                 return request(url, {
                     method: 'get',
                     headers: { 'X-Requested-With': null },
@@ -38,9 +56,16 @@ function(
                                 end: variant.end,
                                 name: variant.id,
                                 info: variant.mutation,
-                                genotypes: "variant.genotypes",
+                                reference_allele: variant.referenceGenomeAllele,
+                                assembly_version: variant.assemblyVersion,
+                                civic: createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
+                                clinvar: createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
+                                icgc: createLinkWithId(ICGC_LINK, variant.id),
+                                affected_projects: variant.affectedProjectCount,
+                                affected_donors: getDonorFraction(variant),
                                 type: variant.type,
-                                study: variant.study.join()
+                                study: variant.study.join(),
+                                description: variant.description
                             }
                         }));
                     });
