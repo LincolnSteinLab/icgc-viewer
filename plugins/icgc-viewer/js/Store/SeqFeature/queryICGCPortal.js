@@ -36,6 +36,56 @@ function(
                 }
             }
 
+            function getTranscripts(transcripts) {
+                var listOfTranscripts = '<ul>';
+                for (transcript of transcripts) {
+                    listOfTranscripts += '<li>' + transcript.name + '</li>';
+                }
+                listOfTranscripts += '</ul>';
+                return listOfTranscripts;
+            }
+
+            function prettyValue(value) {
+                if (value == undefined) {
+                    return '';
+                } else {
+                    return value;
+                }
+            }
+
+            function createConsequencesTable(consequences) {
+                var headerRow = `
+                    <tr>
+                        <th>Gene</th>
+                        <th>AA Change</th>
+                        <th>Consequence</th>
+                        <th>CDS Change</th> 
+                        <th>Functional Impact</th>
+                        <th>Strand</th>
+                        <th>Transcripts</th>
+                    </tr>
+                `;
+
+                var consequenceTable = '<table>' + headerRow;
+
+                for (consequence of consequences) {
+                    var consequenceRow = '<tr>' +
+                        '<td>' + prettyValue(consequence.geneAffectedSymbol) + '</td>' +
+                        '<td>' + prettyValue(consequence.aaMutation) + '</td>' +
+                        '<td>' + prettyValue(consequence.type) + '</td>' +
+                        '<td>' + prettyValue(consequence.cdsMutation) + '</td>' +
+                        '<td>' + prettyValue(consequence.functionalImpact) + '</td>' +
+                        '<td>' + prettyValue(consequence.geneStrand) + '</td>' +
+                        '<td>' + getTranscripts(consequence.transcriptsAffected) + '</td>' +
+                        '</tr>';
+                    
+                    consequenceTable += consequenceRow;
+                }
+
+                consequenceTable += '/<table>';
+                return consequenceTable;
+            }
+
             function fetch() {
                 var start = query.start;
                 var end = query.end;
@@ -53,9 +103,9 @@ function(
                             id: variant.id,
                             data: {
                                 start: variant.start,
-                                end: variant.end,
+                                end: +variant.end,
                                 name: variant.id,
-                                info: variant.mutation,
+                                mutation: variant.mutation,
                                 reference_allele: variant.referenceGenomeAllele,
                                 assembly_version: variant.assemblyVersion,
                                 civic: createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
@@ -65,7 +115,8 @@ function(
                                 affected_donors: getDonorFraction(variant),
                                 type: variant.type,
                                 study: variant.study.join(),
-                                description: variant.description
+                                description: variant.description,
+                                consequences: createConsequencesTable(variant.consequences)
                             }
                         }));
                     });
