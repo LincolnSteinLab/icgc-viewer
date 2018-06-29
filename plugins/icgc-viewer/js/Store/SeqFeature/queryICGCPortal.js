@@ -53,8 +53,8 @@ function(
                 if (transcripts.length > 0) {
                     var listOfTranscripts = '<ul>';
                     for (transcript of transcripts) {
-                        if (transcript.name) {
-                            listOfTranscripts += '<li>' + transcript.name + '</li>';
+                        if (transcript.name && transcript.id) {
+                            listOfTranscripts += '<li><a href="http://feb2014.archive.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=' + transcript.id + '" target="_blank">' + transcript.name + '</a></li>';
                         }
                     }
                     listOfTranscripts += '</ul>';
