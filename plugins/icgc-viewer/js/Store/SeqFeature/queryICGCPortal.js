@@ -53,8 +53,8 @@ function(
                 if (transcripts.length > 0) {
                     var listOfTranscripts = '<ul>';
                     for (transcript of transcripts) {
-                        if (transcript.name) {
-                            listOfTranscripts += '<li>' + transcript.name + '</li>';
+                        if (transcript.name && transcript.id) {
+                            listOfTranscripts += '<li><a href="http://feb2014.archive.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=' + transcript.id + '" target="_blank">' + transcript.name + '</a></li>';
                         }
                     }
                     listOfTranscripts += '</ul>';
@@ -82,13 +82,13 @@ function(
             function createConsequencesTable(consequences) {
                 var headerRow = `
                     <tr>
-                        <th>Gene</th>
-                        <th>AA Change</th>
-                        <th>Consequence</th>
-                        <th>CDS Change</th> 
-                        <th>Functional Impact</th>
-                        <th>Strand</th>
-                        <th>Transcripts</th>
+                        <th style="border: 1px solid #000">Gene</th>
+                        <th style="border: 1px solid #000">AA Change</th>
+                        <th style="border: 1px solid #000">Consequence</th>
+                        <th style="border: 1px solid #000">CDS Change</th> 
+                        <th style="border: 1px solid #000">Functional Impact</th>
+                        <th style="border: 1px solid #000">Strand</th>
+                        <th style="border: 1px solid #000">Transcripts</th>
                     </tr>
                 `;
 
@@ -96,13 +96,13 @@ function(
 
                 for (consequence of consequences) {
                     var consequenceRow = '<tr>' +
-                        '<td>' + prettyValue(consequence.geneAffectedSymbol) + '</td>' +
-                        '<td>' + prettyValue(consequence.aaMutation) + '</td>' +
-                        '<td>' + prettyValue(consequence.type) + '</td>' +
-                        '<td>' + prettyValue(consequence.cdsMutation) + '</td>' +
-                        '<td>' + prettyValue(consequence.functionalImpact) + '</td>' +
-                        '<td>' + prettyValue(consequence.geneStrand) + '</td>' +
-                        '<td>' + getTranscripts(consequence.transcriptsAffected) + '</td>' +
+                        '<td style="border: 1px solid #000">' + prettyValue(consequence.geneAffectedSymbol) + '</td>' +
+                        '<td style="border: 1px solid #000">' + prettyValue(consequence.aaMutation) + '</td>' +
+                        '<td style="border: 1px solid #000">' + prettyValue(consequence.type) + '</td>' +
+                        '<td style="border: 1px solid #000">' + prettyValue(consequence.cdsMutation) + '</td>' +
+                        '<td style="border: 1px solid #000">' + prettyValue(consequence.functionalImpact) + '</td>' +
+                        '<td style="border: 1px solid #000">' + prettyValue(consequence.geneStrand) + '</td>' +
+                        '<td style="border: 1px solid #000">' + getTranscripts(consequence.transcriptsAffected) + '</td>' +
                         '</tr>';
                     
                     consequenceTable += consequenceRow;
@@ -172,8 +172,8 @@ function(
                         featureCallback(new SimpleFeature({
                             id: variant.id,
                             data: {
-                                start: variant.start,
-                                end: variant.end,
+                                start: variant.start - 1,
+                                end: variant.end - 1,
                                 name: variant.id,
                                 mutation: variant.mutation,
                                 reference_allele: variant.referenceGenomeAllele,
