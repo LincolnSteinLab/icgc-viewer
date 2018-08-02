@@ -15,6 +15,11 @@ function(
     SimpleFeature
 ) {
     return declare(SeqFeatureStore, {
+
+        constructor: function (args) {
+            this.donor = args.donor;
+        },
+
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
             const CIVIC_LINK = "https://civic.genome.wustl.edu/links/variants/";
             const CLINVAR_LINK = "https://www.ncbi.nlm.nih.gov/clinvar/variation/";
@@ -161,8 +166,8 @@ function(
                 var ref = query.ref.replace(/chr/, '');
                 end = getChromosomeEnd(ref, end);
 
-                var url = encodeURI('https://dcc.icgc.org/api/v1/donors/DO232761/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=1000');
-                
+                var url = encodeURI('https://dcc.icgc.org/api/v1/donors/' + this.donor +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=1000');
+                console.log(url);
                 return request(url, {
                     method: 'get',
                     headers: { 'X-Requested-With': null },
