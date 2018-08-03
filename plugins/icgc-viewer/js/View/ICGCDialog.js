@@ -23,6 +23,7 @@ function (
     ActionBarDialog
 ) {
     return declare(ActionBarDialog, {
+        searchText: "",
 
         constructor: function () {
             var thisB = this;
@@ -43,14 +44,13 @@ function (
             var x = dom.create('div', { style: { width: '500px' } }, container);
 
             var thisB = this;
-            var searchText = "";
 
             // OnClick will add a track with the given donor ID
             var myButton = new Button({
-                label: "Add donor track",
+                label: "Search for donor",
                 iconClass: "dijitIconSearch",
                 onClick: function() {
-                    thisB.addTrack(searchText);
+                    thisB.searchForDonor()
                 }
             }, "addButton").placeAt(searchBoxDiv);
 
@@ -58,13 +58,32 @@ function (
 
             // Update the search text on change
             on(content.searchBox, 'change', function () {
-                searchText = content.searchBox.get('value');
+                thisB.searchText = content.searchBox.get('value');
             });
 
             return container;
         },
 
-        addTrack: function (val) {
+        searchForDonor: function() {
+            var thisB = this;
+            fetch('https://dcc.icgc.org/api/v1/donors/' + thisB.searchText).then(function (res) {
+                    res.json().then(function (res2) {
+                        if (!res2.code) {
+                            thisB.addSSMTrack(thisB.searchText);
+                        } else {
+                            console.log("Donor with id " + thisB.searchText + " not found.");
+                        }
+
+                        thisB.resize();
+                    }, function (res3) {
+                        console.error('error', res3);
+                    });
+                }, function (err) {
+                    console.error('error', err);
+                });
+        },
+
+        addSSMTrack: function (val) {
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,

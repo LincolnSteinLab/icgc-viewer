@@ -17,14 +17,14 @@ return declare(JBrowsePlugin, {
             this.browser.afterMilestone('initView', function () {
                 this.browser.addGlobalMenuItem('file', new MenuItem(
                     {
-                        label: 'ICGC Browser',
+                        label: 'ICGC Search for donor',
                         iconClass: "dijitIconSearch",
-                        onClick: lang.hitch(this, 'createSearchTrack')
+                        onClick: lang.hitch(this, 'createDonorTrack')
                     }));
             }, this);
         },
 
-        createSearchTrack: function () {
+        createDonorTrack: function () {
             var searchDialog = new ICGCDialog();
             searchDialog.show(this.browser,
                 function () {
