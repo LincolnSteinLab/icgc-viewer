@@ -1,6 +1,5 @@
 define([
     'dojo/_base/declare',
-    'dojo/_base/array',
     'dojo/dom-construct',
     'dojo/aspect',
     'dijit/focus',
@@ -12,7 +11,6 @@ define([
 ],
 function (
     declare,
-    array,
     dom,
     aspect,
     focus,
@@ -36,16 +34,18 @@ function (
         _dialogContent: function () {
             var content = this.content = {};
             var container = dom.create('div', { className: 'search-container' });
+
+            // Add the logo
             dom.create('img', {
                 src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
                 width: '100'
             }, container);
-            var searchBoxDiv = dom.create('div', { className: 'section' }, container);
 
             // Create search box with label
+            var searchBoxDiv = dom.create('div', { className: 'section' }, container);
             dom.create('span', { className: 'header', innerHTML: 'Enter a Donor ID: ' }, searchBoxDiv);
             content.searchBox = new TextBox({}).placeAt(searchBoxDiv);
-            var x = dom.create('div', { style: { width: '500px' } }, container);
+            var searchResults = dom.create('div', { style: { width: '500px' } }, container);
 
             var thisB = this;
 
@@ -53,7 +53,7 @@ function (
             var myButton = new Button({
                 iconClass: "dijitIconSearch",
                 onClick: function() {
-                    thisB.searchForDonor(x)
+                    thisB.searchForDonor(searchResults)
                 }
             }, "addButton").placeAt(searchBoxDiv);
 
@@ -67,28 +67,28 @@ function (
             return container;
         },
 
-        searchForDonor: function(x) {
+        searchForDonor: function(searchResults) {
             var thisB = this;
             fetch('https://dcc.icgc.org/api/v1/donors/' + thisB.searchText).then(function (res) {
                     res.json().then(function (res2) {
                         if (!res2.code) {
                             // Add button to the container
-                            dom.empty(x);
+                            dom.empty(searchResults);
                             if (res2.availableDataTypes.includes("ssm")) {
-                                dom.create('span', { className: '', innerHTML: 'Simple Somatic Mutations (SSMs)' }, x);
+                                dom.create('span', { className: '', innerHTML: 'Simple Somatic Mutations (SSMs)' }, searchResults);
                                 var ssmButton = new Button({
                                     label: "Add",
                                     iconClass: "dijitIconSave",
                                     onClick: function() {
                                         thisB.addSSMTrack(thisB.searchText);
                                     }
-                                }, "ssmButton").placeAt(x);
+                                }, "ssmButton").placeAt(searchResults);
                             }
 
                         } else {
                             console.log("Donor with id " + thisB.searchText + " not found.");
-                            dom.empty(x);
-                            dom.create('span', { className: '', innerHTML: 'No Donors found with ID ' + thisB.searchText }, x);
+                            dom.empty(searchResults);
+                            dom.create('span', { className: '', innerHTML: 'No Donors found with ID ' + thisB.searchText }, searchResults);
                         }
 
                         thisB.resize();
@@ -105,7 +105,8 @@ function (
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcDonorMutations',
-                donor: val
+                donor: val,
+                baseUrl: 'https://dcc.icgc.org/api/v1/donors/'
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 

@@ -18,6 +18,7 @@ function(
 
         constructor: function (args) {
             this.donor = args.donor;
+            this.baseUrl = args.baseUrl;
         },
 
         /**
@@ -167,7 +168,14 @@ function(
             var ref = query.ref.replace(/chr/, '');
             end = thisB.getChromosomeEnd(ref, end);
 
-            var url = encodeURI('https://dcc.icgc.org/api/v1/donors/' + thisB.donor +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=1000');
+            var searchBaseUrl = '';
+            if (thisB.donor) {
+                searchBaseUrl = thisB.baseUrl + thisB.donor;
+            } else {
+                searchBaseUrl = thisB.baseUrl;
+            }
+
+            var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=1000');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },
