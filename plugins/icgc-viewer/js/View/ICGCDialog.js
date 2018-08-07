@@ -36,10 +36,14 @@ function (
         _dialogContent: function () {
             var content = this.content = {};
             var container = dom.create('div', { className: 'search-container' });
+            dom.create('img', {
+                src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
+                width: '100'
+            }, container);
             var searchBoxDiv = dom.create('div', { className: 'section' }, container);
 
             // Create search box with label
-            dom.create('span', { className: 'header', innerHTML: 'Enter a Donor ID' }, searchBoxDiv);
+            dom.create('span', { className: 'header', innerHTML: 'Enter a Donor ID: ' }, searchBoxDiv);
             content.searchBox = new TextBox({}).placeAt(searchBoxDiv);
             var x = dom.create('div', { style: { width: '500px' } }, container);
 
@@ -47,10 +51,9 @@ function (
 
             // OnClick will add a track with the given donor ID
             var myButton = new Button({
-                label: "Search for donor",
                 iconClass: "dijitIconSearch",
                 onClick: function() {
-                    thisB.searchForDonor()
+                    thisB.searchForDonor(x)
                 }
             }, "addButton").placeAt(searchBoxDiv);
 
@@ -64,14 +67,28 @@ function (
             return container;
         },
 
-        searchForDonor: function() {
+        searchForDonor: function(x) {
             var thisB = this;
             fetch('https://dcc.icgc.org/api/v1/donors/' + thisB.searchText).then(function (res) {
                     res.json().then(function (res2) {
                         if (!res2.code) {
-                            thisB.addSSMTrack(thisB.searchText);
+                            // Add button to the container
+                            dom.empty(x);
+                            if (res2.availableDataTypes.includes("ssm")) {
+                                dom.create('span', { className: '', innerHTML: 'Simple Somatic Mutations (SSMs)' }, x);
+                                var ssmButton = new Button({
+                                    label: "Add",
+                                    iconClass: "dijitIconSave",
+                                    onClick: function() {
+                                        thisB.addSSMTrack(thisB.searchText);
+                                    }
+                                }, "ssmButton").placeAt(x);
+                            }
+
                         } else {
                             console.log("Donor with id " + thisB.searchText + " not found.");
+                            dom.empty(x);
+                            dom.create('span', { className: '', innerHTML: 'No Donors found with ID ' + thisB.searchText }, x);
                         }
 
                         thisB.resize();
