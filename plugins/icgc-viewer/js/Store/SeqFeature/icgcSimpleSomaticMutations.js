@@ -171,7 +171,7 @@ function(
             // Alter URL if looking at a donor
             var searchBaseUrl = 'https://dcc.icgc.org/api/v1';
             if (thisB.donor) {
-                searchBaseUrl = searchBaseUrl + '/donor/' + thisB.donor;
+                searchBaseUrl = searchBaseUrl + '/donors/' + thisB.donor;
             }
 
             var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=1000');
