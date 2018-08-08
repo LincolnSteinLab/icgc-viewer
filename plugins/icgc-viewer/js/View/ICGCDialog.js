@@ -108,7 +108,7 @@ function (
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcDonorMutations',
+                type: 'icgc-viewer/Store/SeqFeature/icgcSimpleSomaticMutations',
                 donor: val
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
