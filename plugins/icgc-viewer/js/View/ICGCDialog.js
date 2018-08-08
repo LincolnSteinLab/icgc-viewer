@@ -6,7 +6,6 @@ define([
     'dijit/form/Button',
     'dijit/form/TextBox',
     'dojo/on',
-    'dojo/query',
     'JBrowse/View/Dialog/WithActionBar'
 ],
 function (
@@ -17,7 +16,6 @@ function (
     Button,
     TextBox,
     on,
-    query,
     ActionBarDialog
 ) {
     return declare(ActionBarDialog, {
@@ -72,8 +70,15 @@ function (
             fetch('https://dcc.icgc.org/api/v1/donors/' + thisB.searchText).then(function (res) {
                     res.json().then(function (res2) {
                         if (!res2.code) {
-                            // Add button to the container
                             dom.empty(searchResults);
+
+                            // Add some basic donor information
+                            dom.create('h1', { className: '', innerHTML: 'Donor ' + res2.id }, searchResults);
+                            dom.create('p', { className: '', innerHTML: res2.projectName + ' (' + res2.projectId + ')' }, searchResults);
+                            dom.create('p', { className: '', innerHTML: res2.gender + '/' + res2.vitalStatus }, searchResults);
+                            dom.create('p', { className: '', innerHTML: res2.primarySite + '/' + res2.tumourType + '/' + res2.tumourSubtype }, searchResults);
+
+                            // Add button to the container
                             if (res2.availableDataTypes.includes("ssm")) {
                                 dom.create('span', { className: '', innerHTML: 'Simple Somatic Mutations (SSMs)' }, searchResults);
                                 var ssmButton = new Button({
@@ -86,9 +91,8 @@ function (
                             }
 
                         } else {
-                            console.log("Donor with id " + thisB.searchText + " not found.");
                             dom.empty(searchResults);
-                            dom.create('span', { className: '', innerHTML: 'No Donors found with ID ' + thisB.searchText }, searchResults);
+                            dom.create('span', { className: '', innerHTML: 'No donors found with ID ' + thisB.searchText }, searchResults);
                         }
 
                         thisB.resize();
@@ -105,8 +109,7 @@ function (
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcDonorMutations',
-                donor: val,
-                baseUrl: 'https://dcc.icgc.org/api/v1/donors/'
+                donor: val
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 

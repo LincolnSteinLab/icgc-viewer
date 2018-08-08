@@ -168,11 +168,10 @@ function(
             var ref = query.ref.replace(/chr/, '');
             end = thisB.getChromosomeEnd(ref, end);
 
-            var searchBaseUrl = '';
+            // Alter URL if looking at a donor
+            var searchBaseUrl = 'https://dcc.icgc.org/api/v1';
             if (thisB.donor) {
-                searchBaseUrl = thisB.baseUrl + thisB.donor;
-            } else {
-                searchBaseUrl = thisB.baseUrl;
+                searchBaseUrl = searchBaseUrl + '/donor/' + thisB.donor;
             }
 
             var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=1000');
