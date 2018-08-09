@@ -79,7 +79,7 @@ function(
          * @param {*} consequences 
          */
         createConsequencesTable: function(consequences) {
-            var thStyle = 'border: 1px solid #ddd; padding: 3px;';
+            var thStyle = 'border: 1px solid #e6e6e6; padding: 2rem .4rem;';
             var headerRow = `
                 <tr>
                     <th style="${thStyle}">Gene</th>
@@ -92,7 +92,7 @@ function(
                 </tr>
             `;
 
-            var consequenceTable = '<table style="width: 100%">' + headerRow;
+            var consequenceTable = '<table style="width: 100%; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
 
             var count = 0;
             for (consequence of consequences) {

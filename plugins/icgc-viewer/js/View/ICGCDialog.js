@@ -126,11 +126,14 @@ function (
 
                             // Apply styles
                             query("table").style({
-                                'width': '100%'
+                                'width': '100%',
+                                'border': '1px solid #e6e6e6',
+                                'border-collapse': 'collapse',
+                                'border-spacing': '0'
                             });
                             query("td").style({
-                                'border': '1px solid #ddd',
-                                'padding': '3px'
+                                'border': '1px solid #e6e6e6',
+                                'padding': '.2rem .4rem'
                             });
                             query("tr:nth-child(odd)").style({
                                 'background-color': '#f2f2f2'
