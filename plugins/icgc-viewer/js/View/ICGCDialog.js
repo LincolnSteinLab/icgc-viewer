@@ -2,6 +2,7 @@ define([
     'dojo/_base/declare',
     'dojo/dom-construct',
     'dojo/aspect',
+    'dojo/query',
     'dijit/focus',
     'dijit/form/Button',
     'dijit/form/TextBox',
@@ -12,6 +13,7 @@ function (
     declare,
     dom,
     aspect,
+    query,
     focus,
     Button,
     TextBox,
@@ -72,23 +74,65 @@ function (
                         if (!res2.code) {
                             dom.empty(searchResults);
 
-                            // Add some basic donor information
-                            dom.create('h1', { className: '', innerHTML: 'Donor ' + res2.id }, searchResults);
-                            dom.create('p', { className: '', innerHTML: res2.projectName + ' (' + res2.projectId + ')' }, searchResults);
-                            dom.create('p', { className: '', innerHTML: res2.gender + '/' + res2.vitalStatus }, searchResults);
-                            dom.create('p', { className: '', innerHTML: res2.primarySite + '/' + res2.tumourType + '/' + res2.tumourSubtype }, searchResults);
+                            dom.create('h1', { innerHTML: 'Donor ' + res2.id }, searchResults);
+
+                            var donorInfo = `
+                                <table>
+                                    <tr>
+                                        <td>Submitter ID</td>
+                                        <td>${res2.submittedDonorId}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Project Name</td>
+                                        <td>${res2.projectName}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Project Code</td>
+                                        <td>${res2.projectId}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Primary Site</td>
+                                        <td>${res2.primarySite}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tumour Type</td>
+                                        <td>${res2.tumourType}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tumour Subtype</td>
+                                        <td>${res2.tumourSubtype}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total number of mutations</td>
+                                        <td>${res2.ssmCount}</td>
+                                    </tr>
+                                </table>
+                            `
+                            var node = dom.toDom(donorInfo);
+                            dom.place(node, searchResults);
 
                             // Add button to the container
                             if (res2.availableDataTypes.includes("ssm")) {
-                                dom.create('span', { className: '', innerHTML: 'Simple Somatic Mutations (SSMs)' }, searchResults);
                                 var ssmButton = new Button({
-                                    label: "Add",
+                                    label: "Add SSMs",
                                     iconClass: "dijitIconSave",
                                     onClick: function() {
                                         thisB.addSSMTrack(thisB.searchText);
                                     }
                                 }, "ssmButton").placeAt(searchResults);
                             }
+
+                            // Apply styles
+                            query("table").style({
+                                'width': '100%'
+                            });
+                            query("td").style({
+                                'border': '1px solid #ddd',
+                                'padding': '3px'
+                            });
+                            query("tr:nth-child(odd)").style({
+                                'background-color': '#f2f2f2'
+                            });
 
                         } else {
                             dom.empty(searchResults);

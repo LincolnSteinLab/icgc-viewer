@@ -1,7 +1,6 @@
 define([
     'dojo/_base/declare',
     'dojo/_base/array',
-    'dojo/_base/lang',
     'dojo/request',
     'JBrowse/Store/SeqFeature',
     'JBrowse/Model/SimpleFeature'
@@ -9,7 +8,6 @@ define([
 function(
     declare,
     array,
-    lang,
     request,
     SeqFeatureStore,
     SimpleFeature
@@ -81,32 +79,40 @@ function(
          * @param {*} consequences 
          */
         createConsequencesTable: function(consequences) {
+            var thStyle = 'border: 1px solid #ddd; padding: 3px;';
             var headerRow = `
                 <tr>
-                    <th style="border: 1px solid #000">Gene</th>
-                    <th style="border: 1px solid #000">AA Change</th>
-                    <th style="border: 1px solid #000">Consequence</th>
-                    <th style="border: 1px solid #000">CDS Change</th> 
-                    <th style="border: 1px solid #000">Functional Impact</th>
-                    <th style="border: 1px solid #000">Strand</th>
-                    <th style="border: 1px solid #000">Transcripts</th>
+                    <th style="${thStyle}">Gene</th>
+                    <th style="${thStyle}">AA Change</th>
+                    <th style="${thStyle}">Consequence</th>
+                    <th style="${thStyle}">CDS Change</th> 
+                    <th style="${thStyle}">Functional Impact</th>
+                    <th style="${thStyle}">Strand</th>
+                    <th style="${thStyle}">Transcripts</th>
                 </tr>
             `;
 
-            var consequenceTable = '<table>' + headerRow;
+            var consequenceTable = '<table style="width: 100%">' + headerRow;
 
+            var count = 0;
             for (consequence of consequences) {
-                var consequenceRow = '<tr>' +
-                    '<td style="border: 1px solid #000">' + this.prettyValue(consequence.geneAffectedSymbol) + '</td>' +
-                    '<td style="border: 1px solid #000">' + this.prettyValue(consequence.aaMutation) + '</td>' +
-                    '<td style="border: 1px solid #000">' + this.prettyValue(consequence.type) + '</td>' +
-                    '<td style="border: 1px solid #000">' + this.prettyValue(consequence.cdsMutation) + '</td>' +
-                    '<td style="border: 1px solid #000">' + this.prettyValue(consequence.functionalImpact) + '</td>' +
-                    '<td style="border: 1px solid #000">' + this.prettyValue(consequence.geneStrand) + '</td>' +
-                    '<td style="border: 1px solid #000">' + this.getTranscripts(consequence.transcriptsAffected) + '</td>' +
-                    '</tr>';
+                var trStyle = '';
+                if (count % 2 == 0) {
+                    trStyle = 'style=\"background-color: #f2f2f2\"';
+                }
+                var consequenceRow = `<tr ${trStyle}>
+                    <td style="${thStyle}">${this.prettyValue(consequence.geneAffectedSymbol)}</td>
+                    <td style="${thStyle}">${this.prettyValue(consequence.aaMutation)}</td>
+                    <td style="${thStyle}">${this.prettyValue(consequence.type)}</td>
+                    <td style="${thStyle}">${this.prettyValue(consequence.cdsMutation)}</td>
+                    <td style="${thStyle}">${this.prettyValue(consequence.functionalImpact)}</td>
+                    <td style="${thStyle}">${this.prettyValue(consequence.geneStrand)}</td>
+                    <td style="${thStyle}">${this.getTranscripts(consequence.transcriptsAffected)}</td>
+                    </tr>
+                `;
                 
                 consequenceTable += consequenceRow;
+                count++;
             }
 
             consequenceTable += '/<table>';
