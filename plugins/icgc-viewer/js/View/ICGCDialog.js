@@ -44,7 +44,9 @@ function (
             // Create search box with label
             var searchBoxDiv = dom.create('div', { className: 'section' }, container);
             dom.create('span', { className: 'header', innerHTML: 'Enter a Donor ID: ' }, searchBoxDiv);
-            content.searchBox = new TextBox({}).placeAt(searchBoxDiv);
+            content.searchBox = new TextBox({
+                placeholder: "Ex. DO232761"
+            }).placeAt(searchBoxDiv);
             var searchResults = dom.create('div', { style: { width: '500px' } }, container);
 
             var thisB = this;
