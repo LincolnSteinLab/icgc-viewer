@@ -76,6 +76,9 @@ function(
 
         /**
          * Creates a table of projects and their associated tumour type and incidence rate for the given mutation
+         * @param {*} projects Object of the form projectId -> projectObject
+         * @param {*} projectCounts Occurrence count for each project given the mutationId
+         * @param {*} mutationId ICGC ID for the mutation
          */
         createProjectIncidenceTable: function(projects, projectCounts, mutationId) {
             var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
@@ -221,38 +224,40 @@ function(
                 searchBaseUrl = searchBaseUrl + '/donors/' + thisB.donor;
             }
 
+            // Retrieve all mutations in the given chromosome range
             var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=500');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },
                 handleAs: 'json'
-            }).then(function(res) {
-                promiseArray = []
-                array.forEach(res.hits, function(item) {
-                    promiseArray.push(new Promise(function(resolve, reject) {
-                        var variant = item;
+            }).then(function(mutationsResponse) {
+                featurePromiseArray = []
+                // Create a feature for each mutation found
+                array.forEach(mutationsResponse.hits, function(variant) {
+                    featurePromiseArray.push(new Promise(function(resolve, reject) {
+                        // Find projects related to the current mutation
                         var url = encodeURI('https://dcc.icgc.org/api/v1/mutations/' + variant.id + '?field=occurences}&from=1&size=0');
-
                         return request(url, {
                             method: 'get',
                             headers: { 'X-Requested-With': null },
                             handleAs: 'json'
-                        }).then(function(res) {
-                            if (res) {
-                                var projectsObject = {}
-                                for (project of res.occurrences) {
-                                    projectsObject[project.projectId] = project.project;
+                        }).then(function(mutationResponse) {
+                            if (mutationResponse) {
+                                // Create an object holding all project information
+                                var projects = {}
+                                for (project of mutationResponse.occurrences) {
+                                    projects[project.projectId] = project.project;
                                 }
 
-                                var projectArray = Object.keys(projectsObject);
+                                // Find counts of affected donors for each project
+                                var projectArray = Object.keys(projects);
                                 var url = encodeURI('https://dcc.icgc.org/api/v1/projects/' + projectArray + '/mutations/' + variant.id + '/donors/counts');
-
                                 return request(url, {
                                     method: 'get',
                                     headers: { 'X-Requested-With': null },
                                     handleAs: 'json'
-                                }).then(function(res) {
-                                    variantObject = {
+                                }).then(function(projectsResponse) {
+                                    variantFeature = {
                                         id: variant.id,
                                         data: {
                                             start: variant.start - 1,
@@ -270,20 +275,23 @@ function(
                                             study: thisB.prettyValue(variant.study.join()),
                                             description: variant.description,
                                             consequences: thisB.createConsequencesTable(variant.consequences),
-                                            projects: thisB.createProjectIncidenceTable(projectsObject, res, variant.id)
+                                            projects: thisB.createProjectIncidenceTable(projects, projectsResponse, variant.id)
                                         }
                                     }
-                                    featureCallback(new SimpleFeature(variantObject));
+                                    featureCallback(new SimpleFeature(variantFeature));
                                     resolve("Success");
                                 })
                             } else {
                                 reject(Error("Failure"));
                             }
+                        }, function(err) {
+                            console.log(err);
+                            errorCallback('Error contacting ICGC Portal');
                         });
                       }));
                       
                 });
-                Promise.all(promiseArray).then(function(values) {
+                Promise.all(featurePromiseArray).then(function(values) {
                     finishCallback();
                 });
             }, function(err) {
