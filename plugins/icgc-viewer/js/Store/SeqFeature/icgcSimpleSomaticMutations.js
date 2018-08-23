@@ -98,30 +98,13 @@ function(
                 var projectRow = `<tr ${trStyle}>
                     <td style="${thStyle}">${this.prettyValue(project)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].tumourType)}</td>
-                    <td style="${thStyle}">${this.prettyValue(projects[project].ssmTestedDonorCount)}</td>
+                    <td style="${thStyle}">N/A</td>
                     </tr>
                 `;
 
                 projectTable += projectRow;
                 count++;
             });
-
-            // for (project of projects) {
-            //     console.log(project);
-            //     var trStyle = '';
-            //     if (count % 2 == 0) {
-            //         trStyle = 'style=\"background-color: #f2f2f2\"';
-            //     }
-            //     var projectRow = `<tr ${trStyle}>
-            //         <td style="${thStyle}">${this.prettyValue(term.term)}</td>
-            //         <td style="${thStyle}"></td>
-            //         <td style="${thStyle}">${this.prettyValue(term.count)}</td>
-            //         </tr>
-            //     `;
-
-            //     projectTable += projectRow;
-            //     count++;
-            // }
 
             projectTable += '</table>';
             return projectTable;
