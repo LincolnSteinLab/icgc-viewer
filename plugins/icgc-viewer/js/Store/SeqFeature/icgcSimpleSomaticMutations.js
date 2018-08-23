@@ -75,6 +75,43 @@ function(
         },
 
         /**
+         * Creates a table of projects and their associated tumour type and incidence rate for the given mutation
+         */
+        createProjectIncidenceTable: function(facets) {
+            var thStyle = 'border: 1px solid #e6e6e6; padding: 2rem .4rem;';
+            var headerRow = `
+                <tr>
+                    <th style="${thStyle}">Project</th>
+                    <th style="${thStyle}">Tumour Type</th>
+                    <th style="${thStyle}">Frequency</th> 
+                </tr>
+            `;
+
+            var projectTable = '<table style="width: 100%; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
+
+            var count = 0;
+            for (term of facets.projectId.terms) {
+                var trStyle = '';
+                if (count % 2 == 0) {
+                    trStyle = 'style=\"background-color: #f2f2f2\"';
+                }
+                var projectRow = `<tr ${trStyle}>
+                    <td style="${thStyle}">${this.prettyValue(term.term)}</td>
+                    <td style="${thStyle}"></td>
+                    <td style="${thStyle}">${this.prettyValue(term.count)}</td>
+                    </tr>
+                `;
+
+                projectTable += projectRow;
+                count++;
+            }
+
+            projectTable += '/<table>';
+            return projectTable;
+
+        },
+
+        /**
          * Creates a table of consequences for a mutation
          * @param {*} consequences 
          */
@@ -186,30 +223,54 @@ function(
                 headers: { 'X-Requested-With': null },
                 handleAs: 'json'
             }).then(function(res) {
-                array.forEach(res.hits, function(variant) {
-                    featureCallback(new SimpleFeature({
-                        id: variant.id,
-                        data: {
-                            start: variant.start - 1,
-                            end: variant.end - 1,
-                            name: variant.id,
-                            mutation: variant.mutation,
-                            reference_allele: variant.referenceGenomeAllele,
-                            assembly_version: variant.assemblyVersion,
-                            civic: thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
-                            clinvar: thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
-                            icgc: thisB.createLinkWithId(ICGC_LINK, variant.id),
-                            affected_projects: variant.affectedProjectCount,
-                            affected_donors: thisB.getDonorFraction(variant),
-                            type: variant.type,
-                            study: thisB.prettyValue(variant.study.join()),
-                            description: variant.description,
-                            consequences: thisB.createConsequencesTable(variant.consequences)
-                        }
-                    }));
-                });
+                promiseArray = []
+                array.forEach(res.hits, function(item) {
+                    promiseArray.push(new Promise(function(resolve, reject) {
+                        var variant = item;
+                        var url = encodeURI('https://dcc.icgc.org/api/v1/donors?filters={"mutation":{"id":{"is":["' + variant.id + '"]}}}&from=1&include=facets&size=0');
 
-                finishCallback();
+                        return request(url, {
+                            method: 'get',
+                            headers: { 'X-Requested-With': null },
+                            handleAs: 'json'
+                        }).then(function(res) {
+                            // console.log(variant);
+                            if (res) {
+                                // console.log(res);
+                                variantObject = {
+                                    id: variant.id,
+                                    data: {
+                                        start: variant.start - 1,
+                                        end: variant.end - 1,
+                                        name: variant.id,
+                                        mutation: variant.mutation,
+                                        reference_allele: variant.referenceGenomeAllele,
+                                        assembly_version: variant.assemblyVersion,
+                                        civic: thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
+                                        clinvar: thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
+                                        icgc: thisB.createLinkWithId(ICGC_LINK, variant.id),
+                                        affected_projects: variant.affectedProjectCount,
+                                        affected_donors: thisB.getDonorFraction(variant),
+                                        type: variant.type,
+                                        study: thisB.prettyValue(variant.study.join()),
+                                        description: variant.description,
+                                        consequences: thisB.createConsequencesTable(variant.consequences),
+                                        projects: thisB.createProjectIncidenceTable(res.facets)
+                                    }
+                                }
+                                featureCallback(new SimpleFeature(variantObject));
+                                resolve("Stuff worked!");
+                            }
+                            else {
+                                reject(Error("It broke"));
+                            }
+                        });
+                      }));
+                      
+                });
+                Promise.all(promiseArray).then(function(values) {
+                    finishCallback();
+                });
             }, function(err) {
                 console.log(err);
                 errorCallback('Error contacting ICGC Portal');
