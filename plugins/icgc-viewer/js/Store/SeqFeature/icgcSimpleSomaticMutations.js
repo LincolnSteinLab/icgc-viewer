@@ -77,7 +77,7 @@ function(
         /**
          * Creates a table of projects and their associated tumour type and incidence rate for the given mutation
          */
-        createProjectIncidenceTable: function(facets) {
+        createProjectIncidenceTable: function(projects) {
             var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
             var headerRow = `
                 <tr>
@@ -90,21 +90,38 @@ function(
             var projectTable = '<table style="width: 560px; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
 
             var count = 0;
-            for (term of facets.projectId.terms) {
+            Object.keys(projects).forEach(project => {
                 var trStyle = '';
                 if (count % 2 == 0) {
                     trStyle = 'style=\"background-color: #f2f2f2\"';
                 }
                 var projectRow = `<tr ${trStyle}>
-                    <td style="${thStyle}">${this.prettyValue(term.term)}</td>
-                    <td style="${thStyle}"></td>
-                    <td style="${thStyle}">${this.prettyValue(term.count)}</td>
+                    <td style="${thStyle}">${this.prettyValue(project)}</td>
+                    <td style="${thStyle}">${this.prettyValue(projects[project].tumourType)}</td>
+                    <td style="${thStyle}">${this.prettyValue(projects[project].ssmTestedDonorCount)}</td>
                     </tr>
                 `;
 
                 projectTable += projectRow;
                 count++;
-            }
+            });
+
+            // for (project of projects) {
+            //     console.log(project);
+            //     var trStyle = '';
+            //     if (count % 2 == 0) {
+            //         trStyle = 'style=\"background-color: #f2f2f2\"';
+            //     }
+            //     var projectRow = `<tr ${trStyle}>
+            //         <td style="${thStyle}">${this.prettyValue(term.term)}</td>
+            //         <td style="${thStyle}"></td>
+            //         <td style="${thStyle}">${this.prettyValue(term.count)}</td>
+            //         </tr>
+            //     `;
+
+            //     projectTable += projectRow;
+            //     count++;
+            // }
 
             projectTable += '</table>';
             return projectTable;
@@ -217,7 +234,7 @@ function(
                 searchBaseUrl = searchBaseUrl + '/donors/' + thisB.donor;
             }
 
-            var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=0');
+            var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=3');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },
@@ -227,16 +244,19 @@ function(
                 array.forEach(res.hits, function(item) {
                     promiseArray.push(new Promise(function(resolve, reject) {
                         var variant = item;
-                        var url = encodeURI('https://dcc.icgc.org/api/v1/donors?filters={"mutation":{"id":{"is":["' + variant.id + '"]}}}&from=1&include=facets&size=0');
+                        var url = encodeURI('https://dcc.icgc.org/api/v1/mutations/' + variant.id + '?field=occurences}&from=1&size=0');
 
                         return request(url, {
                             method: 'get',
                             headers: { 'X-Requested-With': null },
                             handleAs: 'json'
                         }).then(function(res) {
-                            // console.log(variant);
                             if (res) {
-                                // console.log(res);
+                                var projectsObject = {}
+                                for (project of res.occurrences) {
+                                    projectsObject[project.projectId] = project.project;
+                                }
+
                                 variantObject = {
                                     id: variant.id,
                                     data: {
@@ -255,7 +275,7 @@ function(
                                         study: thisB.prettyValue(variant.study.join()),
                                         description: variant.description,
                                         consequences: thisB.createConsequencesTable(variant.consequences),
-                                        projects: thisB.createProjectIncidenceTable(res.facets)
+                                        projects: thisB.createProjectIncidenceTable(projectsObject)
                                     }
                                 }
                                 featureCallback(new SimpleFeature(variantObject));
