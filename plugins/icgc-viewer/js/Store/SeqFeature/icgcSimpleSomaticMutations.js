@@ -102,7 +102,7 @@ function(
                     <td style="${thStyle}">${this.prettyValue(projects[project].primarySite)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].tumourType)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].tumourSubtype)}</td>
-                    <td style="${thStyle}">${this.prettyValue(projectCounts[project][mutationId]) + ' / ' + projects[project].ssmTestedDonorCount} (${Math.floor((projectCounts[project][mutationId] / projects[project].ssmTestedDonorCount) * 100)}%)</td>
+                    <td style="${thStyle}">${this.prettyValue(projectCounts[project][mutationId]) + ' / ' + projects[project].ssmTestedDonorCount} (${Math.round((projectCounts[project][mutationId] / projects[project].ssmTestedDonorCount) * 100)}%)</td>
                     </tr>
                 `;
 
