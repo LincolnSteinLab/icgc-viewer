@@ -76,6 +76,9 @@ function(
 
         /**
          * Creates a table of projects and their associated tumour type and incidence rate for the given mutation
+         * @param {*} projects Object of the form projectId -> projectObject
+         * @param {*} projectCounts Occurrence count for each project given the mutationId
+         * @param {*} mutationId ICGC ID for the mutation
          */
         createProjectIncidenceTable: function(projects, projectCounts, mutationId) {
             var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
