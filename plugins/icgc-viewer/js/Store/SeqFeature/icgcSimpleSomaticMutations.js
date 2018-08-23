@@ -78,7 +78,7 @@ function(
          * Creates a table of projects and their associated tumour type and incidence rate for the given mutation
          */
         createProjectIncidenceTable: function(facets) {
-            var thStyle = 'border: 1px solid #e6e6e6; padding: 2rem .4rem;';
+            var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
             var headerRow = `
                 <tr>
                     <th style="${thStyle}">Project</th>
@@ -87,7 +87,7 @@ function(
                 </tr>
             `;
 
-            var projectTable = '<table style="width: 100%; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
+            var projectTable = '<table style="width: 560px; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
 
             var count = 0;
             for (term of facets.projectId.terms) {
@@ -106,7 +106,7 @@ function(
                 count++;
             }
 
-            projectTable += '/<table>';
+            projectTable += '</table>';
             return projectTable;
 
         },
@@ -116,7 +116,7 @@ function(
          * @param {*} consequences 
          */
         createConsequencesTable: function(consequences) {
-            var thStyle = 'border: 1px solid #e6e6e6; padding: 2rem .4rem;';
+            var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
             var headerRow = `
                 <tr>
                     <th style="${thStyle}">Gene</th>
@@ -129,7 +129,7 @@ function(
                 </tr>
             `;
 
-            var consequenceTable = '<table style="width: 100%; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
+            var consequenceTable = '<table style="width: 560px; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
 
             var count = 0;
             for (consequence of consequences) {
@@ -152,7 +152,7 @@ function(
                 count++;
             }
 
-            consequenceTable += '/<table>';
+            consequenceTable += '</table>';
             return consequenceTable;
         },
 
@@ -217,7 +217,7 @@ function(
                 searchBaseUrl = searchBaseUrl + '/donors/' + thisB.donor;
             }
 
-            var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=1000');
+            var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=0');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },
