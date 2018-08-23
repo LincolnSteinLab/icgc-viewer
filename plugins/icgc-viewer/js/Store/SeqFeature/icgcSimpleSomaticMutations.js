@@ -75,11 +75,52 @@ function(
         },
 
         /**
+         * Creates a table of projects and their associated tumour type and incidence rate for the given mutation
+         */
+        createProjectIncidenceTable: function(projects, projectCounts, mutationId) {
+            var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
+            var headerRow = `
+                <tr>
+                    <th style="${thStyle}">Project</th>
+                    <th style="${thStyle}">Site</th>
+                    <th style="${thStyle}">Tumour Type</th>
+                    <th style="${thStyle}">Tumour Subtype</th>
+                    <th style="${thStyle}"># Donors Affected</th> 
+                </tr>
+            `;
+
+            var projectTable = '<table style="width: 560px; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
+
+            var count = 0;
+            Object.keys(projects).forEach(project => {
+                var trStyle = '';
+                if (count % 2 == 0) {
+                    trStyle = 'style=\"background-color: #f2f2f2\"';
+                }
+                var projectRow = `<tr ${trStyle}>
+                    <td style="${thStyle}">${this.prettyValue(project)}</td>
+                    <td style="${thStyle}">${this.prettyValue(projects[project].primarySite)}</td>
+                    <td style="${thStyle}">${this.prettyValue(projects[project].tumourType)}</td>
+                    <td style="${thStyle}">${this.prettyValue(projects[project].tumourSubtype)}</td>
+                    <td style="${thStyle}">${this.prettyValue(projectCounts[project][mutationId]) + ' / ' + projects[project].ssmTestedDonorCount} (${Math.round((projectCounts[project][mutationId] / projects[project].ssmTestedDonorCount) * 100)}%)</td>
+                    </tr>
+                `;
+
+                projectTable += projectRow;
+                count++;
+            });
+
+            projectTable += '</table>';
+            return projectTable;
+
+        },
+
+        /**
          * Creates a table of consequences for a mutation
          * @param {*} consequences 
          */
         createConsequencesTable: function(consequences) {
-            var thStyle = 'border: 1px solid #e6e6e6; padding: 2rem .4rem;';
+            var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
             var headerRow = `
                 <tr>
                     <th style="${thStyle}">Gene</th>
@@ -92,7 +133,7 @@ function(
                 </tr>
             `;
 
-            var consequenceTable = '<table style="width: 100%; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
+            var consequenceTable = '<table style="width: 560px; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
 
             var count = 0;
             for (consequence of consequences) {
@@ -115,7 +156,7 @@ function(
                 count++;
             }
 
-            consequenceTable += '/<table>';
+            consequenceTable += '</table>';
             return consequenceTable;
         },
 
@@ -180,36 +221,71 @@ function(
                 searchBaseUrl = searchBaseUrl + '/donors/' + thisB.donor;
             }
 
-            var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=1000');
+            var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=500');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },
                 handleAs: 'json'
             }).then(function(res) {
-                array.forEach(res.hits, function(variant) {
-                    featureCallback(new SimpleFeature({
-                        id: variant.id,
-                        data: {
-                            start: variant.start - 1,
-                            end: variant.end - 1,
-                            name: variant.id,
-                            mutation: variant.mutation,
-                            reference_allele: variant.referenceGenomeAllele,
-                            assembly_version: variant.assemblyVersion,
-                            civic: thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
-                            clinvar: thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
-                            icgc: thisB.createLinkWithId(ICGC_LINK, variant.id),
-                            affected_projects: variant.affectedProjectCount,
-                            affected_donors: thisB.getDonorFraction(variant),
-                            type: variant.type,
-                            study: thisB.prettyValue(variant.study.join()),
-                            description: variant.description,
-                            consequences: thisB.createConsequencesTable(variant.consequences)
-                        }
-                    }));
-                });
+                promiseArray = []
+                array.forEach(res.hits, function(item) {
+                    promiseArray.push(new Promise(function(resolve, reject) {
+                        var variant = item;
+                        var url = encodeURI('https://dcc.icgc.org/api/v1/mutations/' + variant.id + '?field=occurences}&from=1&size=0');
 
-                finishCallback();
+                        return request(url, {
+                            method: 'get',
+                            headers: { 'X-Requested-With': null },
+                            handleAs: 'json'
+                        }).then(function(res) {
+                            if (res) {
+                                var projectsObject = {}
+                                for (project of res.occurrences) {
+                                    projectsObject[project.projectId] = project.project;
+                                }
+
+                                var projectArray = Object.keys(projectsObject);
+                                var url = encodeURI('https://dcc.icgc.org/api/v1/projects/' + projectArray + '/mutations/' + variant.id + '/donors/counts');
+
+                                return request(url, {
+                                    method: 'get',
+                                    headers: { 'X-Requested-With': null },
+                                    handleAs: 'json'
+                                }).then(function(res) {
+                                    variantObject = {
+                                        id: variant.id,
+                                        data: {
+                                            start: variant.start - 1,
+                                            end: variant.end - 1,
+                                            name: variant.id,
+                                            mutation: variant.mutation,
+                                            reference_allele: variant.referenceGenomeAllele,
+                                            assembly_version: variant.assemblyVersion,
+                                            civic: thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
+                                            clinvar: thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
+                                            icgc: thisB.createLinkWithId(ICGC_LINK, variant.id),
+                                            affected_projects: variant.affectedProjectCount,
+                                            affected_donors: thisB.getDonorFraction(variant),
+                                            type: variant.type,
+                                            study: thisB.prettyValue(variant.study.join()),
+                                            description: variant.description,
+                                            consequences: thisB.createConsequencesTable(variant.consequences),
+                                            projects: thisB.createProjectIncidenceTable(projectsObject, res, variant.id)
+                                        }
+                                    }
+                                    featureCallback(new SimpleFeature(variantObject));
+                                    resolve("Success");
+                                })
+                            } else {
+                                reject(Error("Failure"));
+                            }
+                        });
+                      }));
+                      
+                });
+                Promise.all(promiseArray).then(function(values) {
+                    finishCallback();
+                });
             }, function(err) {
                 console.log(err);
                 errorCallback('Error contacting ICGC Portal');
