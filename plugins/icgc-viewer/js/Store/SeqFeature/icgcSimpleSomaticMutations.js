@@ -82,8 +82,10 @@ function(
             var headerRow = `
                 <tr>
                     <th style="${thStyle}">Project</th>
+                    <th style="${thStyle}">Site</th>
                     <th style="${thStyle}">Tumour Type</th>
-                    <th style="${thStyle}">Frequency</th> 
+                    <th style="${thStyle}">Tumour Subtype</th>
+                    <th style="${thStyle}"># Donors Affected</th> 
                 </tr>
             `;
 
@@ -97,8 +99,10 @@ function(
                 }
                 var projectRow = `<tr ${trStyle}>
                     <td style="${thStyle}">${this.prettyValue(project)}</td>
+                    <td style="${thStyle}">${this.prettyValue(projects[project].primarySite)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].tumourType)}</td>
-                    <td style="${thStyle}">${this.prettyValue(projectCounts[project][mutationId])}</td>
+                    <td style="${thStyle}">${this.prettyValue(projects[project].tumourSubtype)}</td>
+                    <td style="${thStyle}">${this.prettyValue(projectCounts[project][mutationId]) + ' / ' + projects[project].ssmTestedDonorCount} (${Math.floor((projectCounts[project][mutationId] / projects[project].ssmTestedDonorCount) * 100)}%)</td>
                     </tr>
                 `;
 
@@ -217,7 +221,7 @@ function(
                 searchBaseUrl = searchBaseUrl + '/donors/' + thisB.donor;
             }
 
-            var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=3');
+            var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=500');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },
@@ -272,8 +276,7 @@ function(
                                     featureCallback(new SimpleFeature(variantObject));
                                     resolve("Success");
                                 })
-                            }
-                            else {
+                            } else {
                                 reject(Error("Failure"));
                             }
                         });
