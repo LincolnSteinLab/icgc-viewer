@@ -17,7 +17,7 @@ function(
         constructor: function (args) {
             this.donor = args.donor;
             this.baseUrl = args.baseUrl;
-            this.filters = args.filters;
+            this.filters = args.filters !== undefined ? args.filters : '{}';
         },
 
         /**
@@ -106,7 +106,7 @@ function(
                     <td style="${thStyle}">${this.prettyValue(projects[project].primarySite)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].tumourType)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].tumourSubtype)}</td>
-                    <td style="${thStyle}">${this.prettyValue(projectCounts[project][mutationId]) + ' / ' + projects[project].ssmTestedDonorCount} (${Math.round((projectCounts[project][mutationId] / projects[project].ssmTestedDonorCount) * 100)}%)</td>
+                    <td style="${thStyle}">${this.prettyValue(projectCounts[project][mutationId]) + ' / ' + projects[project].ssmTestedDonorCount} (${((projectCounts[project][mutationId] / projects[project].ssmTestedDonorCount) * 100).toFixed(2)}%)</td>
                     </tr>
                 `;
 
@@ -204,6 +204,12 @@ function(
             }
         },
 
+        /**
+         * Creates the filter string based on the input to the track
+         * @param {*} ref 
+         * @param {*} start 
+         * @param {*} end
+         */
         getFilterQuery: function(ref, start, end) {
             var thisB = this;
             var locationFilter = { "is": [ ref + ':' + start + '-' + end ]};
