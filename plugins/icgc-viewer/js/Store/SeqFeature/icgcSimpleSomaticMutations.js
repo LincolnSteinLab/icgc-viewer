@@ -17,6 +17,7 @@ function(
         constructor: function (args) {
             this.donor = args.donor;
             this.baseUrl = args.baseUrl;
+            this.filters = args.filters;
         },
 
         /**
@@ -202,7 +203,19 @@ function(
                 return end;
             }
         },
-        
+
+        getFilterQuery: function(ref, start, end) {
+            var thisB = this;
+            var locationFilter = { "is": [ ref + ':' + start + '-' + end ]};
+            var filterReturn = JSON.parse(thisB.filters);
+
+            if (Object.keys(filterReturn).length === 0) {
+                filterReturn = {"mutation": {}};
+            }
+
+            filterReturn.mutation.location = locationFilter;
+            return JSON.stringify(filterReturn);
+        },
 
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
             var thisB = this;
@@ -225,7 +238,7 @@ function(
             }
 
             // Retrieve all mutations in the given chromosome range
-            var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=500');
+            var url = encodeURI(searchBaseUrl +  '/mutations?filters= ' + thisB.getFilterQuery(ref, start, end) + '&from=1&include=consequences&size=500');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },
