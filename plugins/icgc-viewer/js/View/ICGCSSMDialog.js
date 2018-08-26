@@ -2,37 +2,29 @@ define([
     'dojo/_base/declare',
     'dojo/dom-construct',
     'dojo/aspect',
-    'dojo/query',
     'dijit/focus',
     'dijit/form/Button',
-    'dijit/form/TextBox',
     'dijit/form/CheckBox',
     'dijit/layout/AccordionContainer',
     'dijit/layout/ContentPane',
-    'dojo/on',
     'JBrowse/View/Dialog/WithActionBar'
 ],
 function (
     declare,
     dom,
     aspect,
-    query,
     focus,
     Button,
-    TextBox,
     CheckBox,
     AccordionContainer,
     ContentPane,
-    on,
     ActionBarDialog
 ) {
     return declare(ActionBarDialog, {
-        // Keep track of facet -> [filters]
-        // Then generate these each time
-        // Will make it easier to update
         filters: {},
         containerHolder: undefined,
         accordionCount: 0,
+
         constructor: function () {
             var thisB = this;
             aspect.after(this, 'hide', function () {
@@ -51,14 +43,17 @@ function (
                 width: '100'
             }, container);
 
+            dom.create('h2', { className: '', innerHTML: 'Search for Mutations'}, container);
+
             var facetUrl = thisB.createFacetUrl();
 
             thisB.containerHolder = dom.create('div', { }, container);
 
             thisB.fetchFacets(facetUrl);
 
-            var myButton = new Button({
-                iconClass: "dijitIconSearch",
+            var addMutationsButton = new Button({
+                label: "Add SSMs",
+                iconClass: "dijitIconSave",
                 onClick: function() {
                     thisB.addSSMTrack()
                 }
@@ -68,13 +63,16 @@ function (
             return container;
         },
 
+        /**
+         * Adds an SSM track along with according to the selected filters
+         */
         addSSMTrack: function () {
             var thisB = this;
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcSimpleSomaticMutations',
-                filters: thisB.convertFiltersObjectToString()
+                filters: JSON.parse(thisB.convertFiltersObjectToString())
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
@@ -88,7 +86,33 @@ function (
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
         },
 
-        // Check if the term is found in the given facet
+        /**
+         * Converts a camelCase word to Title Case
+         * @param {*} word in camelCase 
+         */
+        camelCaseToTitleCase: function(word) {
+            var titleCase = '';
+            for (var i = 0; i < word.length; i++) {
+                var char = word.charAt(i);
+
+                if (i === 0) {
+                    titleCase += char.toUpperCase();
+                } else {
+                    if (char === char.toUpperCase()) {
+                        titleCase += ' ';
+                    }
+
+                    titleCase += char;
+                }
+              }
+              return titleCase;
+        },
+
+        /**
+         * Check if the term is found in the given facet
+         * @param {*} facet name of the facet
+         * @param {*} term name of option within facet
+         */
         isChecked: function(facet, term) {
             var thisB = this;
             return thisB.filters[facet] && thisB.filters[facet].indexOf(term) > -1;
@@ -102,14 +126,13 @@ function (
                 facetsResponse.json().then(function (facetsJsonResponse) {
                         dom.empty(thisB.containerHolder);
                         if (!facetsJsonResponse.code) {
-                            dom.create('span', { className: '', innerHTML: 'Mutations: ' + facetsJsonResponse.pagination.total }, thisB.containerHolder);
                             var tempDiv = dom.create('div', { id: thisB.accordionCount }, thisB.containerHolder);
 
                             var accordion = new AccordionContainer({ style:"height: 400px;overflow: scroll;" }, tempDiv);
                             for (var facet in facetsJsonResponse.facets) {
                                 // Create accordion pane
                                 var contentPane = new ContentPane({
-                                    title: facet
+                                    title: thisB.camelCaseToTitleCase(facet)
                                 });
 
                                 // Create an object with all facets
@@ -149,6 +172,9 @@ function (
 
                             accordion.startup();
                         }
+
+                        dom.create('span', { className: '', innerHTML: 'Mutations found: ' + facetsJsonResponse.pagination.total }, thisB.containerHolder);
+
                         thisB.resize();
                     }, function (res3) {
                         console.error('error', res3);

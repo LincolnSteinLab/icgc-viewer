@@ -41,6 +41,9 @@ function (
                 width: '100'
             }, container);
 
+            dom.create('h2', { className: '', innerHTML: 'Search for Donors'}, container);
+
+
             // Create search box with label
             var searchBoxDiv = dom.create('div', { className: 'section' }, container);
             dom.create('span', { className: 'header', innerHTML: 'Enter a Donor ID: ' }, searchBoxDiv);

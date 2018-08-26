@@ -17,7 +17,7 @@ function(
         constructor: function (args) {
             this.donor = args.donor;
             this.baseUrl = args.baseUrl;
-            this.filters = args.filters !== undefined ? args.filters : '{}';
+            this.filters = args.filters !== undefined ? args.filters : {};
         },
 
         /**
@@ -212,15 +212,14 @@ function(
          */
         getFilterQuery: function(ref, start, end) {
             var thisB = this;
-            var locationFilter = { "is": [ ref + ':' + start + '-' + end ]};
-            var filterReturn = JSON.parse(thisB.filters);
 
-            if (Object.keys(filterReturn).length === 0) {
-                filterReturn = {"mutation": {}};
+            // If empty need to create skeleton
+            if (Object.keys(thisB.filters).length === 0) {
+                thisB.filters = {"mutation": {}};
             }
 
-            filterReturn.mutation.location = locationFilter;
-            return JSON.stringify(filterReturn);
+            thisB.filters.mutation.location = { "is": [ ref + ':' + start + '-' + end ]};
+            return JSON.stringify(thisB.filters);
         },
 
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
