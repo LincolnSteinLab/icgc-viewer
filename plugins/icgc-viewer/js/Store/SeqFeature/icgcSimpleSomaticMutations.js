@@ -17,6 +17,7 @@ function(
         constructor: function (args) {
             this.donor = args.donor;
             this.baseUrl = args.baseUrl;
+            this.filters = args.filters !== undefined ? args.filters : {};
         },
 
         /**
@@ -105,7 +106,7 @@ function(
                     <td style="${thStyle}">${this.prettyValue(projects[project].primarySite)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].tumourType)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].tumourSubtype)}</td>
-                    <td style="${thStyle}">${this.prettyValue(projectCounts[project][mutationId]) + ' / ' + projects[project].ssmTestedDonorCount} (${Math.round((projectCounts[project][mutationId] / projects[project].ssmTestedDonorCount) * 100)}%)</td>
+                    <td style="${thStyle}">${this.prettyValue(projectCounts[project][mutationId]) + ' / ' + projects[project].ssmTestedDonorCount} (${((projectCounts[project][mutationId] / projects[project].ssmTestedDonorCount) * 100).toFixed(2)}%)</td>
                     </tr>
                 `;
 
@@ -202,7 +203,24 @@ function(
                 return end;
             }
         },
-        
+
+        /**
+         * Creates the filter string based on the input to the track
+         * @param {*} ref 
+         * @param {*} start 
+         * @param {*} end
+         */
+        getFilterQuery: function(ref, start, end) {
+            var thisB = this;
+
+            // If empty need to create skeleton
+            if (Object.keys(thisB.filters).length === 0) {
+                thisB.filters = {"mutation": {}};
+            }
+
+            thisB.filters.mutation.location = { "is": [ ref + ':' + start + '-' + end ]};
+            return JSON.stringify(thisB.filters);
+        },
 
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
             var thisB = this;
@@ -225,7 +243,7 @@ function(
             }
 
             // Retrieve all mutations in the given chromosome range
-            var url = encodeURI(searchBaseUrl +  '/mutations?filters={"mutation":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&include=consequences&size=500');
+            var url = encodeURI(searchBaseUrl +  '/mutations?filters= ' + thisB.getFilterQuery(ref, start, end) + '&from=1&include=consequences&size=500');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },

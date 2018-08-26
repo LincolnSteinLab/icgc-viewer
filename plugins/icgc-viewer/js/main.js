@@ -3,14 +3,16 @@ define([
         'dojo/_base/lang',
         'JBrowse/Plugin',
         'dijit/MenuItem',
-        './View/ICGCDialog'
+        './View/ICGCDonorDialog',
+        './View/ICGCSSMDialog'
        ],
        function(
             declare,
             lang,
             JBrowsePlugin,
             MenuItem,
-            ICGCDialog
+            ICGCDonorDialog,
+            ICGCSSMDialog
        ) {
 return declare(JBrowsePlugin, {
         constructor: function () {
@@ -21,11 +23,24 @@ return declare(JBrowsePlugin, {
                         iconClass: "dijitIconSearch",
                         onClick: lang.hitch(this, 'createDonorTrack')
                     }));
+                this.browser.addGlobalMenuItem('file', new MenuItem(
+                    {
+                        label: 'ICGC Search SSMs',
+                        iconClass: "dijitIconSearch",
+                        onClick: lang.hitch(this, 'createAllSSmTrack')
+                    }));
             }, this);
         },
 
         createDonorTrack: function () {
-            var searchDialog = new ICGCDialog();
+            var searchDialog = new ICGCDonorDialog();
+            searchDialog.show(this.browser,
+                function () {
+
+                });
+        },
+        createAllSSmTrack: function () {
+            var searchDialog = new ICGCSSMDialog();
             searchDialog.show(this.browser,
                 function () {
 
