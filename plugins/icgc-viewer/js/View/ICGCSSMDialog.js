@@ -24,6 +24,7 @@ function (
         filters: {},
         containerHolder: undefined,
         accordionCount: 0,
+        accordion: undefined,
 
         constructor: function () {
             var thisB = this;
@@ -59,8 +60,33 @@ function (
                 }
             }, "addMutations").placeAt(container);
 
+            var clearFacetButton = new Button({
+                label: "Clear",
+                iconClass: "dijitIconDelete",
+                onClick: function() {
+                    thisB.clearFacets()
+                }
+            }, "clearFacets").placeAt(container);
+
             thisB.resize();
             return container;
+        },
+
+        /**
+         * Clears all of the facets
+         */
+        clearFacets: function() {
+            var thisB = this;
+            thisB.filters = {};
+            thisB.updateAccordion();
+        },
+
+        updateAccordion: function() {
+            var thisB = this;
+            thisB.accordion.destroyRecursive();
+            dom.empty(thisB.containerHolder);
+            thisB.accordionCount = thisB.accordionCount + 1;
+            thisB.fetchFacets(thisB.createFacetUrl());
         },
 
         /**
@@ -94,14 +120,12 @@ function (
             var titleCase = '';
             for (var i = 0; i < word.length; i++) {
                 var char = word.charAt(i);
-
                 if (i === 0) {
                     titleCase += char.toUpperCase();
                 } else {
                     if (char === char.toUpperCase()) {
                         titleCase += ' ';
                     }
-
                     titleCase += char;
                 }
               }
@@ -118,6 +142,10 @@ function (
             return thisB.filters[facet] && thisB.filters[facet].indexOf(term) > -1;
         },
 
+        /**
+         * Retrieve facets and display
+         * @param {*} facetUrl Url of facets to query
+         */
         fetchFacets: function(facetUrl) {
             var thisB = this;
             
@@ -128,14 +156,12 @@ function (
                         if (!facetsJsonResponse.code) {
                             var tempDiv = dom.create('div', { id: thisB.accordionCount }, thisB.containerHolder);
 
-                            var accordion = new AccordionContainer({ style:"height: 400px;overflow: scroll;" }, tempDiv);
+                            thisB.accordion = new AccordionContainer({ style:"height: 400px;overflow: scroll;" }, tempDiv);
                             for (var facet in facetsJsonResponse.facets) {
-                                // Create accordion pane
                                 var contentPane = new ContentPane({
                                     title: thisB.camelCaseToTitleCase(facet)
                                 });
 
-                                // Create an object with all facets
                                 if (facetsJsonResponse.facets[facet].terms) {
                                     var facetHolder = dom.create('span', { style:"display: flex; flex-direction:column" });
                                     facetsJsonResponse.facets[facet].terms.forEach((term) => {
@@ -144,33 +170,26 @@ function (
                                         var checkBox = new CheckBox({
                                             name: facet + '-' + term.term,
                                             id: facet + '-' + term.term + '-' + thisB.accordionCount,
-                                            value: [facet, term.term],
+                                            value: { "facet": facet, "term" : term.term },
                                             checked: thisB.isChecked(facet, term.term),
-                                            onChange: function(b) {
-                                                if (b) {
-                                                    // Add filter
+                                            onChange: function(isChecked) {
+                                                if (isChecked) {
                                                     thisB.addToFilters(this.value);
                                                 } else {
-                                                    // Remove filter (this doesn't seem to work)
                                                     thisB.removeFromFilters(this.value);
                                                 }
-                                                accordion.destroyRecursive();
-                                                dom.empty(thisB.containerHolder);
-                                                thisB.accordionCount = thisB.accordionCount + 1;
-                                                thisB.fetchFacets(thisB.createFacetUrl());
+                                                thisB.updateAccordion();
                                             }
                                         }, 'checkbox').placeAt(facetCheckbox);
                                         var label = dom.create("label", { "for" : facet + '-' + term.term + '-' + thisB.accordionCount, innerHTML: term.term + ' (' + term.count + ')' }, facetCheckbox);
                                     });
-                                    // Place facets in accordion pane
-                                    dojo.place(facetHolder, contentPane.containerNode);
 
-                                    // Add accordion pane to facet
-                                    accordion.addChild(contentPane);
+                                    dojo.place(facetHolder, contentPane.containerNode);
+                                    thisB.accordion.addChild(contentPane);
                                 }
                             }
 
-                            accordion.startup();
+                            thisB.accordion.startup();
                         }
 
                         dom.create('span', { className: '', innerHTML: 'Mutations found: ' + facetsJsonResponse.pagination.total }, thisB.containerHolder);
@@ -184,7 +203,9 @@ function (
                 });
         },
 
-        // Converts the filters object to an ICGC compatable string
+        /**
+         * Converts the filters object to an ICGC compatable string
+         */
         convertFiltersObjectToString: function() {
             var thisB = this;
             if (Object.keys(thisB.filters).length === 0) {
@@ -198,15 +219,21 @@ function (
             return JSON.stringify(filterObject);
         },
 
+        /**
+         * 
+         */
         createFacetUrl: function() {
             var thisB = this;
             return encodeURI('https://dcc.icgc.org/api/v1/mutations?include=facets&facetsOnly=true&filters=' + thisB.convertFiltersObjectToString());
         },
 
-        // Adds the facet and term to the filters object
+        /**
+         * Adds the facet and term to the filters object
+         * @param {*} value object holding facet and term to add
+         */
         addToFilters: function(value) {
-            facet = value[0];
-            term = value[1];
+            facet = value.facet;
+            term = value.term;
             var thisB = this;
             if (!thisB.filters[facet]) {
                 thisB.filters[facet] = [];
@@ -216,10 +243,13 @@ function (
             }
         },
 
-        // Removes the term from the facet in the filters object
+        /**
+         *  Removes the term from the facet in the filters object
+         * @param {*} value object holding facet and term to remove
+         */
         removeFromFilters: function(value) {
-            facet = value[0];
-            term = value[1];
+            facet = value.facet;
+            term = value.term;
             var thisB = this;
 
             if (thisB.filters[facet]) {
