@@ -227,6 +227,7 @@ function (
                 facetsResponse.json().then(function (facetsJsonResponse) {
                         dom.empty(thisB.searchByFacetContainer);
                         if (!facetsJsonResponse.code) {
+                            // Create accordion of the facets available
                             var tempDiv = dom.create('div', { id: thisB.accordionCount, style: "flex: 1 0 0;" }, thisB.searchByFacetContainer);
 
                             thisB.accordion = new AccordionContainer({ style:"height: 500px;overflow: scroll;" }, tempDiv);
@@ -264,16 +265,14 @@ function (
                             }
 
                             thisB.accordion.startup();
-                
+
                             dojo.place(thisB.searchByFacetContainer, thisB.searchByFacetPane.containerNode);
 
-                            // Now add the search results
+                            // Create a list of search results based on the currents facets
                             var searchResults = dom.create('div', { style: "flex: 3 0 0; padding: 5px;" }, thisB.searchByFacetContainer);
 
-                            if (facetsJsonResponse.pagination.total > facetsJsonResponse.pagination.size) {
-                                var maxDonorIndex = thisB.getDonorStartIndex() + thisB.pageSize;
-                                dom.create('span', { className: '', innerHTML: 'Showing donors ' + thisB.getDonorStartIndex() + ' to ' + maxDonorIndex  + ' of ' + facetsJsonResponse.pagination.total }, searchResults);
-                            }
+                            var maxDonorIndex = thisB.getDonorStartIndex() + thisB.pageSize;
+                            dom.create('span', { className: '', innerHTML: 'Showing donors ' + thisB.getDonorStartIndex() + ' to ' + maxDonorIndex  + ' of ' + facetsJsonResponse.pagination.total }, searchResults);
                             for (var hitId in facetsJsonResponse.hits) {
                                 var hit = facetsJsonResponse.hits[hitId];
                                 dom.create('h2', { innerHTML: "Donor " + hit.id }, searchResults);
@@ -317,19 +316,8 @@ function (
 
                             thisB.createPaginationButtons(searchResults, facetsJsonResponse.pagination);
 
-                            query("table").style({
-                                'width': '100%',
-                                'border': '1px solid #e6e6e6',
-                                'border-collapse': 'collapse',
-                                'border-spacing': '0'
-                            });
-                            query("td").style({
-                                'border': '1px solid #e6e6e6',
-                                'padding': '.2rem .4rem'
-                            });
-                            query("tr:nth-child(odd)").style({
-                                'background-color': '#f2f2f2'
-                            });
+                            // Update styles
+                            thisB.updateStyles();
 
                             thisB.resize();
                         }
@@ -456,19 +444,7 @@ function (
 
                             thisB.createDonorButtons(thisB.searchText, res2.availableDataTypes, searchResults);
 
-                            query("table").style({
-                                'width': '100%',
-                                'border': '1px solid #e6e6e6',
-                                'border-collapse': 'collapse',
-                                'border-spacing': '0'
-                            });
-                            query("td").style({
-                                'border': '1px solid #e6e6e6',
-                                'padding': '.2rem .4rem'
-                            });
-                            query("tr:nth-child(odd)").style({
-                                'background-color': '#f2f2f2'
-                            });
+                            thisB.updateStyles();
 
                         } else {
                             dom.empty(searchResults);
@@ -541,6 +517,22 @@ function (
                     thisB.filters[facet] = undefined;
                 }
             }
+        },
+
+        updateStyles: function(){
+            query("table").style({
+                'width': '100%',
+                'border': '1px solid #e6e6e6',
+                'border-collapse': 'collapse',
+                'border-spacing': '0'
+            });
+            query("td").style({
+                'border': '1px solid #e6e6e6',
+                'padding': '.2rem .4rem'
+            });
+            query("tr:nth-child(odd)").style({
+                'background-color': '#f2f2f2'
+            });
         },
 
         show: function (browser, callback) {
