@@ -51,7 +51,7 @@ function (
         _dialogContent: function () {
             var thisB = this;
             var content = this.content = {};
-            var container = dom.create('div', { className: 'search-container', style: { width: '500px' } });
+            var container = dom.create('div', { className: 'search-container', style: { width: '800px', height: '800px' } });
 
             dom.create('img', {
                 src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
@@ -63,18 +63,18 @@ function (
             thisB.tabDiv = dom.create('div', { }, container);
 
             thisB.tabs = new TabContainer({
-                style: "height: 300px;overflow: scroll; width: 100%;"
+                style: "height: 100%; overflow: scroll; width: 100%;"
             }, thisB.tabDiv);
 
             thisB.searchByIdPane = new ContentPane({
                 title: "Search By ID",
-                style: "height: 200px; width: 100%;"
+                style: "height: auto; width: 100%;"
            });
            thisB.tabs.addChild(thisB.searchByIdPane);
        
            thisB.searchByFacetPane = new ContentPane({
                 title: "Search By Facets",
-                style: "height: 200px; width: 100%;"
+                style: "height: auto; width: 100%;"
            });
            thisB.tabs.addChild(thisB.searchByFacetPane);
        
@@ -100,7 +100,7 @@ function (
             dojo.place(thisB.searchByIdContainer, thisB.searchByIdPane.containerNode);
 
             // Create search by facet tab
-            thisB.searchByFacetContainer = dom.create('div', { });
+            thisB.searchByFacetContainer = dom.create('div', { style: "display: flex; flex-direction: row; flex-wrap: wrap; align-items: stretch;"});
 
             var facetUrl = thisB.createFacetUrl();
 
@@ -194,12 +194,13 @@ function (
                 facetsResponse.json().then(function (facetsJsonResponse) {
                         dom.empty(thisB.searchByFacetContainer);
                         if (!facetsJsonResponse.code) {
-                            var tempDiv = dom.create('div', { id: thisB.accordionCount }, thisB.searchByFacetContainer);
+                            var tempDiv = dom.create('div', { id: thisB.accordionCount, style: "flex: 1 0 0;" }, thisB.searchByFacetContainer);
 
-                            thisB.accordion = new AccordionContainer({ style:"height: 400px;overflow: scroll;" }, tempDiv);
+                            thisB.accordion = new AccordionContainer({ style:"height: 500px;overflow: scroll;" }, tempDiv);
                             for (var facet in facetsJsonResponse.facets) {
                                 var contentPane = new ContentPane({
-                                    title: thisB.camelCaseToTitleCase(facet)
+                                    title: thisB.camelCaseToTitleCase(facet),
+                                    style: "height: auto"
                                 });
 
                                 if (facetsJsonResponse.facets[facet].terms) {
@@ -233,18 +234,20 @@ function (
                         }
 
                         // Now add the search results
+                        var searchResults = dom.create('div', { style: "flex: 3 0 0; padding: 5px;" }, thisB.searchByFacetContainer);
 
+                        dom.create('h1', { className: '', innerHTML: 'Search results' }, searchResults);
                         if (facetsJsonResponse.pagination.total > facetsJsonResponse.pagination.size) {
-                            dom.create('span', { className: '', innerHTML: 'Showing first ' + facetsJsonResponse.pagination.size + ' donors of ' + facetsJsonResponse.pagination.total }, thisB.searchByFacetContainer);
+                            dom.create('span', { className: '', innerHTML: 'Showing first ' + facetsJsonResponse.pagination.size + ' donors of ' + facetsJsonResponse.pagination.total }, searchResults);
                         }
                         for (var hitId in facetsJsonResponse.hits) {
                             var hit = facetsJsonResponse.hits[hitId];
-                            dom.create('h1', { innerHTML: "Donor " + hit.id }, thisB.searchByFacetContainer);
+                            dom.create('h2', { innerHTML: "Donor " + hit.id }, searchResults);
 
                             var donorInfo = `
                                 <table>
                                     <tr>
-                                        <td>Project Name</td>
+                                        <td>Project Code</td>
                                         <td>${hit.projectId}</td>
                                     </tr>
                                     <tr>
@@ -260,7 +263,7 @@ function (
                                         <td>${hit.ageAtDiagnosis}</td>
                                     </tr>
                                     <tr>
-                                        <td>SSM Count</td>
+                                        <td>Total number of mutations</td>
                                         <td>${hit.ssmCount}</td>
                                     </tr>
                                     <tr>
@@ -274,16 +277,8 @@ function (
                                 </table>
                             `
                             var node = dom.toDom(donorInfo);
-                            dom.place(node, thisB.searchByFacetContainer);
-                            if (hit.availableDataTypes.includes("ssm")) {
-                                var ssmButton = new Button({
-                                    label: "Add SSMs",
-                                    iconClass: "dijitIconSave",
-                                    onClick: function() {
-                                        thisB.addSSMTrack(hit.id);
-                                    }
-                                }, "ssmButton").placeAt(thisB.searchByFacetContainer);
-                            }
+                            dom.place(node, searchResults);
+                            thisB.createDonorButtons(hit.id, hit.availableDataTypes, searchResults);
                         }
 
                         query("table").style({
@@ -308,6 +303,18 @@ function (
                 }, function (err) {
                     console.error('error', err);
                 });
+        },
+
+        createDonorButtons: function(donorId, availableDataTypes, holder) {
+            if (availableDataTypes.includes("ssm")) {
+                var ssmButton = new Button({
+                    label: "Add SSMs",
+                    iconClass: "dijitIconSave",
+                    onClick: function() {
+                        thisB.addSSMTrack(donorId);
+                    }
+                }, "ssmButton").placeAt(holder);
+            }
         },
 
         searchForDonor: function(searchResults) {
@@ -354,15 +361,7 @@ function (
                             var node = dom.toDom(donorInfo);
                             dom.place(node, searchResults);
 
-                            if (res2.availableDataTypes.includes("ssm")) {
-                                var ssmButton = new Button({
-                                    label: "Add SSMs",
-                                    iconClass: "dijitIconSave",
-                                    onClick: function() {
-                                        thisB.addSSMTrack(thisB.searchText);
-                                    }
-                                }, "ssmButton").placeAt(searchResults);
-                            }
+                            thisB.createDonorButtons(thisB.searchText, res2.availableDataTypes, searchResults);
 
                             query("table").style({
                                 'width': '100%',
