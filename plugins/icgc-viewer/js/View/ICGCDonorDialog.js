@@ -39,6 +39,8 @@ function (
         filters: {},
         accordionCount: 0,
         accordion: undefined,
+        page: 1,
+        pageSize: 10,
 
         constructor: function () {
             var thisB = this;
@@ -66,17 +68,17 @@ function (
                 style: "height: 100%; overflow: scroll; width: 100%;"
             }, thisB.tabDiv);
 
+            thisB.searchByFacetPane = new ContentPane({
+                title: "Search By Facets",
+                style: "height: auto; width: 100%;"
+           });
+           thisB.tabs.addChild(thisB.searchByFacetPane);
+
             thisB.searchByIdPane = new ContentPane({
                 title: "Search By ID",
                 style: "height: auto; width: 100%;"
            });
            thisB.tabs.addChild(thisB.searchByIdPane);
-       
-           thisB.searchByFacetPane = new ContentPane({
-                title: "Search By Facets",
-                style: "height: auto; width: 100%;"
-           });
-           thisB.tabs.addChild(thisB.searchByFacetPane);
        
            thisB.tabs.startup();
 
@@ -150,9 +152,14 @@ function (
             return JSON.stringify(filterObject);
         },
 
+        getDonorStartIndex: function() {
+            var thisB = this;
+            return thisB.pageSize * (thisB.page - 1) + 1;
+        },
+
         createFacetUrl: function() {
             var thisB = this;
-            return encodeURI('https://dcc.icgc.org/api/v1/donors?include=facets&from=1&size=10&sort=ssmAffectedGenes&filters=' + thisB.convertFiltersObjectToString());
+            return encodeURI('https://dcc.icgc.org/api/v1/donors?include=facets&from=' + thisB.getDonorStartIndex()  + '&size=' + thisB.pageSize + '&sort=ssmAffectedGenes&filters=' + thisB.convertFiltersObjectToString());
         },
 
         /**
@@ -187,7 +194,7 @@ function (
 
         fetchFacets: function(facetUrl) {
             var thisB = this;
-            
+
             dom.create('span', { className: '', innerHTML: 'Fetching...' }, thisB.searchByFacetContainer);
 
             fetch(facetUrl).then(function (facetsResponse) {
@@ -231,6 +238,14 @@ function (
                             }
 
                             thisB.accordion.startup();
+
+                            var clearFacetButton = new Button({
+                                label: "Clear",
+                                iconClass: "dijitIconDelete",
+                                onClick: function() {
+                                    thisB.clearFacets()
+                                }
+                            }, "clearFacets").placeAt(tempDiv);
                         }
 
                         // Now add the search results
@@ -238,7 +253,8 @@ function (
 
                         dom.create('h1', { className: '', innerHTML: 'Search results' }, searchResults);
                         if (facetsJsonResponse.pagination.total > facetsJsonResponse.pagination.size) {
-                            dom.create('span', { className: '', innerHTML: 'Showing first ' + facetsJsonResponse.pagination.size + ' donors of ' + facetsJsonResponse.pagination.total }, searchResults);
+                            var maxDonorIndex = thisB.getDonorStartIndex() + thisB.pageSize;
+                            dom.create('span', { className: '', innerHTML: 'Showing donors ' + thisB.getDonorStartIndex() + ' to ' + maxDonorIndex  + ' of ' + facetsJsonResponse.pagination.total }, searchResults);
                         }
                         for (var hitId in facetsJsonResponse.hits) {
                             var hit = facetsJsonResponse.hits[hitId];
@@ -281,6 +297,8 @@ function (
                             thisB.createDonorButtons(hit.id, hit.availableDataTypes, searchResults);
                         }
 
+                        thisB.createPaginationButtons(searchResults, facetsJsonResponse.pagination);
+
                         query("table").style({
                             'width': '100%',
                             'border': '1px solid #e6e6e6',
@@ -295,7 +313,6 @@ function (
                             'background-color': '#f2f2f2'
                         });
 
-
                         thisB.resize();
                     }, function (res3) {
                         console.error('error', res3);
@@ -303,6 +320,42 @@ function (
                 }, function (err) {
                     console.error('error', err);
                 });
+        },
+
+        createPaginationButtons: function(holder, pagination) {
+            var thisB = this;
+
+            var paginationHolder = dom.create('div', { }, holder);
+            
+            if (thisB.page > 1) {
+                var previousButton = new Button({
+                    label: "Previous",
+                    onClick: function() {
+                        thisB.previousPage();
+                    }
+                }, "previousButton").placeAt(paginationHolder);
+
+            }
+            if (thisB.page < pagination.pages) {
+                var nextButton = new Button({
+                    label: "Next",
+                    onClick: function() {
+                        thisB.nextPage();
+                    }
+                }, "nextButton").placeAt(paginationHolder);
+            }
+        },
+
+        previousPage: function() {
+            var thisB = this;
+            thisB.page = thisB.page - 1;
+            thisB.updateAccordion();
+        },
+        
+        nextPage: function() {
+            var thisB = this;
+            thisB.page = thisB.page + 1;
+            thisB.updateAccordion();
         },
 
         createDonorButtons: function(donorId, availableDataTypes, holder) {
