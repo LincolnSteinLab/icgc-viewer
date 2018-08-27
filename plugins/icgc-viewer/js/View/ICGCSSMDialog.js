@@ -38,7 +38,6 @@ function (
             var thisB = this;
             var container = dom.create('div', { className: 'dialog-container', style: { width: '500px' } });
 
-            // Add the logo
             dom.create('img', {
                 src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
                 width: '100'

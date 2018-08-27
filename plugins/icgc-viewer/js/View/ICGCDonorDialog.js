@@ -6,6 +6,8 @@ define([
     'dijit/focus',
     'dijit/form/Button',
     'dijit/form/TextBox',
+    'dijit/layout/TabContainer',
+    'dijit/layout/ContentPane',
     'dojo/on',
     'JBrowse/View/Dialog/WithActionBar'
 ],
@@ -17,11 +19,17 @@ function (
     focus,
     Button,
     TextBox,
+    TabContainer,
+    ContentPane,
     on,
     ActionBarDialog
 ) {
     return declare(ActionBarDialog, {
         searchText: "",
+        tabs: undefined,
+        tabDiv: undefined,
+        searchByIdPane: undefined,
+        searchByFacetPane: undefined,
 
         constructor: function () {
             var thisB = this;
@@ -32,10 +40,10 @@ function (
         },
 
         _dialogContent: function () {
+            var thisB = this;
             var content = this.content = {};
-            var container = dom.create('div', { className: 'search-container' });
+            var container = dom.create('div', { className: 'search-container', style: { width: '500px' } });
 
-            // Add the logo
             dom.create('img', {
                 src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
                 width: '100'
@@ -43,28 +51,45 @@ function (
 
             dom.create('h2', { className: '', innerHTML: 'Search for Donors'}, container);
 
+            thisB.tabDiv = dom.create('div', { }, container);
 
-            // Create search box with label
-            var searchBoxDiv = dom.create('div', { className: 'section' }, container);
+            thisB.tabs = new TabContainer({
+                style: "height: 300px;overflow: scroll; width: 100%;"
+            }, thisB.tabDiv);
+
+            thisB.searchByIdPane = new ContentPane({
+                title: "Search By ID",
+                style: "height: 200px; width: 100%;"
+           });
+           thisB.tabs.addChild(thisB.searchByIdPane);
+       
+           thisB.searchByFacetPane = new ContentPane({
+                title: "Search By Facets",
+                style: "height: 200px; width: 100%;"
+           });
+           thisB.tabs.addChild(thisB.searchByFacetPane);
+       
+           thisB.tabs.startup();
+
+            var searchBoxDiv = dom.create('div', { className: 'section' });
             dom.create('span', { className: 'header', innerHTML: 'Enter a Donor ID: ' }, searchBoxDiv);
             content.searchBox = new TextBox({
                 placeholder: "Ex. DO232761"
             }).placeAt(searchBoxDiv);
-            var searchResults = dom.create('div', { style: { width: '500px' } }, container);
+            var searchResults = dom.create('div', { style: { width: '100%' } });
 
-            var thisB = this;
-
-            // OnClick will add a track with the given donor ID
-            var myButton = new Button({
+            var searchButton = new Button({
                 iconClass: "dijitIconSearch",
                 onClick: function() {
                     thisB.searchForDonor(searchResults)
                 }
             }, "addButton").placeAt(searchBoxDiv);
 
+            dojo.place(searchBoxDiv, thisB.searchByIdPane.containerNode);
+            dojo.place(searchResults, thisB.searchByIdPane.containerNode);
+
             thisB.resize();
 
-            // Update the search text on change
             on(content.searchBox, 'change', function () {
                 thisB.searchText = content.searchBox.get('value');
             });
@@ -116,7 +141,6 @@ function (
                             var node = dom.toDom(donorInfo);
                             dom.place(node, searchResults);
 
-                            // Add button to the container
                             if (res2.availableDataTypes.includes("ssm")) {
                                 var ssmButton = new Button({
                                     label: "Add SSMs",
@@ -127,7 +151,6 @@ function (
                                 }, "ssmButton").placeAt(searchResults);
                             }
 
-                            // Apply styles
                             query("table").style({
                                 'width': '100%',
                                 'border': '1px solid #e6e6e6',
