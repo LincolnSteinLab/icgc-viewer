@@ -108,6 +108,14 @@ function (
 
             thisB.fetchFacets(facetUrl);
 
+            var clearFacetButton = new Button({
+                label: "Clear",
+                iconClass: "dijitIconDelete",
+                onClick: function() {
+                    thisB.clearFacets()
+                }
+            }, "clearFacets").placeAt(thisB.searchByFacetPane.containerNode);
+
             dojo.place(thisB.searchByFacetContainer, thisB.searchByFacetPane.containerNode);
 
             thisB.resize();
@@ -238,20 +246,11 @@ function (
                             }
 
                             thisB.accordion.startup();
-
-                            var clearFacetButton = new Button({
-                                label: "Clear",
-                                iconClass: "dijitIconDelete",
-                                onClick: function() {
-                                    thisB.clearFacets()
-                                }
-                            }, "clearFacets").placeAt(tempDiv);
                         }
 
                         // Now add the search results
                         var searchResults = dom.create('div', { style: "flex: 3 0 0; padding: 5px;" }, thisB.searchByFacetContainer);
 
-                        dom.create('h1', { className: '', innerHTML: 'Search results' }, searchResults);
                         if (facetsJsonResponse.pagination.total > facetsJsonResponse.pagination.size) {
                             var maxDonorIndex = thisB.getDonorStartIndex() + thisB.pageSize;
                             dom.create('span', { className: '', innerHTML: 'Showing donors ' + thisB.getDonorStartIndex() + ' to ' + maxDonorIndex  + ' of ' + facetsJsonResponse.pagination.total }, searchResults);
