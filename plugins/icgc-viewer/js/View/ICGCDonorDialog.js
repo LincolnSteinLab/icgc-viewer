@@ -271,11 +271,12 @@ function (
                             // Create a list of search results based on the currents facets
                             var searchResults = dom.create('div', { style: "flex: 3 0 0; padding: 5px;" }, thisB.searchByFacetContainer);
 
+                            thisB.prettyPrintFilters(searchResults);
+
                             var maxDonorIndex = thisB.getDonorStartIndex() + thisB.pageSize;
-                            dom.create('span', { className: '', innerHTML: 'Showing donors ' + thisB.getDonorStartIndex() + ' to ' + maxDonorIndex  + ' of ' + facetsJsonResponse.pagination.total }, searchResults);
                             for (var hitId in facetsJsonResponse.hits) {
                                 var hit = facetsJsonResponse.hits[hitId];
-                                dom.create('h2', { innerHTML: "Donor " + hit.id }, searchResults);
+                                dom.create('h3', { innerHTML: "Donor " + hit.id }, searchResults);
 
                                 var donorInfo = `
                                     <table>
@@ -356,6 +357,36 @@ function (
                     }
                 }, "nextButton").placeAt(paginationHolder);
             }
+        },
+
+        /**
+         * Pretty prints the current filters
+         */
+        prettyPrintFilters: function(location) {
+            var thisB = this;
+
+            var currentFilter = 0;
+            var filterCount = Object.keys(thisB.filters).length;
+            var prettyFacetString = "";
+            
+            for (var facet in thisB.filters) {
+                var facetString = `<span>${thisB.camelCaseToTitleCase(facet)}`;
+                if (thisB.filters[facet].length > 1) {
+                    facetString += ` <strong>IN [</strong>${thisB.filters[facet].join(', ')}<strong>]</strong>`;
+                } else {
+                    facetString += ` <strong>IS</strong> ${thisB.filters[facet]}`;
+                }
+
+                if (currentFilter < filterCount - 1) {
+                    facetString += ` <strong>AND</strong> `;
+                }
+                facetString += `</span>`;
+                prettyFacetString += facetString;
+                currentFilter++;
+            }
+
+            var node = dom.toDom(prettyFacetString);
+            dom.place(node, location);
         },
 
         /**

@@ -36,7 +36,7 @@ function (
 
         _dialogContent: function () {
             var thisB = this;
-            var container = dom.create('div', { className: 'dialog-container', style: { width: '500px' } });
+            var container = dom.create('div', { className: 'dialog-container', style: { width: '800px', height: '800px' } });
 
             dom.create('img', {
                 src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
@@ -47,25 +47,9 @@ function (
 
             var facetUrl = thisB.createFacetUrl();
 
-            thisB.containerHolder = dom.create('div', { }, container);
+            thisB.containerHolder = dom.create('div', { style: "display: flex; flex-direction: row; flex-wrap: wrap; align-items: stretch;" }, container);
 
             thisB.fetchFacets(facetUrl);
-
-            var addMutationsButton = new Button({
-                label: "Add SSMs",
-                iconClass: "dijitIconSave",
-                onClick: function() {
-                    thisB.addSSMTrack()
-                }
-            }, "addMutations").placeAt(container);
-
-            var clearFacetButton = new Button({
-                label: "Clear",
-                iconClass: "dijitIconDelete",
-                onClick: function() {
-                    thisB.clearFacets()
-                }
-            }, "clearFacets").placeAt(container);
 
             thisB.resize();
             return container;
@@ -153,9 +137,9 @@ function (
                 facetsResponse.json().then(function (facetsJsonResponse) {
                         dom.empty(thisB.containerHolder);
                         if (!facetsJsonResponse.code) {
-                            var tempDiv = dom.create('div', { id: thisB.accordionCount }, thisB.containerHolder);
+                            var tempDiv = dom.create('div', { id: thisB.accordionCount, style: "flex: 1 0 0;" }, thisB.containerHolder);
 
-                            thisB.accordion = new AccordionContainer({ style:"height: 400px;overflow: scroll;" }, tempDiv);
+                            thisB.accordion = new AccordionContainer({ style:"height: 500px;overflow: scroll;" }, tempDiv);
                             for (var facet in facetsJsonResponse.facets) {
                                 var contentPane = new ContentPane({
                                     title: thisB.camelCaseToTitleCase(facet)
@@ -191,7 +175,28 @@ function (
                             thisB.accordion.startup();
                         }
 
-                        dom.create('span', { className: '', innerHTML: 'Mutations found: ' + facetsJsonResponse.pagination.total }, thisB.containerHolder);
+
+                        var searchResults = dom.create('div', { id: thisB.accordionCount, style: "flex: 3 0 0; padding: 5px;" }, thisB.containerHolder);
+
+                        thisB.prettyPrintFilters(searchResults);
+
+                        dom.create('div', { innerHTML: 'Mutations found: ' + facetsJsonResponse.pagination.total }, searchResults);
+
+                        var addMutationsButton = new Button({
+                            label: "Add SSMs",
+                            iconClass: "dijitIconSave",
+                            onClick: function() {
+                                thisB.addSSMTrack()
+                            }
+                        }, "addMutations").placeAt(searchResults);
+            
+                        var clearFacetButton = new Button({
+                            label: "Clear",
+                            iconClass: "dijitIconDelete",
+                            onClick: function() {
+                                thisB.clearFacets()
+                            }
+                        }, "clearFacets").placeAt(searchResults);
 
                         thisB.resize();
                     }, function (res3) {
@@ -200,6 +205,36 @@ function (
                 }, function (err) {
                     console.error('error', err);
                 });
+        },
+
+        /**
+         * Pretty prints the current filters
+         */
+        prettyPrintFilters: function(location) {
+            var thisB = this;
+
+            var currentFilter = 0;
+            var filterCount = Object.keys(thisB.filters).length;
+            var prettyFacetString = "";
+            
+            for (var facet in thisB.filters) {
+                var facetString = `<span>${thisB.camelCaseToTitleCase(facet)}`;
+                if (thisB.filters[facet].length > 1) {
+                    facetString += ` <strong>IN [</strong>${thisB.filters[facet].join(', ')}<strong>]</strong>`;
+                } else {
+                    facetString += ` <strong>IS</strong> ${thisB.filters[facet]}`;
+                }
+
+                if (currentFilter < filterCount - 1) {
+                    facetString += ` <strong>AND</strong> `;
+                }
+                facetString += `</span>`;
+                prettyFacetString += facetString;
+                currentFilter++;
+            }
+
+            var node = dom.toDom(prettyFacetString);
+            dom.place(node, location);
         },
 
         /**
