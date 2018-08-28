@@ -216,21 +216,24 @@ function (
             var currentFilter = 0;
             var filterCount = Object.keys(thisB.filters).length;
             var prettyFacetString = "";
-            
-            for (var facet in thisB.filters) {
-                var facetString = `<span>${thisB.camelCaseToTitleCase(facet)}`;
-                if (thisB.filters[facet].length > 1) {
-                    facetString += ` <strong>IN [</strong>${thisB.filters[facet].join(', ')}<strong>]</strong>`;
-                } else {
-                    facetString += ` <strong>IS</strong> ${thisB.filters[facet]}`;
-                }
 
-                if (currentFilter < filterCount - 1) {
-                    facetString += ` <strong>AND</strong> `;
+            for (var facet in thisB.filters) {
+                if (thisB.filters[facet]) {
+                    var facetString = `<span>${thisB.camelCaseToTitleCase(facet)}`;
+                    if (thisB.filters[facet].length > 1) {
+                        facetString += ` <strong>IN [</strong>${thisB.filters[facet].join(', ')}<strong>]</strong>`;
+                    } else {
+                        facetString += ` <strong>IS</strong> ${thisB.filters[facet]}`;
+                    }
+
+                    if (currentFilter < filterCount - 1) {
+                        facetString += ` <strong>AND</strong> `;
+                    }
+                    facetString += `</span>`;
+                    prettyFacetString += facetString;
                 }
-                facetString += `</span>`;
-                prettyFacetString += facetString;
                 currentFilter++;
+
             }
 
             var node = dom.toDom(prettyFacetString);
@@ -292,7 +295,7 @@ function (
                     thisB.filters[facet].splice(index, 1);
                 }
                 if (thisB.filters[facet].length === 0) {
-                    thisB.filters[facet] = undefined;
+                    delete thisB.filters[facet];
                 }
             }
         },
