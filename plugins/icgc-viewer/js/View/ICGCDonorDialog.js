@@ -161,8 +161,8 @@ function (
                                     style: "height: auto"
                                 });
 
+                                var facetHolder = dom.create('span', { style:"display: flex; flex-direction:column" });
                                 if (facetsJsonResponse.facets[facet].terms) {
-                                    var facetHolder = dom.create('span', { style:"display: flex; flex-direction:column" });
                                     facetsJsonResponse.facets[facet].terms.forEach((term) => {
                                         var facetCheckbox = dom.create('span', { style:"display: flex; flex-direction:row" }, facetHolder)
 
@@ -182,10 +182,11 @@ function (
                                         }, 'checkbox').placeAt(facetCheckbox);
                                         var label = dom.create("label", { "for" : facet + '-' + term.term + '-' + thisB.accordionCount, innerHTML: term.term + ' (' + term.count + ')' }, facetCheckbox);
                                     });
-
-                                    dojo.place(facetHolder, contentPane.containerNode);
-                                    thisB.accordion.addChild(contentPane);
                                 }
+
+                                dojo.place(facetHolder, contentPane.containerNode);
+                                thisB.accordion.addChild(contentPane);
+
                             }
 
                             thisB.accordion.startup();
