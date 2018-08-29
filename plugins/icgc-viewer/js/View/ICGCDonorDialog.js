@@ -219,26 +219,29 @@ function (
 
         createDonorsTable: function(hits, location) {
             var thisB = this;
-            var donorsTable = `
-                <table class="results-table">
-                    <tr>
-                        <th>Donor ID</th>
-                        <th>Project Code</th>
-                        <th>Primary Site</th>
-                        <th>Gender</th>
-                        <th>Age at Diagnosis</th>
-                        <th>Stage</th>
-                        <th>Survival (days)</th>
-                        <th># Mutations</th>
-                        <th># Genes</th>
-                    </tr>
+            var table = `<table class="results-table"></table>`;
+            var tableNode = dom.toDom(table);
+            var rowsHolder = `
+                <tr>
+                    <th>Donor ID</th>
+                    <th>Project Code</th>
+                    <th>Primary Site</th>
+                    <th>Gender</th>
+                    <th>Age</th>
+                    <th>Stage</th>
+                    <th>Survival (days)</th>
+                    <th># Mutations</th>
+                    <th># Genes</th>
+                    <th>SSM</th>
+                </tr>
             `;
+
+            var rowsHolderNode = dom.toDom(rowsHolder);
 
             for (var hitId in hits) {
                 var hit = hits[hitId];
 
-                var donorRow = `
-                    <tr>
+                var donorRowContent = `
                         <td>${hit.id}</td>
                         <td>${hit.projectId}</td>
                         <td>${hit.primarySite}</td>
@@ -248,18 +251,23 @@ function (
                         <td>${hit.survivalTime}</td>
                         <td>${hit.ssmCount}</td>
                         <td>${hit.ssmAffectedGenes}</td>
-                    </tr>
                 `
+                var donorRowContentNode = dom.toDom(donorRowContent);
 
-                donorsTable += donorRow;
-                thisB.createDonorButtons(hit.id, hit.availableDataTypes, location);
+                var ssmButton = `<td></td>`;
+                var ssmButtonNode = dom.toDom(ssmButton);
+                thisB.createDonorButtons(hit.id, hit.availableDataTypes, ssmButtonNode);
+
+                dom.place(ssmButtonNode, donorRowContentNode);
+
+                var row = `<tr></tr>`;
+                var rowNodeHolder = dom.toDom(row);
+                dom.place(donorRowContentNode, rowNodeHolder);
+                dom.place(rowNodeHolder, rowsHolderNode);
+
             }
-
-
-            donorsTable += `</table>`;
-
-            var node = dom.toDom(donorsTable);
-            dom.place(node, location);
+            dom.place(rowsHolderNode, tableNode);
+            dom.place(tableNode, location);
         },
 
         /**
@@ -319,7 +327,6 @@ function (
             var thisB = this;
             if (availableDataTypes.includes("ssm")) {
                 var ssmButton = new Button({
-                    label: "Add SSMs",
                     iconClass: "dijitIconSave",
                     onClick: function() {
                         thisB.addSSMTrack(donorId);
