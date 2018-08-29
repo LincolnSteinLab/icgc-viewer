@@ -37,6 +37,13 @@ function (
 
             // Create search by facet section
             var facetUrl = thisB.createFacetUrl();
+            var clearFacetButton = new Button({
+                label: "Clear",
+                iconClass: "dijitIconDelete",
+                onClick: function() {
+                    thisB.clearFacets()
+                }
+            }, "clearFacets").placeAt(container);
             thisB.searchByFacetContainer = dom.create('div', { style: "display: flex; flex-direction: row; flex-wrap: wrap; align-items: stretch;" }, container);
             thisB.fetchFacets(facetUrl);
 
@@ -57,10 +64,11 @@ function (
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
+            var randomId = Math.random().toString(36).substring(7);
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_SSM"
+                label: "ICGC_SSM_" + randomId
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -131,14 +139,6 @@ function (
                                 thisB.addSSMTrack()
                             }
                         }, "addMutations").placeAt(searchResults);
-            
-                        var clearFacetButton = new Button({
-                            label: "Clear",
-                            iconClass: "dijitIconDelete",
-                            onClick: function() {
-                                thisB.clearFacets()
-                            }
-                        }, "clearFacets").placeAt(searchResults);
 
                         thisB.resize();
                     }, function (res3) {
