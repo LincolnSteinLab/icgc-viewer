@@ -1,9 +1,7 @@
 define([
     'dojo/_base/declare',
     'dojo/dom-construct',
-    'dojo/aspect',
     'dojo/query',
-    'dijit/focus',
     'dijit/form/Button',
     'dijit/form/CheckBox',
     'dijit/form/TextBox',
@@ -11,14 +9,12 @@ define([
     'dijit/layout/AccordionContainer',
     'dijit/layout/ContentPane',
     'dojo/on',
-    'JBrowse/View/Dialog/WithActionBar'
+    './ICGCCommonFacetDialog'
 ],
 function (
     declare,
     dom,
-    aspect,
     query,
-    focus,
     Button,
     CheckBox,
     TextBox,
@@ -26,16 +22,15 @@ function (
     AccordionContainer,
     ContentPane,
     on,
-    ActionBarDialog
+    ICGCCommonFacetDialog
 ) {
-    return declare(ActionBarDialog, {
+    return declare(ICGCCommonFacetDialog, {
         searchText: "",
         tabs: undefined,
         tabDiv: undefined,
         searchByIdPane: undefined,
         searchByFacetPane: undefined,
         searchByIdContainer: undefined,
-        searchByFacetContainer: undefined,
         filters: {},
         accordionCount: 0,
         accordion: undefined,
@@ -43,11 +38,6 @@ function (
         pageSize: 10,
 
         constructor: function () {
-            var thisB = this;
-            aspect.after(this, 'hide', function () {
-                focus.curNode && focus.curNode.blur();
-                setTimeout(function () { thisB.destroyRecursive(); }, 500);
-            });
         },
 
         _dialogContent: function () {
@@ -93,7 +83,7 @@ function (
 
             // Create search by facet tab
             thisB.searchByFacetContainer = dom.create('div', { style: "display: flex; flex-direction: row; flex-wrap: wrap; align-items: stretch;"});
-            thisB.createSearchByDonorContent();
+            thisB.fetchFacets();
 
             var clearFacetButton = new Button({
                 label: "Clear",
@@ -125,47 +115,11 @@ function (
             var searchButton = new Button({
                 iconClass: "dijitIconSearch",
                 onClick: function() {
-                    thisB.searchForDonor(searchResults)
+                    thisB.searchForDonorById(searchResults)
                 }
-            }, "addButton").placeAt(searchBoxDiv);
+            }, "searchButton").placeAt(searchBoxDiv);
 
             dojo.place(thisB.searchByIdContainer, thisB.searchByIdPane.containerNode);
-        },
-
-        /**
-         * Clears all of the facets
-         */
-        clearFacets: function() {
-            var thisB = this;
-            thisB.filters = {};
-            thisB.updateAccordion();
-        },
-
-        /**
-         * Updates the accordion based on the current filters
-         */
-        updateAccordion: function() {
-            var thisB = this;
-            thisB.accordion.destroyRecursive();
-            dom.empty(thisB.searchByFacetContainer);
-            thisB.accordionCount = thisB.accordionCount + 1;
-            thisB.createSearchByDonorContent(thisB.createFacetUrl());
-        },
-
-        /**
-         * Converts the filters object to an ICGC compatable string
-         */
-        convertFiltersObjectToString: function() {
-            var thisB = this;
-            if (Object.keys(thisB.filters).length === 0) {
-                return JSON.stringify(thisB.filters);
-            }
-            var filterObject = { "donor" : { }};
-            for (var facet in thisB.filters) {
-                var facetObject = { "is": thisB.filters[facet] };
-                filterObject.donor[facet] = facetObject;
-            }
-            return JSON.stringify(filterObject);
         },
 
         /**
@@ -181,43 +135,13 @@ function (
          */
         createFacetUrl: function() {
             var thisB = this;
-            return encodeURI('https://dcc.icgc.org/api/v1/donors?include=facets&from=' + thisB.getDonorStartIndex()  + '&size=' + thisB.pageSize + '&sort=ssmAffectedGenes&filters=' + thisB.convertFiltersObjectToString());
-        },
-
-        /**
-         * Converts a camelCase word to Title Case
-         * @param {*} word in camelCase 
-         */
-        camelCaseToTitleCase: function(word) {
-            var titleCase = '';
-            for (var i = 0; i < word.length; i++) {
-                var char = word.charAt(i);
-                if (i === 0) {
-                    titleCase += char.toUpperCase();
-                } else {
-                    if (char === char.toUpperCase()) {
-                        titleCase += ' ';
-                    }
-                    titleCase += char;
-                }
-              }
-              return titleCase;
-        },
-
-        /**
-         * Check if the term is found in the given facet
-         * @param {*} facet name of the facet
-         * @param {*} term name of option within facet
-         */
-        isChecked: function(facet, term) {
-            var thisB = this;
-            return thisB.filters[facet] && thisB.filters[facet].indexOf(term) > -1;
+            return encodeURI('https://dcc.icgc.org/api/v1/donors?include=facets&from=' + thisB.getDonorStartIndex()  + '&size=' + thisB.pageSize + '&sort=ssmAffectedGenes&filters=' + thisB.convertFiltersObjectToString('donor'));
         },
 
         /**
          * Retrieves the facets and search results for the given URL and displays them
          */
-        createSearchByDonorContent: function() {
+        fetchFacets: function() {
             var thisB = this;
 
             var facetUrl = thisB.createFacetUrl();
@@ -360,39 +284,6 @@ function (
         },
 
         /**
-         * Pretty prints the current filters
-         */
-        prettyPrintFilters: function(location) {
-            var thisB = this;
-
-            var currentFilter = 0;
-            var filterCount = Object.keys(thisB.filters).length;
-            var prettyFacetString = "";
-
-            for (var facet in thisB.filters) {
-                if (thisB.filters[facet]) {
-                    var facetString = `<span>${thisB.camelCaseToTitleCase(facet)}`;
-                    if (thisB.filters[facet].length > 1) {
-                        facetString += ` <strong>IN [</strong>${thisB.filters[facet].join(', ')}<strong>]</strong>`;
-                    } else {
-                        facetString += ` <strong>IS</strong> ${thisB.filters[facet]}`;
-                    }
-
-                    if (currentFilter < filterCount - 1) {
-                        facetString += ` <strong>AND</strong> `;
-                    }
-                    facetString += `</span>`;
-                    prettyFacetString += facetString;
-                }
-                currentFilter++;
-
-            }
-
-            var node = dom.toDom(prettyFacetString);
-            dom.place(node, location);
-        },
-
-        /**
          * Loads the facet results at the previous page
          */
         previousPage: function() {
@@ -433,7 +324,7 @@ function (
          * Searches for a donor of the given ID and adds the results to the dialog
          * @param {*} searchResults Location to place the search results in
          */
-        searchForDonor: function(searchResults) {
+        searchForDonorById: function(searchResults) {
             var thisB = this;
             fetch('https://dcc.icgc.org/api/v1/donors/' + thisB.searchText).then(function (res) {
                     res.json().then(function (res2) {
@@ -518,42 +409,6 @@ function (
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
         },
 
-        /**
-         * Adds the facet and term to the filters object
-         * @param {*} value object holding facet and term to add
-         */
-        addToFilters: function(value) {
-            facet = value.facet;
-            term = value.term;
-            var thisB = this;
-            if (!thisB.filters[facet]) {
-                thisB.filters[facet] = [];
-            }
-            if (thisB.filters[facet].indexOf(term) == -1) {
-                thisB.filters[facet].push(term);
-            }
-        },
-
-        /**
-         *  Removes the term from the facet in the filters object
-         * @param {*} value object holding facet and term to remove
-         */
-        removeFromFilters: function(value) {
-            facet = value.facet;
-            term = value.term;
-            var thisB = this;
-
-            if (thisB.filters[facet]) {
-                var index = thisB.filters[facet].indexOf(term);
-                if (index > -1) {
-                    thisB.filters[facet].splice(index, 1);
-                }
-                if (thisB.filters[facet].length === 0) {
-                    delete thisB.filters[facet];
-                }
-            }
-        },
-
         updateStyles: function(){
             query("table").style({
                 'width': '100%',
@@ -568,15 +423,6 @@ function (
             query("tr:nth-child(odd)").style({
                 'background-color': '#f2f2f2'
             });
-        },
-
-        show: function (browser, callback) {
-            this.browser = browser;
-            this.callback = callback || function () {};
-            this.set('title', 'ICGC Browser');
-            this.set('content', this._dialogContent());
-            this.inherited(arguments);
-            focus.focus(this.closeButtonNode);
         }
 
     });
