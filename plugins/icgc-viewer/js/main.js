@@ -4,7 +4,8 @@ define([
         'JBrowse/Plugin',
         'dijit/MenuItem',
         './View/ICGCDonorDialog',
-        './View/ICGCSSMDialog'
+        './View/ICGCSSMDialog',
+        './View/ICGCGeneDialog'
        ],
        function(
             declare,
@@ -12,22 +13,29 @@ define([
             JBrowsePlugin,
             MenuItem,
             ICGCDonorDialog,
-            ICGCSSMDialog
+            ICGCSSMDialog,
+            ICGCGeneDialog
        ) {
 return declare(JBrowsePlugin, {
         constructor: function () {
             this.browser.afterMilestone('initView', function () {
                 this.browser.addGlobalMenuItem('file', new MenuItem(
                     {
-                        label: 'ICGC Search for donor',
+                        label: 'ICGC Search Donors',
                         iconClass: "dijitIconSearch",
                         onClick: lang.hitch(this, 'createDonorTrack')
                     }));
                 this.browser.addGlobalMenuItem('file', new MenuItem(
                     {
-                        label: 'ICGC Search SSMs',
+                        label: 'ICGC Search Mutations',
                         iconClass: "dijitIconSearch",
                         onClick: lang.hitch(this, 'createAllSSmTrack')
+                    }));
+                this.browser.addGlobalMenuItem('file', new MenuItem(
+                    {
+                        label: 'ICGC Search Genes',
+                        iconClass: "dijitIconSearch",
+                        onClick: lang.hitch(this, 'createGeneTrack')
                     }));
             }, this);
         },
@@ -41,6 +49,13 @@ return declare(JBrowsePlugin, {
         },
         createAllSSmTrack: function () {
             var searchDialog = new ICGCSSMDialog();
+            searchDialog.show(this.browser,
+                function () {
+
+                });
+        },
+        createGeneTrack: function () {
+            var searchDialog = new ICGCGeneDialog();
             searchDialog.show(this.browser,
                 function () {
 
