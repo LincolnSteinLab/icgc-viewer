@@ -243,7 +243,7 @@ function(
             }
 
             // Retrieve all mutations in the given chromosome range
-            var url = encodeURI(searchBaseUrl +  '/mutations?filters= ' + thisB.getFilterQuery(ref, start, end) + '&from=1&include=consequences&size=500');
+            var url = encodeURI(searchBaseUrl +  '/mutations?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&include=consequences&size=500');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },

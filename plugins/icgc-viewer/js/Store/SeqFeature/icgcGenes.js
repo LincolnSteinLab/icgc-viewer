@@ -1,7 +1,6 @@
 define([
     'dojo/_base/declare',
     'dojo/_base/array',
-    'dojo/_base/lang',
     'dojo/request',
     'JBrowse/Store/SeqFeature',
     'JBrowse/Model/SimpleFeature'
@@ -9,12 +8,16 @@ define([
 function(
     declare,
     array,
-    lang,
     request,
     SeqFeatureStore,
     SimpleFeature
 ) {
     return declare(SeqFeatureStore, {
+
+        constructor: function(args) {
+            this.filters = args.filters !== undefined ? args.filters : {};
+        },
+
         /**
          * Creates a link to a given ID
          * @param {*} link
@@ -85,6 +88,24 @@ function(
             }
         },
 
+        /**
+         * Creates the filter string based on the input to the track
+         * @param {*} ref 
+         * @param {*} start 
+         * @param {*} end
+         */
+        getFilterQuery: function(ref, start, end) {
+            var thisB = this;
+
+            // If empty need to create skeleton
+            if (Object.keys(thisB.filters).length === 0) {
+                thisB.filters = {"gene": {}};
+            }
+
+            thisB.filters.gene.location = { "is": [ ref + ':' + start + '-' + end ]};
+            return JSON.stringify(thisB.filters);
+        },
+
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
             var thisB = this;
             const ENSEMBL_LINK = "http://feb2014.archive.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=";
@@ -103,7 +124,7 @@ function(
             var ref = query.ref.replace(/chr/, '');
             end = thisB.getChromosomeEnd(ref, end);
 
-            var url = encodeURI('https://dcc.icgc.org/api/v1/genes?filters={"gene":{"location":{"is":["' + ref + ':' + start + '-' + end + '"]}}}&from=1&size=1000&include=externalDbIds');
+            var url = encodeURI('https://dcc.icgc.org/api/v1/genes?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&size=1000&include=externalDbIds');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },

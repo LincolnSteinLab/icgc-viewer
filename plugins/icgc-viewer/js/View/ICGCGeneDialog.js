@@ -33,7 +33,7 @@ function (
                 width: '100'
             }, container);
 
-            dom.create('h2', { className: '', innerHTML: 'Search for Mutations'}, container);
+            dom.create('h2', { className: '', innerHTML: 'Search for Genes'}, container);
 
             // Create search by facet section
             var facetUrl = thisB.createFacetUrl();
@@ -52,15 +52,15 @@ function (
         },
 
         /**
-         * Adds an SSM track along with according to the selected filters
+         * Adds an Gene track along with according to the selected filters
          */
-        addSSMTrack: function () {
+        addGeneTrack: function () {
             var thisB = this;
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcSimpleSomaticMutations',
-                filters: JSON.parse(thisB.convertFiltersObjectToString('mutation'))
+                type: 'icgc-viewer/Store/SeqFeature/icgcGenes',
+                filters: JSON.parse(thisB.convertFiltersObjectToString('gene'))
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
@@ -68,7 +68,7 @@ function (
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_SSM_" + randomId
+                label: "ICGC_Genes_" + randomId
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -133,15 +133,15 @@ function (
                             thisB.prettyPrintFilters(facetStringHolder);
                         }
 
-                        dom.create('div', { innerHTML: 'Mutations found: ' + facetsJsonResponse.pagination.total }, searchResults);
+                        dom.create('div', { innerHTML: 'Genes found: ' + facetsJsonResponse.pagination.total }, searchResults);
 
-                        var addMutationsButton = new Button({
-                            label: "Add SSMs",
+                        var addGenesButton = new Button({
+                            label: "Add Genes",
                             iconClass: "dijitIconSave",
                             onClick: function() {
-                                thisB.addSSMTrack()
+                                thisB.addGeneTrack()
                             }
-                        }, "addMutations").placeAt(searchResults);
+                        }, "addGenes").placeAt(searchResults);
 
                         thisB.resize();
                     }, function (res3) {
@@ -157,7 +157,7 @@ function (
          */
         createFacetUrl: function() {
             var thisB = this;
-            return encodeURI('https://dcc.icgc.org/api/v1/mutations?include=facets&facetsOnly=true&filters=' + thisB.convertFiltersObjectToString('mutation'));
+            return encodeURI('https://dcc.icgc.org/api/v1/genes?include=facets&facetsOnly=true&filters=' + thisB.convertFiltersObjectToString('gene'));
         }
 
     });
