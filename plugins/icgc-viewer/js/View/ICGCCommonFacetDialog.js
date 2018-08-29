@@ -18,6 +18,7 @@ function (
 
         constructor: function() {
             var thisB = this;
+            thisB.filters = {};
             aspect.after(this, 'hide', function () {
                 focus.curNode && focus.curNode.blur();
                 setTimeout(function () { thisB.destroyRecursive(); }, 500);
@@ -66,11 +67,11 @@ function (
 
             for (var facet in thisB.filters) {
                 if (thisB.filters[facet]) {
-                    var facetString = `<span>${thisB.camelCaseToTitleCase(facet)}`;
+                    var facetString = `<span><span style="background: #e6e6e6;border-radius: .5rem; padding: 3px;">${thisB.camelCaseToTitleCase(facet)}</span>`;
                     if (thisB.filters[facet].length > 1) {
-                        facetString += ` <strong>IN [</strong>${thisB.filters[facet].join(', ')}<strong>]</strong>`;
+                        facetString += ` <strong>IN [</strong><span style="background: #daf2fb;border-radius: .5rem; padding: 3px;">${thisB.filters[facet].join(', ')}</span><strong>]</strong>`;
                     } else {
-                        facetString += ` <strong>IS</strong> ${thisB.filters[facet]}`;
+                        facetString += ` <strong>IS </strong><span style="background: #daf2fb;border-radius: .5rem; padding: 3px;">${thisB.filters[facet]}</span>`;
                     }
 
                     if (currentFilter < filterCount - 1) {

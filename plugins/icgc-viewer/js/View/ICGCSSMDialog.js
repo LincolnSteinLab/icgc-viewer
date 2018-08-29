@@ -128,7 +128,10 @@ function (
 
                         var searchResults = dom.create('div', { id: thisB.accordionCount, style: "flex: 3 0 0; padding: 5px;" }, thisB.searchByFacetContainer);
 
-                        thisB.prettyPrintFilters(searchResults);
+                        if (Object.keys(thisB.filters).length > 0) {
+                            var facetStringHolder = dom.create('div', { id: thisB.accordionCount, style: "background:#fafafa; padding:7px;" }, searchResults);
+                            thisB.prettyPrintFilters(facetStringHolder);
+                        }
 
                         dom.create('div', { innerHTML: 'Mutations found: ' + facetsJsonResponse.pagination.total }, searchResults);
 

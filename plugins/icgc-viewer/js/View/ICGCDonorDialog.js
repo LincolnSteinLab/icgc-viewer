@@ -196,7 +196,10 @@ function (
                             // Create a list of search results based on the currents facets
                             var searchResults = dom.create('div', { style: "flex: 3 0 0; padding: 5px;" }, thisB.searchByFacetContainer);
 
-                            thisB.prettyPrintFilters(searchResults);
+                            if (Object.keys(thisB.filters).length > 0) {
+                                var facetStringHolder = dom.create('div', { id: thisB.accordionCount, style: "background:#fafafa; padding:7px;" }, searchResults);
+                                thisB.prettyPrintFilters(facetStringHolder);
+                            }
 
                             var maxDonorIndex = thisB.getDonorStartIndex() + thisB.pageSize;
                             for (var hitId in facetsJsonResponse.hits) {
