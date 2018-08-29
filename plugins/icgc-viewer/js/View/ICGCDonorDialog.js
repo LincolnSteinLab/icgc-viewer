@@ -35,7 +35,7 @@ function (
         accordionCount: 0,
         accordion: undefined,
         page: 1,
-        pageSize: 10,
+        pageSize: 20,
 
         constructor: function () {
         },
@@ -43,7 +43,7 @@ function (
         _dialogContent: function () {
             var thisB = this;
             var content = this.content = {};
-            var container = dom.create('div', { className: 'search-container', style: { width: '800px', height: '800px' } });
+            var container = dom.create('div', { className: 'search-container', style: { width: '900px', height: '700px' } });
 
             // Create header section
             dom.create('img', {
@@ -186,7 +186,6 @@ function (
 
                                 dojo.place(facetHolder, contentPane.containerNode);
                                 thisB.accordion.addChild(contentPane);
-
                             }
 
                             thisB.accordion.startup();
@@ -197,51 +196,11 @@ function (
                             var searchResults = dom.create('div', { style: "flex: 3 0 0; padding: 5px;" }, thisB.searchByFacetContainer);
 
                             if (Object.keys(thisB.filters).length > 0) {
-                                var facetStringHolder = dom.create('div', { id: thisB.accordionCount, style: "background:#fafafa; padding:7px;" }, searchResults);
+                                var facetStringHolder = dom.create('div', { id: thisB.accordionCount, style: "margin-bottom: 5px;" }, searchResults);
                                 thisB.prettyPrintFilters(facetStringHolder);
                             }
 
-                            var maxDonorIndex = thisB.getDonorStartIndex() + thisB.pageSize;
-                            for (var hitId in facetsJsonResponse.hits) {
-                                var hit = facetsJsonResponse.hits[hitId];
-                                dom.create('h3', { innerHTML: "Donor " + hit.id }, searchResults);
-
-                                var donorInfo = `
-                                    <table class="results-table">
-                                        <tr>
-                                            <td>Project Code</td>
-                                            <td>${hit.projectId}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Primary Site</td>
-                                            <td>${hit.primarySite}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Gender</td>
-                                            <td>${hit.gender}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Age at Diagnosis</td>
-                                            <td>${hit.ageAtDiagnosis}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Total number of mutations</td>
-                                            <td>${hit.ssmCount}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>SSM Affected Genes</td>
-                                            <td>${hit.ssmAffectedGenes}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Total number of mutations</td>
-                                            <td>${hit.ssmCount}</td>
-                                        </tr>
-                                    </table>
-                                `
-                                var node = dom.toDom(donorInfo);
-                                dom.place(node, searchResults);
-                                thisB.createDonorButtons(hit.id, hit.availableDataTypes, searchResults);
-                            }
+                            thisB.createDonorsTable(facetsJsonResponse.hits, searchResults);
 
                             thisB.createPaginationButtons(searchResults, facetsJsonResponse.pagination);
 
@@ -256,6 +215,51 @@ function (
                 }, function (err) {
                     console.error('error', err);
                 });
+        },
+
+        createDonorsTable: function(hits, location) {
+            var thisB = this;
+            var donorsTable = `
+                <table class="results-table">
+                    <tr>
+                        <th>Donor ID</th>
+                        <th>Project Code</th>
+                        <th>Primary Site</th>
+                        <th>Gender</th>
+                        <th>Age at Diagnosis</th>
+                        <th>Stage</th>
+                        <th>Survival (days)</th>
+                        <th># Mutations</th>
+                        <th># Genes</th>
+                    </tr>
+            `;
+
+            for (var hitId in hits) {
+                var hit = hits[hitId];
+
+                var donorRow = `
+                    <tr>
+                        <td>${hit.id}</td>
+                        <td>${hit.projectId}</td>
+                        <td>${hit.primarySite}</td>
+                        <td>${hit.gender}</td>
+                        <td>${hit.ageAtDiagnosis}</td>
+                        <td>${hit.state}</td>
+                        <td>${hit.survivalTime}</td>
+                        <td>${hit.ssmCount}</td>
+                        <td>${hit.ssmAffectedGenes}</td>
+                    </tr>
+                `
+
+                donorsTable += donorRow;
+                thisB.createDonorButtons(hit.id, hit.availableDataTypes, location);
+            }
+
+
+            donorsTable += `</table>`;
+
+            var node = dom.toDom(donorsTable);
+            dom.place(node, location);
         },
 
         /**
