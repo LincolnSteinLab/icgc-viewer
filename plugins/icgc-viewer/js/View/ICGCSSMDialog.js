@@ -26,6 +26,8 @@ function (
         _dialogContent: function () {
             var thisB = this;
             var container = dom.create('div', { className: 'dialog-container', style: { width: '800px', height: '800px' } });
+
+            // Create header section
             dom.create('img', {
                 src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
                 width: '100'
@@ -33,10 +35,9 @@ function (
 
             dom.create('h2', { className: '', innerHTML: 'Search for Mutations'}, container);
 
+            // Create search by facet section
             var facetUrl = thisB.createFacetUrl();
-
             thisB.searchByFacetContainer = dom.create('div', { style: "display: flex; flex-direction: row; flex-wrap: wrap; align-items: stretch;" }, container);
-
             thisB.fetchFacets(facetUrl);
 
             thisB.resize();

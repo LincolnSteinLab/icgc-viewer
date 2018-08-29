@@ -203,7 +203,7 @@ function (
                                 dom.create('h3', { innerHTML: "Donor " + hit.id }, searchResults);
 
                                 var donorInfo = `
-                                    <table>
+                                    <table class="results-table">
                                         <tr>
                                             <td>Project Code</td>
                                             <td>${hit.projectId}</td>
@@ -334,7 +334,7 @@ function (
                             dom.create('h1', { innerHTML: 'Donor ' + res2.id }, searchResults);
 
                             var donorInfo = `
-                                <table>
+                                <table class="results-table">
                                     <tr>
                                         <td>Submitter ID</td>
                                         <td>${res2.submittedDonorId}</td>
@@ -410,17 +410,17 @@ function (
         },
 
         updateStyles: function(){
-            query("table").style({
+            query("table.results-table").style({
                 'width': '100%',
                 'border': '1px solid #e6e6e6',
                 'border-collapse': 'collapse',
                 'border-spacing': '0'
             });
-            query("td").style({
+            query("table.results-table td").style({
                 'border': '1px solid #e6e6e6',
                 'padding': '.2rem .4rem'
             });
-            query("tr:nth-child(odd)").style({
+            query("table.results-table tr:nth-child(odd)").style({
                 'background-color': '#f2f2f2'
             });
         }
