@@ -200,6 +200,9 @@ function (
                                 thisB.prettyPrintFilters(facetStringHolder);
                             }
 
+                            var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
+                            var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, searchResults);
+
                             thisB.createDonorsTable(facetsJsonResponse.hits, searchResults);
 
                             thisB.createPaginationButtons(searchResults, facetsJsonResponse.pagination);
@@ -217,6 +220,11 @@ function (
                 });
         },
 
+        /**
+         * Creates the donors table for the given hits in some location
+         * @param {*} hits array of donor hits
+         * @param {*} location dom element to place the table
+         */
         createDonorsTable: function(hits, location) {
             var thisB = this;
             var table = `<table class="results-table"></table>`;
@@ -278,7 +286,7 @@ function (
         createPaginationButtons: function(holder, pagination) {
             var thisB = this;
 
-            var paginationHolder = dom.create('div', { }, holder);
+            var paginationHolder = dom.create('div', { style:"display: flex;justify-content: center;"}, holder);
             
             if (thisB.page > 1) {
                 var previousButton = new Button({
@@ -289,6 +297,7 @@ function (
                 }, "previousButton").placeAt(paginationHolder);
 
             }
+
             if (thisB.page < pagination.pages) {
                 var nextButton = new Button({
                     label: "Next",
