@@ -49,7 +49,9 @@ function (
                 width: '100'
             }, container);
 
-            dom.create('h2', { className: '', innerHTML: 'Search for Donors'}, container);
+            var infoText = 'Search for donors by filters or by ID and display their mutation data individually as tracks.';
+            dom.create('h2', { innerHTML: 'Search for Donors'}, container);
+            dom.create('p', { innerHTML: infoText}, container);
 
             // Create the tab structure
             thisB.tabDiv = dom.create('div', { }, container);
@@ -103,8 +105,10 @@ function (
             var thisB = this;
             thisB.searchByIdContainer = dom.create('div', { });
 
-            var searchBoxDiv = dom.create('div', { }, thisB.searchByIdContainer);
-            dom.create('span', { className: 'header', innerHTML: 'Enter a Donor ID: ' }, searchBoxDiv);
+            var searchBoxTitle = dom.create('div', { className: "donor-id-holder" }, thisB.searchByIdContainer);
+            dom.create('h1', { innerHTML: 'Search By ID' }, searchBoxTitle);
+
+            var searchBoxDiv = dom.create('div', { className: "donor-id-holder" }, thisB.searchByIdContainer);
             content.searchBox = new TextBox({
                 placeholder: "Ex. DO232761"
             }).placeAt(searchBoxDiv);
@@ -350,7 +354,7 @@ function (
                         if (!res2.code) {
                             dom.empty(searchResults);
 
-                            dom.create('h1', { innerHTML: 'Donor ' + res2.id }, searchResults);
+                            dom.create('h2', { innerHTML: 'Donor ' + res2.id }, searchResults);
 
                             var donorInfo = `
                                 <table class="results-table">

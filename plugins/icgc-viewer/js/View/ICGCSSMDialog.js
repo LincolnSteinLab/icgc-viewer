@@ -34,6 +34,8 @@ function (
             }, container);
 
             dom.create('h2', { className: '', innerHTML: 'Search for Mutations'}, container);
+            var infoText = 'Search for mutations by filters and display all matching mutations as a track.';
+            dom.create('p', { innerHTML: infoText}, container);
 
             // Create search by facet section
             var facetUrl = thisB.createFacetUrl();

@@ -34,6 +34,8 @@ function (
             }, container);
 
             dom.create('h2', { className: '', innerHTML: 'Search for Genes'}, container);
+            var infoText = 'Search for genes by filters and display all matching genes as a track.';
+            dom.create('p', { innerHTML: infoText}, container);
 
             // Create search by facet section
             var facetUrl = thisB.createFacetUrl();

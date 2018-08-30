@@ -54,3 +54,9 @@ table.results-table tr:nth-child(odd) {
 .nowrapTabStrip {
     width: 100% !important;
 }
+
+.donor-id-holder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
