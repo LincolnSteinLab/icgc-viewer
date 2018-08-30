@@ -80,7 +80,7 @@ function (
             });
 
             // Create search by facet tab
-            thisB.searchByFacetContainer = dom.create('div', { style: "display: flex; flex-direction: row; flex-wrap: wrap; align-items: stretch;"});
+            thisB.searchByFacetContainer = dom.create('div', { className: "flexHolder" });
             thisB.fetchFacets();
 
             var clearFacetButton = new Button({
@@ -150,7 +150,7 @@ function (
                         dom.empty(thisB.searchByFacetContainer);
                         if (!facetsJsonResponse.code) {
                             // Create accordion of the facets available
-                            var tempDiv = dom.create('div', { id: thisB.accordionCount, style: "flex: 1 0 0;" }, thisB.searchByFacetContainer);
+                            var tempDiv = dom.create('div', { id: thisB.accordionCount, className: "facet-accordion" }, thisB.searchByFacetContainer);
 
                             thisB.accordion = new AccordionContainer({ style:"height: 500px;overflow: scroll;" }, tempDiv);
                             for (var facet in facetsJsonResponse.facets) {
@@ -159,10 +159,10 @@ function (
                                     style: "height: auto"
                                 });
 
-                                var facetHolder = dom.create('span', { style:"display: flex; flex-direction:column" });
+                                var facetHolder = dom.create('span', { className: "flex-column" });
                                 if (facetsJsonResponse.facets[facet].terms) {
                                     facetsJsonResponse.facets[facet].terms.forEach((term) => {
-                                        var facetCheckbox = dom.create('span', { style:"display: flex; flex-direction:row" }, facetHolder)
+                                        var facetCheckbox = dom.create('span', { className: "flex-row" }, facetHolder)
 
                                         var checkBox = new CheckBox({
                                             name: facet + '-' + term.term,
@@ -191,7 +191,7 @@ function (
                             dojo.place(thisB.searchByFacetContainer, thisB.searchByFacetPane.containerNode);
 
                             // Create a list of search results based on the currents facets
-                            var searchResults = dom.create('div', { style: "flex: 3 0 0; padding: 5px;" }, thisB.searchByFacetContainer);
+                            var searchResults = dom.create('div', { className: "search-results-holder" }, thisB.searchByFacetContainer);
 
                             if (Object.keys(thisB.filters).length > 0) {
                                 var facetStringHolder = dom.create('div', { id: thisB.accordionCount, style: "margin-bottom: 5px;" }, searchResults);
@@ -245,15 +245,15 @@ function (
                 var hit = hits[hitId];
 
                 var donorRowContent = `
-                        <td>${hit.id}</td>
-                        <td>${hit.projectId}</td>
-                        <td>${hit.primarySite}</td>
-                        <td>${hit.gender}</td>
-                        <td>${hit.ageAtDiagnosis}</td>
-                        <td>${hit.state}</td>
-                        <td>${hit.survivalTime}</td>
-                        <td>${hit.ssmCount}</td>
-                        <td>${hit.ssmAffectedGenes}</td>
+                        <td>${thisB.prettyString(hit.id)}</td>
+                        <td>${thisB.prettyString(hit.projectId)}</td>
+                        <td>${thisB.prettyString(hit.primarySite)}</td>
+                        <td>${thisB.prettyString(hit.gender)}</td>
+                        <td>${thisB.prettyString(hit.ageAtDiagnosis)}</td>
+                        <td>${thisB.prettyString(hit.state)}</td>
+                        <td>${thisB.prettyString(hit.survivalTime)}</td>
+                        <td>${thisB.prettyString(hit.ssmCount)}</td>
+                        <td>${thisB.prettyString(hit.ssmAffectedGenes)}</td>
                 `
                 var donorRowContentNode = dom.toDom(donorRowContent);
 

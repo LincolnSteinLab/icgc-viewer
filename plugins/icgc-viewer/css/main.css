@@ -27,3 +27,30 @@ table.results-table tr:nth-child(odd) {
     padding: 3px;
     margin: 2px;
 }
+
+.flexHolder {
+    display: flex; flex-direction: row; flex-wrap: wrap; align-items: stretch;
+}
+
+.facet-accordion {
+    flex: 1 0 0;
+}
+
+.search-results-holder {
+    flex: 3 0 0;
+    padding: 5px;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction:column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction:row;
+}
+
+.nowrapTabStrip {
+    width: 100% !important;
+}

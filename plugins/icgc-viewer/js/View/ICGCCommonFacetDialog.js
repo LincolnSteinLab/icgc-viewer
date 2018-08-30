@@ -97,6 +97,14 @@ function (
         },
 
         /**
+         * Makes a string pretty (N/A if does not exist)
+         * @param {*}  value String to pretty
+         */
+        prettyString: function(value) {
+            return value ? value : "N/A";
+        },
+
+        /**
          * Clears all of the facets
          */
         clearFacets: function() {
