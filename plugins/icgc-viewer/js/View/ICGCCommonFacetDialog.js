@@ -67,19 +67,19 @@ function (
 
             for (var facet in thisB.filters) {
                 if (thisB.filters[facet]) {
-                    var facetString = `<span><span style="background: #e6e6e6;border-radius: .5rem; padding: 3px; margin: 2px;">${thisB.camelCaseToTitleCase(facet)}</span>`;
+                    var facetString = `<span><span class="filterName">${thisB.camelCaseToTitleCase(facet)}</span>`;
                     if (thisB.filters[facet].length > 1) {
                         facetString += ` <strong>IN [ </strong>`;
                         var filterLength = thisB.filters[facet].length;
                         thisB.filters[facet].forEach(function(value, i) {
-                            facetString += `<span style="background: #daf2fb;border-radius: .5rem; padding: 3px; margin: 2px;">${value}</span>`;
+                            facetString += `<span class="filterValue">${value}</span>`;
                             if (i < filterLength - 1) {
                                 facetString += ` , `
                             }
                         });
                         facetString += `<strong> ]</strong>`;
                     } else {
-                        facetString += ` <strong>IS </strong><span style="background: #daf2fb;border-radius: .5rem; padding: 3px; margin: 2px;">${thisB.filters[facet]}</span>`;
+                        facetString += ` <strong>IS </strong><span class="filterValue">${thisB.filters[facet]}</span>`;
                     }
 
                     if (currentFilter < filterCount - 1) {

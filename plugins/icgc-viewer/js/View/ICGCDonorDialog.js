@@ -1,7 +1,6 @@
 define([
     'dojo/_base/declare',
     'dojo/dom-construct',
-    'dojo/query',
     'dijit/form/Button',
     'dijit/form/CheckBox',
     'dijit/form/TextBox',
@@ -14,7 +13,6 @@ define([
 function (
     declare,
     dom,
-    query,
     Button,
     CheckBox,
     TextBox,
@@ -206,9 +204,6 @@ function (
                             thisB.createDonorsTable(facetsJsonResponse.hits, searchResults);
 
                             thisB.createPaginationButtons(searchResults, facetsJsonResponse.pagination);
-
-                            // Update styles
-                            thisB.updateStyles();
 
                             thisB.resize();
                         }
@@ -431,22 +426,6 @@ function (
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
-
-        updateStyles: function(){
-            query("table.results-table").style({
-                'width': '100%',
-                'border': '1px solid #e6e6e6',
-                'border-collapse': 'collapse',
-                'border-spacing': '0'
-            });
-            query("table.results-table td").style({
-                'border': '1px solid #e6e6e6',
-                'padding': '.2rem .4rem'
-            });
-            query("table.results-table tr:nth-child(odd)").style({
-                'background-color': '#f2f2f2'
-            });
         }
 
     });

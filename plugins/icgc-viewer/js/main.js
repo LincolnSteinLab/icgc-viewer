@@ -19,24 +19,25 @@ define([
 return declare(JBrowsePlugin, {
         constructor: function () {
             this.browser.afterMilestone('initView', function () {
-                this.browser.addGlobalMenuItem('file', new MenuItem(
+                this.browser.addGlobalMenuItem('icgc', new MenuItem(
                     {
-                        label: 'ICGC Search Donors',
+                        label: 'Search for Donors',
                         iconClass: "dijitIconSearch",
                         onClick: lang.hitch(this, 'createDonorTrack')
                     }));
-                this.browser.addGlobalMenuItem('file', new MenuItem(
+                this.browser.addGlobalMenuItem('icgc', new MenuItem(
                     {
-                        label: 'ICGC Search Mutations',
+                        label: 'Search for Mutations',
                         iconClass: "dijitIconSearch",
                         onClick: lang.hitch(this, 'createAllSSmTrack')
                     }));
-                this.browser.addGlobalMenuItem('file', new MenuItem(
+                this.browser.addGlobalMenuItem('icgc', new MenuItem(
                     {
-                        label: 'ICGC Search Genes',
+                        label: 'Search for Genes',
                         iconClass: "dijitIconSearch",
                         onClick: lang.hitch(this, 'createGeneTrack')
                     }));
+                    this.browser.renderGlobalMenu('icgc', {text: 'ICGC'}, this.browser.menuBar);
             }, this);
         },
 
