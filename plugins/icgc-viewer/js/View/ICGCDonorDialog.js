@@ -1,7 +1,6 @@
 define([
     'dojo/_base/declare',
     'dojo/dom-construct',
-    'dojo/query',
     'dijit/form/Button',
     'dijit/form/CheckBox',
     'dijit/form/TextBox',
@@ -14,7 +13,6 @@ define([
 function (
     declare,
     dom,
-    query,
     Button,
     CheckBox,
     TextBox,
@@ -35,7 +33,7 @@ function (
         accordionCount: 0,
         accordion: undefined,
         page: 1,
-        pageSize: 10,
+        pageSize: 20,
 
         constructor: function () {
         },
@@ -43,7 +41,7 @@ function (
         _dialogContent: function () {
             var thisB = this;
             var content = this.content = {};
-            var container = dom.create('div', { className: 'search-container', style: { width: '800px', height: '800px' } });
+            var container = dom.create('div', { className: 'search-container', style: { width: '900px', height: '700px' } });
 
             // Create header section
             dom.create('img', {
@@ -51,7 +49,9 @@ function (
                 width: '100'
             }, container);
 
-            dom.create('h2', { className: '', innerHTML: 'Search for Donors'}, container);
+            var infoText = 'Search for donors by filters or by ID and display their mutation data individually as tracks.';
+            dom.create('h2', { innerHTML: 'Search for Donors'}, container);
+            dom.create('p', { innerHTML: infoText}, container);
 
             // Create the tab structure
             thisB.tabDiv = dom.create('div', { }, container);
@@ -82,7 +82,7 @@ function (
             });
 
             // Create search by facet tab
-            thisB.searchByFacetContainer = dom.create('div', { style: "display: flex; flex-direction: row; flex-wrap: wrap; align-items: stretch;"});
+            thisB.searchByFacetContainer = dom.create('div', { className: "flexHolder" });
             thisB.fetchFacets();
 
             var clearFacetButton = new Button({
@@ -105,8 +105,10 @@ function (
             var thisB = this;
             thisB.searchByIdContainer = dom.create('div', { });
 
-            var searchBoxDiv = dom.create('div', { }, thisB.searchByIdContainer);
-            dom.create('span', { className: 'header', innerHTML: 'Enter a Donor ID: ' }, searchBoxDiv);
+            var searchBoxTitle = dom.create('div', { className: "donor-id-holder" }, thisB.searchByIdContainer);
+            dom.create('h1', { innerHTML: 'Search By ID' }, searchBoxTitle);
+
+            var searchBoxDiv = dom.create('div', { className: "donor-id-holder" }, thisB.searchByIdContainer);
             content.searchBox = new TextBox({
                 placeholder: "Ex. DO232761"
             }).placeAt(searchBoxDiv);
@@ -152,7 +154,7 @@ function (
                         dom.empty(thisB.searchByFacetContainer);
                         if (!facetsJsonResponse.code) {
                             // Create accordion of the facets available
-                            var tempDiv = dom.create('div', { id: thisB.accordionCount, style: "flex: 1 0 0;" }, thisB.searchByFacetContainer);
+                            var tempDiv = dom.create('div', { id: thisB.accordionCount, className: "facet-accordion" }, thisB.searchByFacetContainer);
 
                             thisB.accordion = new AccordionContainer({ style:"height: 500px;overflow: scroll;" }, tempDiv);
                             for (var facet in facetsJsonResponse.facets) {
@@ -161,10 +163,10 @@ function (
                                     style: "height: auto"
                                 });
 
-                                var facetHolder = dom.create('span', { style:"display: flex; flex-direction:column" });
+                                var facetHolder = dom.create('span', { className: "flex-column" });
                                 if (facetsJsonResponse.facets[facet].terms) {
                                     facetsJsonResponse.facets[facet].terms.forEach((term) => {
-                                        var facetCheckbox = dom.create('span', { style:"display: flex; flex-direction:row" }, facetHolder)
+                                        var facetCheckbox = dom.create('span', { className: "flex-row" }, facetHolder)
 
                                         var checkBox = new CheckBox({
                                             name: facet + '-' + term.term,
@@ -186,7 +188,6 @@ function (
 
                                 dojo.place(facetHolder, contentPane.containerNode);
                                 thisB.accordion.addChild(contentPane);
-
                             }
 
                             thisB.accordion.startup();
@@ -194,59 +195,19 @@ function (
                             dojo.place(thisB.searchByFacetContainer, thisB.searchByFacetPane.containerNode);
 
                             // Create a list of search results based on the currents facets
-                            var searchResults = dom.create('div', { style: "flex: 3 0 0; padding: 5px;" }, thisB.searchByFacetContainer);
+                            var searchResults = dom.create('div', { className: "search-results-holder" }, thisB.searchByFacetContainer);
 
                             if (Object.keys(thisB.filters).length > 0) {
-                                var facetStringHolder = dom.create('div', { id: thisB.accordionCount, style: "background:#fafafa; padding:7px;" }, searchResults);
+                                var facetStringHolder = dom.create('div', { id: thisB.accordionCount, style: "margin-bottom: 5px;" }, searchResults);
                                 thisB.prettyPrintFilters(facetStringHolder);
                             }
 
-                            var maxDonorIndex = thisB.getDonorStartIndex() + thisB.pageSize;
-                            for (var hitId in facetsJsonResponse.hits) {
-                                var hit = facetsJsonResponse.hits[hitId];
-                                dom.create('h3', { innerHTML: "Donor " + hit.id }, searchResults);
+                            var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
+                            var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, searchResults);
 
-                                var donorInfo = `
-                                    <table class="results-table">
-                                        <tr>
-                                            <td>Project Code</td>
-                                            <td>${hit.projectId}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Primary Site</td>
-                                            <td>${hit.primarySite}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Gender</td>
-                                            <td>${hit.gender}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Age at Diagnosis</td>
-                                            <td>${hit.ageAtDiagnosis}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Total number of mutations</td>
-                                            <td>${hit.ssmCount}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>SSM Affected Genes</td>
-                                            <td>${hit.ssmAffectedGenes}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Total number of mutations</td>
-                                            <td>${hit.ssmCount}</td>
-                                        </tr>
-                                    </table>
-                                `
-                                var node = dom.toDom(donorInfo);
-                                dom.place(node, searchResults);
-                                thisB.createDonorButtons(hit.id, hit.availableDataTypes, searchResults);
-                            }
+                            thisB.createDonorsTable(facetsJsonResponse.hits, searchResults);
 
                             thisB.createPaginationButtons(searchResults, facetsJsonResponse.pagination);
-
-                            // Update styles
-                            thisB.updateStyles();
 
                             thisB.resize();
                         }
@@ -259,6 +220,64 @@ function (
         },
 
         /**
+         * Creates the donors table for the given hits in some location
+         * @param {*} hits array of donor hits
+         * @param {*} location dom element to place the table
+         */
+        createDonorsTable: function(hits, location) {
+            var thisB = this;
+            var table = `<table class="results-table"></table>`;
+            var tableNode = dom.toDom(table);
+            var rowsHolder = `
+                <tr>
+                    <th>Donor ID</th>
+                    <th>Project Code</th>
+                    <th>Primary Site</th>
+                    <th>Gender</th>
+                    <th>Age</th>
+                    <th>Stage</th>
+                    <th>Survival (days)</th>
+                    <th># Mutations</th>
+                    <th># Genes</th>
+                    <th>SSM</th>
+                </tr>
+            `;
+
+            var rowsHolderNode = dom.toDom(rowsHolder);
+
+            for (var hitId in hits) {
+                var hit = hits[hitId];
+
+                var donorRowContent = `
+                        <td>${thisB.prettyString(hit.id)}</td>
+                        <td>${thisB.prettyString(hit.projectId)}</td>
+                        <td>${thisB.prettyString(hit.primarySite)}</td>
+                        <td>${thisB.prettyString(hit.gender)}</td>
+                        <td>${thisB.prettyString(hit.ageAtDiagnosis)}</td>
+                        <td>${thisB.prettyString(hit.state)}</td>
+                        <td>${thisB.prettyString(hit.survivalTime)}</td>
+                        <td>${thisB.prettyString(hit.ssmCount)}</td>
+                        <td>${thisB.prettyString(hit.ssmAffectedGenes)}</td>
+                `
+                var donorRowContentNode = dom.toDom(donorRowContent);
+
+                var ssmButton = `<td></td>`;
+                var ssmButtonNode = dom.toDom(ssmButton);
+                thisB.createDonorButtons(hit.id, hit.availableDataTypes, ssmButtonNode);
+
+                dom.place(ssmButtonNode, donorRowContentNode);
+
+                var row = `<tr></tr>`;
+                var rowNodeHolder = dom.toDom(row);
+                dom.place(donorRowContentNode, rowNodeHolder);
+                dom.place(rowNodeHolder, rowsHolderNode);
+
+            }
+            dom.place(rowsHolderNode, tableNode);
+            dom.place(tableNode, location);
+        },
+
+        /**
          * Creates pagination buttons for search results in the given 'holder' using the 'pagination' object from the ICGC response
          * @param {*} holder
          * @param {*} pagination
@@ -266,7 +285,7 @@ function (
         createPaginationButtons: function(holder, pagination) {
             var thisB = this;
 
-            var paginationHolder = dom.create('div', { }, holder);
+            var paginationHolder = dom.create('div', { style:"display: flex;justify-content: center;"}, holder);
             
             if (thisB.page > 1) {
                 var previousButton = new Button({
@@ -277,6 +296,7 @@ function (
                 }, "previousButton").placeAt(paginationHolder);
 
             }
+
             if (thisB.page < pagination.pages) {
                 var nextButton = new Button({
                     label: "Next",
@@ -315,7 +335,6 @@ function (
             var thisB = this;
             if (availableDataTypes.includes("ssm")) {
                 var ssmButton = new Button({
-                    label: "Add SSMs",
                     iconClass: "dijitIconSave",
                     onClick: function() {
                         thisB.addSSMTrack(donorId);
@@ -335,7 +354,7 @@ function (
                         if (!res2.code) {
                             dom.empty(searchResults);
 
-                            dom.create('h1', { innerHTML: 'Donor ' + res2.id }, searchResults);
+                            dom.create('h2', { innerHTML: 'Donor ' + res2.id }, searchResults);
 
                             var donorInfo = `
                                 <table class="results-table">
@@ -411,22 +430,6 @@ function (
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
-
-        updateStyles: function(){
-            query("table.results-table").style({
-                'width': '100%',
-                'border': '1px solid #e6e6e6',
-                'border-collapse': 'collapse',
-                'border-spacing': '0'
-            });
-            query("table.results-table td").style({
-                'border': '1px solid #e6e6e6',
-                'padding': '.2rem .4rem'
-            });
-            query("table.results-table tr:nth-child(odd)").style({
-                'background-color': '#f2f2f2'
-            });
         }
 
     });

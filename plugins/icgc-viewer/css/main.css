@@ -1,0 +1,62 @@
+table.results-table {
+    width: 100%;
+    border: 1px solid #e6e6e6;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+table.results-table td {
+    border: 1px solid #e6e6e6;
+    padding: .2rem .4rem;
+}
+
+table.results-table tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+.filterName {
+    background: #e6e6e6;
+    border-radius: .5rem;
+    padding: 3px;
+    margin: 2px;
+}
+
+.filterValue {
+    background: #daf2fb;
+    border-radius: .5rem;
+    padding: 3px;
+    margin: 2px;
+}
+
+.flexHolder {
+    display: flex; flex-direction: row; flex-wrap: wrap; align-items: stretch;
+}
+
+.facet-accordion {
+    flex: 1 0 0;
+}
+
+.search-results-holder {
+    flex: 3 0 0;
+    padding: 5px;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction:column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction:row;
+}
+
+.nowrapTabStrip {
+    width: 100% !important;
+}
+
+.donor-id-holder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -34,6 +34,8 @@ function (
             }, container);
 
             dom.create('h2', { className: '', innerHTML: 'Search for Genes'}, container);
+            var infoText = 'Search for genes by filters and display all matching genes as a track.';
+            dom.create('p', { innerHTML: infoText}, container);
 
             // Create search by facet section
             var facetUrl = thisB.createFacetUrl();
@@ -44,7 +46,7 @@ function (
                     thisB.clearFacets()
                 }
             }, "clearFacets").placeAt(container);
-            thisB.searchByFacetContainer = dom.create('div', { style: "display: flex; flex-direction: row; flex-wrap: wrap; align-items: stretch;" }, container);
+            thisB.searchByFacetContainer = dom.create('div', { className: "flexHolder" }, container);
             thisB.fetchFacets(facetUrl);
 
             thisB.resize();
@@ -87,7 +89,7 @@ function (
                 facetsResponse.json().then(function (facetsJsonResponse) {
                         dom.empty(thisB.searchByFacetContainer);
                         if (!facetsJsonResponse.code) {
-                            var tempDiv = dom.create('div', { id: thisB.accordionCount, style: "flex: 1 0 0;" }, thisB.searchByFacetContainer);
+                            var tempDiv = dom.create('div', { id: thisB.accordionCount, className: "facet-accordion" }, thisB.searchByFacetContainer);
 
                             thisB.accordion = new AccordionContainer({ style:"height: 500px;overflow: scroll;" }, tempDiv);
                             for (var facet in facetsJsonResponse.facets) {
@@ -95,10 +97,10 @@ function (
                                     title: thisB.camelCaseToTitleCase(facet)
                                 });
 
-                                var facetHolder = dom.create('span', { style:"display: flex; flex-direction:column" });
+                                var facetHolder = dom.create('span', { className: "flex-column" });
                                 if (facetsJsonResponse.facets[facet].terms) {
                                     facetsJsonResponse.facets[facet].terms.forEach((term) => {
-                                        var facetCheckbox = dom.create('span', { style:"display: flex; flex-direction:row" }, facetHolder)
+                                        var facetCheckbox = dom.create('span', { className: "flex-row" }, facetHolder)
 
                                         var checkBox = new CheckBox({
                                             name: facet + '-' + term.term,
@@ -126,10 +128,10 @@ function (
                         }
 
 
-                        var searchResults = dom.create('div', { id: thisB.accordionCount, style: "flex: 3 0 0; padding: 5px;" }, thisB.searchByFacetContainer);
+                        var searchResults = dom.create('div', { id: thisB.accordionCount, className: "search-results-holder" }, thisB.searchByFacetContainer);
 
                         if (Object.keys(thisB.filters).length > 0) {
-                            var facetStringHolder = dom.create('div', { id: thisB.accordionCount, style: "background:#fafafa; padding:7px;" }, searchResults);
+                            var facetStringHolder = dom.create('div', { id: thisB.accordionCount }, searchResults);
                             thisB.prettyPrintFilters(facetStringHolder);
                         }
 
