@@ -19,6 +19,7 @@ function (
     return declare(ICGCCommonFacetDialog, {
         accordionCount: 0,
         accordion: undefined,
+        facetAccordion: undefined,
 
         constructor: function () {
         },

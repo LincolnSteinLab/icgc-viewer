@@ -5,7 +5,8 @@ define([
         'dijit/MenuItem',
         './View/ICGCDonorDialog',
         './View/ICGCSSMDialog',
-        './View/ICGCGeneDialog'
+        './View/ICGCGeneDialog',
+        './View/ICGCDialog'
        ],
        function(
             declare,
@@ -14,7 +15,8 @@ define([
             MenuItem,
             ICGCDonorDialog,
             ICGCSSMDialog,
-            ICGCGeneDialog
+            ICGCGeneDialog,
+            ICGCDialog
        ) {
 return declare(JBrowsePlugin, {
         constructor: function () {
@@ -37,10 +39,24 @@ return declare(JBrowsePlugin, {
                         iconClass: "dijitIconSearch",
                         onClick: lang.hitch(this, 'createGeneTrack')
                     }));
+                this.browser.addGlobalMenuItem('icgc', new MenuItem(
+                    {
+                        label: 'Search ICGC',
+                        iconClass: "dijitIconSearch",
+                        onClick: lang.hitch(this, 'createICGCTrack')
+                    }));
                     this.browser.renderGlobalMenu('icgc', {text: 'ICGC'}, this.browser.menuBar);
             }, this);
+            
         },
 
+        createICGCTrack: function () {
+            var searchDialog = new ICGCDialog();
+            searchDialog.show(this.browser,
+                function () {
+
+                });
+        },
         createDonorTrack: function () {
             var searchDialog = new ICGCDonorDialog();
             searchDialog.show(this.browser,
