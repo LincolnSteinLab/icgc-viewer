@@ -61,7 +61,7 @@ function (
         
         _dialogContent: function () {
             var thisB = this;
-            var container = dom.create('div', { className: 'dialog-container', style: { width: '1000px', height: '600px' } });
+            var container = dom.create('div', { className: 'dialog-container', style: { width: '1000px', height: '700px' } });
 
             // Create header section
             dom.create('img', {
@@ -77,6 +77,7 @@ function (
             thisB.createAccordions('mutation');
             thisB.createAccordions('gene');
 
+            // Load initial search results
             thisB.updateSearchResults('donor');
             thisB.updateSearchResults('mutation');
             thisB.updateSearchResults('gene');
@@ -210,6 +211,7 @@ function (
         updateSearchResults: function(type) {
             var thisB = this;
             var combinedFacetObject = thisB.createCombinedFacets();
+            thisB.page = 1;
             if (type === 'donor') {
                 dom.empty(thisB.donorResultsTab.containerNode);
                 thisB.prettyPrintFilters(thisB.donorResultsTab.containerNode, thisB.donorFilters);
@@ -243,7 +245,7 @@ function (
                                     label: "Add SSMs",
                                     iconClass: "dijitIconSave",
                                     onClick: function() {
-                                        thisB.addSSMTrack()
+                                        thisB.addSSMTrack(combinedFacetObject)
                                     }
                                 }, "addMutations").placeAt(thisB.mutationResultsTab.containerNode);
                             }
