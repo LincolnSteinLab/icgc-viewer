@@ -245,7 +245,7 @@ function (
             var combinedFacetObject = thisB.createCombinedFacets();
             dom.empty(thisB.prettyFacetHolder);
 
-            if (Object.keys(thisB.donorFilters) + Object.keys(thisB.mutationFilters) + Object.keys(thisB.geneFilters) > 0) {
+            if (Object.keys(thisB.donorFilters).length + Object.keys(thisB.mutationFilters).length + Object.keys(thisB.geneFilters).length > 0) {
                 var clearFacetButton = new Button({
                     iconClass: "dijitIconDelete",
                     onClick: function() {
@@ -425,7 +425,7 @@ function (
             thisB.facetTabs.startup();
 
             // Create results tabs
-            thisB.prettyFacetHolder = dom.create('div', { style: { 'flex': '3 0 0' } }, thisB.searchResultsVerticalHolder);
+            thisB.prettyFacetHolder = dom.create('div', { style: { 'flex': '3 0 0', 'margin': '5px' } }, thisB.searchResultsVerticalHolder);
 
             thisB.searchResultsTabHolder = dom.create('div', { style: { width: '100%', height: '100%'  } }, thisB.searchResultsVerticalHolder);
             thisB.resultsTabs = new TabContainer({ style: {width: '100%', height: '100%'  } }, thisB.searchResultsTabHolder);
