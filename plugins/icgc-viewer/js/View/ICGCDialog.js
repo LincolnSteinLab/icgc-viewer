@@ -50,6 +50,8 @@ function (
         page: 1,
         pageSize: 20,
 
+        types: ['donor', 'mutation', 'gene'],
+
         constructor: function() {
             var thisB = this;
 
@@ -72,20 +74,20 @@ function (
             // Create the scaffolding to hold everything
             thisB.createScaffolding(container);
 
-            // Create the facets
-            thisB.createAccordions('donor');
-            thisB.createAccordions('mutation');
-            thisB.createAccordions('gene');
-
-            // Load initial search results
-            thisB.updateSearchResults('donor');
-            thisB.updateSearchResults('mutation');
-            thisB.updateSearchResults('gene');
+            // Create initial accordions and search results
+            for (var type of thisB.types) {
+                thisB.createAccordions(type);
+                thisB.updateSearchResults(type);
+            }
 
             thisB.resize();
             return container;
         },
 
+        /**
+         * Creates an accordion of the given type
+         * @param {*} type The type of accordion
+         */
         createAccordions: function(type) {
             var thisB = this;
 
@@ -101,6 +103,10 @@ function (
             }
         },
 
+        /**
+         * Destroys an accordion of the given type
+         * @param {*} type The type of accordion
+         */
         destroyAccordions: function(type) {
             var thisB = this;
             if (type === 'donor') {
@@ -112,6 +118,10 @@ function (
             }
         },
 
+        /**
+         * Creates a facet URL based on some type
+         * @param {*} type The type of accordion
+         */
         createFacetUrl: function(type) {
             var thisB = this;
             var filters = {};
@@ -128,6 +138,10 @@ function (
             return facetURl;
         },
 
+        /**
+         * Retrieves the filters of some type
+         * @param {*} type The type of accordion
+         */
         getFiltersForType: function(type) {
             var thisB = this;
             var filters = {};
@@ -141,6 +155,11 @@ function (
             return filters;
         },
 
+        /**
+         * Creates a facet accordion of some type and places them in the given accordion
+         * @param {*} type The type of accordion
+         * @param {*} accordion The accordion to put the facets in
+         */
         createFacet: function(type, accordion) {
             var thisB = this;
 
@@ -208,6 +227,10 @@ function (
                 });
         },
 
+        /**
+         * Updates the search results of some type based on the facets
+         * @param {*} type The type of accordion
+         */
         updateSearchResults: function(type) {
             var thisB = this;
             var combinedFacetObject = thisB.createCombinedFacets();
@@ -215,9 +238,11 @@ function (
             if (type === 'donor') {
                 dom.empty(thisB.donorResultsTab.containerNode);
                 thisB.prettyPrintFilters(thisB.donorResultsTab.containerNode, thisB.donorFilters);
-                var donorUrl = thisB.createDonorUrl(combinedFacetObject);
+                var resultsInfo = thisB.createLoadingIcon(thisB.donorResultsTab.containerNode);
 
+                var donorUrl = thisB.createDonorUrl(combinedFacetObject);
                 fetch(donorUrl).then(function (facetsResponse) {
+                    dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
@@ -234,9 +259,11 @@ function (
             } else if (type === 'mutation') {
                 dom.empty(thisB.mutationResultsTab.containerNode);
                 thisB.prettyPrintFilters(thisB.mutationResultsTab.containerNode, thisB.mutationFilters);
+                var resultsInfo = thisB.createLoadingIcon(thisB.mutationResultsTab.containerNode);
 
                 var mutationUrl = thisB.createMutationUrl(combinedFacetObject);
                 fetch(mutationUrl).then(function (facetsResponse) {
+                    dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
                                 dom.create('div', { innerHTML: 'Mutations found: ' + facetsJsonResponse.pagination.total }, thisB.mutationResultsTab.containerNode);
@@ -258,9 +285,11 @@ function (
             } else if (type === 'gene') {
                 dom.empty(thisB.geneResultsTab.containerNode);
                 thisB.prettyPrintFilters(thisB.geneResultsTab.containerNode, thisB.geneFilters);
-
+                var resultsInfo = thisB.createLoadingIcon(thisB.geneResultsTab.containerNode);
+                
                 var geneUrl = thisB.createGeneUrl(combinedFacetObject);
                 fetch(geneUrl).then(function (facetsResponse) {
+                    dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
                                 dom.create('div', { innerHTML: 'Genes found: ' + facetsJsonResponse.pagination.total }, thisB.geneResultsTab.containerNode);
@@ -280,6 +309,17 @@ function (
                         console.error('error', err);
                     });
             }
+        },
+
+        /**
+         * Creates a loading icon in the given location and returns
+         * @param {*} location Place to put the loading icon
+         */
+        createLoadingIcon: function(location) {
+            var thisB = this;
+            var resultsInfo = dom.create('div', { className: 'loading' }, location);
+            var spinner = dom.create('div', {}, resultsInfo);
+            return resultsInfo;
         },
 
         /**
