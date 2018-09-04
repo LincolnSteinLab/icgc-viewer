@@ -222,7 +222,7 @@ function (
                             if (!facetsJsonResponse.code) {
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
                                 var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.donorResultsTab.containerNode);
-                                thisB.createDonorsTable(facetsJsonResponse.hits, thisB.donorResultsTab.containerNode);
+                                thisB.createDonorsTable(facetsJsonResponse.hits, thisB.donorResultsTab.containerNode, combinedFacetObject);
                                 thisB.createPaginationButtons(thisB.donorResultsTab.containerNode, facetsJsonResponse.pagination);
                             }
                         }, function (res3) {
@@ -282,26 +282,44 @@ function (
             }
         },
 
+        /**
+         * Creates the donor URL for grabbing mutations
+         * @param {*} combinedFacetObject Object containing facet information
+         */
         createDonorUrl: function(combinedFacetObject) {
             var thisB = this;
             return encodeURI('https://dcc.icgc.org/api/v1/donors?include=facets&from=' + thisB.getDonorStartIndex()  + '&size=' + thisB.pageSize + '&sort=ssmAffectedGenes&filters=' + combinedFacetObject);
         },
 
+        /**
+         * Creates the gene URL for grabbing mutations
+         * @param {*} combinedFacetObject Object containing facet information
+         */
         createGeneUrl: function(combinedFacetObject) {
             var thisB = this;
             return encodeURI('https://dcc.icgc.org/api/v1/genes?filters=' + combinedFacetObject);
         },
 
+        /**
+         * Creates the mutation URL for grabbing mutations
+         * @param {*} combinedFacetObject Object containing facet information
+         */
         createMutationUrl: function(combinedFacetObject) {
             var thisB = this;
             return encodeURI('https://dcc.icgc.org/api/v1/mutations?filters=' + combinedFacetObject);
         },
 
+        /**
+         * Calculate the 'from' parameter for the URL call
+         */
         getDonorStartIndex: function() {
             var thisB = this;
             return thisB.pageSize * (thisB.page - 1) + 1;
         },
 
+        /**
+         * Combines all of the facets into one object and converts to a string
+         */
         createCombinedFacets: function() {
             var thisB = this;
             var donorFilter = JSON.parse(thisB.convertFiltersObjectToString('donor', thisB.donorFilters));
@@ -312,6 +330,10 @@ function (
             return JSON.stringify(combinedFilters);
         },
 
+        /**
+         * Creates the scaffolding to place all of the accordions and search results in
+         * @param {*} container Location to place the scaffolding in
+         */
         createScaffolding: function(container) {
             var thisB = this;
 
@@ -363,6 +385,11 @@ function (
             thisB.resultsTabs.startup();
         },
 
+        /**
+         * Pretty prints the current filters
+         * @param {*} location  place to display the filters
+         * @param {*} filters filters to display
+         */
         prettyPrintFilters: function(location, filters) {
             var thisB = this;
 
@@ -401,7 +428,13 @@ function (
             dom.place(node, location);
         },
 
-        createDonorsTable: function(hits, location) {
+        /**
+         * Creates the donors table for the given hits in some location
+         * @param {*} hits array of donor hits
+         * @param {*} location dom element to place the table
+         * @param {*} combinedFacetObject combined object of facets
+         */
+        createDonorsTable: function(hits, location, combinedFacetObject) {
             var thisB = this;
             var table = `<table class="results-table"></table>`;
             var tableNode = dom.toDom(table);
@@ -440,7 +473,7 @@ function (
 
                 var ssmButton = `<td></td>`;
                 var ssmButtonNode = dom.toDom(ssmButton);
-                thisB.createDonorButtons(hit.id, hit.availableDataTypes, ssmButtonNode);
+                thisB.createDonorButtons(hit.id, hit.availableDataTypes, ssmButtonNode, combinedFacetObject);
 
                 dom.place(ssmButtonNode, donorRowContentNode);
 
@@ -454,6 +487,11 @@ function (
             dom.place(tableNode, location);
         },
 
+        /**
+         * Creates pagination buttons for search results in the given 'holder' using the 'pagination' object from the ICGC response
+         * @param {*} holder
+         * @param {*} pagination
+         */
         createPaginationButtons: function(holder, pagination) {
             var thisB = this;
 
@@ -479,6 +517,9 @@ function (
             }
         },
 
+        /**
+         * Loads the facet results at the previous page
+         */
         previousPage: function() {
             var thisB = this;
             thisB.page = thisB.page - 1;
@@ -486,6 +527,9 @@ function (
             thisB.updateSearchResults('donor');
         },
 
+        /**
+         * Loads the facet results at the next page
+         */
         nextPage: function() {
             var thisB = this;
             thisB.page = thisB.page + 1;
@@ -493,24 +537,37 @@ function (
             thisB.updateSearchResults('donor');
         },
 
-        createDonorButtons: function(donorId, availableDataTypes, holder) {
+        /**
+         * Creates the donor buttons for the available data types (for now only SSM)
+         * @param {*} donorId Id of the donor to add
+         * @param {*} availableDataTypes Array of available data types
+         * @param {*} holder HTML element to place the buttons in
+         * @param {*} combinedFacetObject combined object of facets
+         */
+        createDonorButtons: function(donorId, availableDataTypes, holder, combinedFacetObject) {
             var thisB = this;
             if (availableDataTypes.includes("ssm")) {
                 var ssmButton = new Button({
                     iconClass: "dijitIconSave",
                     onClick: function() {
-                        thisB.addDonorSSMTrack(donorId);
+                        thisB.addDonorSSMTrack(donorId, combinedFacetObject);
                     }
                 }, "ssmButton").placeAt(holder);
             }
         },
 
-        addDonorSSMTrack: function(donorId) {
+        /**
+         * Adds a donor SSM track based on the donor ID and the chosen facets
+         * @param {*} donorId Id of donor
+         * @param {*} combinedFacetObject combined object of facets
+         */
+        addDonorSSMTrack: function(donorId, combinedFacetObject) {
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcSimpleSomaticMutations',
-                donor: donorId
+                donor: donorId,
+                filters: JSON.parse(combinedFacetObject)
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
@@ -524,6 +581,10 @@ function (
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
         },
 
+        /**
+         * Adds a gene track based on the chosen facets
+         * @param {*} combinedFacetObject combined object of facets
+         */
         addGeneTrack: function (combinedFacetObject) {
             var thisB = this;
             var storeConf = {
@@ -545,6 +606,10 @@ function (
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
         },
 
+        /**
+         * Adds an SSM track based on the chosen facets
+         * @param {*} combinedFacetObject combined object of facets
+         */
         addSSMTrack: function (combinedFacetObject) {
             var thisB = this;
             var storeConf = {
@@ -566,10 +631,19 @@ function (
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
         },
 
+        /**
+         * Makes a string pretty (N/A if does not exist)
+         * @param {*}  value String to pretty
+         */
         prettyString: function(value) {
             return value ? value : "N/A";
         },
 
+        /**
+         * Adds the facet and term to the filters object and returns
+         * @param {*} value object holding facet and term to add
+         * @param {*} filters filters object to add to
+         */
         addToFilters: function(value, filters) {
             facet = value.facet;
             term = value.term;
@@ -582,6 +656,11 @@ function (
             return filters;
         },
 
+        /**
+         *  Removes the term from the facet in the filters object and returns
+         * @param {*} value object holding facet and term to remove
+         * @param {*} filters filters object to remove from
+         */
         removeFromFilters: function(value, filters) {
             facet = value.facet;
             term = value.term;
@@ -597,10 +676,20 @@ function (
             return filters;
         },
 
+        /**
+         * Check if the term is found in the given facet
+         * @param {*} facet name of the facet
+         * @param {*} term name of option within facet
+         * @param {*} filters list of filters to check
+         */
         isChecked: function(facet, term, filters) {
             return filters[facet] && filters[facet].indexOf(term) > -1;
         },
 
+        /**
+         * Updates the accordion of the given type based on current facets
+         * @param {*} type The type of the accordion to update
+         */
         updateAccordion: function(type) {
             var thisB = this;
             thisB.destroyAccordions(type);
@@ -608,6 +697,11 @@ function (
             thisB.createAccordions(type);
         },
 
+        /**
+         * Converts the filters object to an ICGC compatable string
+         * @param {*} type Either mutation or donor
+         * @param {*} filters list of filters
+         */
         convertFiltersObjectToString: function(type, filters) {
             if (Object.keys(filters).length === 0) {
                 return JSON.stringify(filters);
