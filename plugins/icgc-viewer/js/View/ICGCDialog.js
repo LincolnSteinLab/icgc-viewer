@@ -26,6 +26,8 @@ function (
         facetAndResultsHolder: undefined,
         facetTabHolder: undefined,
         searchResultsTabHolder: undefined,
+        searchResultsVerticalHolder: undefined,
+        prettyFacetHolder: undefined,
 
         facetTabs: undefined,
         donorFacetTab: undefined,
@@ -65,6 +67,8 @@ function (
             var thisB = this;
             var container = dom.create('div', { className: 'dialog-container', style: { width: '1000px', height: '700px' } });
 
+            thisB.accordionCount = thisB.guid();
+
             // Create header section
             dom.create('img', {
                 src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
@@ -93,13 +97,16 @@ function (
 
             if (type === 'donor') {
                 thisB.donorAccordion = new AccordionContainer({ id: 'accordion_donor' + '_' + thisB.accordionCount, style:"height: 500px;overflow: scroll;" }, thisB.donorFacetTab.containerNode);
-                thisB.createFacet('donor', thisB.donorAccordion);
+                var loadingIcon = thisB.createLoadingIcon(thisB.donorFacetTab.containerNode);
+                thisB.createFacet('donor', thisB.donorAccordion, loadingIcon);
             } else if (type === 'mutation') {
                 thisB.mutationAccordion = new AccordionContainer({ id: 'accordion_mutation' + '_' + thisB.accordionCount, style:"height: 500px;overflow: scroll;" }, thisB.mutationFacetTab.containerNode);
-                thisB.createFacet('mutation', thisB.mutationAccordion);
+                var loadingIcon = thisB.createLoadingIcon(thisB.mutationFacetTab.containerNode);
+                thisB.createFacet('mutation', thisB.mutationAccordion, loadingIcon);
             } else if (type === 'gene') {
                 thisB.geneAccordion = new AccordionContainer({ id: 'accordion_gene' + '_' + thisB.accordionCount, style:"height: 500px;overflow: scroll;" }, thisB.geneFacetTab.containerNode);
-                thisB.createFacet('gene', thisB.geneAccordion);
+                var loadingIcon = thisB.createLoadingIcon(thisB.geneFacetTab.containerNode);
+                thisB.createFacet('gene', thisB.geneAccordion, loadingIcon);
             }
         },
 
@@ -160,18 +167,20 @@ function (
          * @param {*} type The type of accordion
          * @param {*} accordion The accordion to put the facets in
          */
-        createFacet: function(type, accordion) {
+        createFacet: function(type, accordion, loadingIcon) {
             var thisB = this;
 
             var url = thisB.createFacetUrl(type);
             fetch(url).then(function (facetsResponse) {
+                dom.empty(loadingIcon);
                 facetsResponse.json().then(function (facetsJsonResponse) {
                         if (!facetsJsonResponse.code) {
                             // Create accordion of the facets available
                             for (var facet in facetsJsonResponse.facets) {
                                 var contentPane = new ContentPane({
                                     title: thisB.camelCaseToTitleCase(facet),
-                                    style: "height: auto"
+                                    style: "height: auto",
+                                    id: facet + '-' + type + '-' + thisB.accordionCount
                                 });
 
                                 var facetHolder = dom.create('span', { className: "flex-column" });
@@ -234,10 +243,23 @@ function (
         updateSearchResults: function(type) {
             var thisB = this;
             var combinedFacetObject = thisB.createCombinedFacets();
+            dom.empty(thisB.prettyFacetHolder);
+
+            if (Object.keys(thisB.donorFilters) + Object.keys(thisB.mutationFilters) + Object.keys(thisB.geneFilters) > 0) {
+                var clearFacetButton = new Button({
+                    iconClass: "dijitIconDelete",
+                    onClick: function() {
+                        thisB.clearFacets()
+                    }
+                }, "clearFacets").placeAt(thisB.prettyFacetHolder);
+            }
+
+            var combinedFacets = Object.assign({}, thisB.donorFilters, thisB.mutationFilters, thisB.geneFilters);
+            thisB.prettyPrintFilters(thisB.prettyFacetHolder, combinedFacets);
+
             thisB.page = 1;
             if (type === 'donor') {
                 dom.empty(thisB.donorResultsTab.containerNode);
-                thisB.prettyPrintFilters(thisB.donorResultsTab.containerNode, thisB.donorFilters);
                 var resultsInfo = thisB.createLoadingIcon(thisB.donorResultsTab.containerNode);
 
                 var donorUrl = thisB.createDonorUrl(combinedFacetObject);
@@ -258,7 +280,6 @@ function (
                     });
             } else if (type === 'mutation') {
                 dom.empty(thisB.mutationResultsTab.containerNode);
-                thisB.prettyPrintFilters(thisB.mutationResultsTab.containerNode, thisB.mutationFilters);
                 var resultsInfo = thisB.createLoadingIcon(thisB.mutationResultsTab.containerNode);
 
                 var mutationUrl = thisB.createMutationUrl(combinedFacetObject);
@@ -284,7 +305,6 @@ function (
                     });
             } else if (type === 'gene') {
                 dom.empty(thisB.geneResultsTab.containerNode);
-                thisB.prettyPrintFilters(thisB.geneResultsTab.containerNode, thisB.geneFilters);
                 var resultsInfo = thisB.createLoadingIcon(thisB.geneResultsTab.containerNode);
                 
                 var geneUrl = thisB.createGeneUrl(combinedFacetObject);
@@ -317,9 +337,9 @@ function (
          */
         createLoadingIcon: function(location) {
             var thisB = this;
-            var resultsInfo = dom.create('div', { className: 'loading' }, location);
-            var spinner = dom.create('div', {}, resultsInfo);
-            return resultsInfo;
+            var loadingIcon = dom.create('div', { className: 'loading' }, location);
+            var spinner = dom.create('div', {}, loadingIcon);
+            return loadingIcon;
         },
 
         /**
@@ -382,7 +402,7 @@ function (
 
             // Create sections to hold facet tabs and search results tab
             thisB.facetTabHolder = dom.create('div', { style: { 'flex': '1 0 0'} }, thisB.facetAndResultsHolder);
-            thisB.searchResultsTabHolder = dom.create('div', { style: { 'flex': '3 0 0' } }, thisB.facetAndResultsHolder);
+            thisB.searchResultsVerticalHolder = dom.create('div', { style: { 'flex': '3 0 0' } }, thisB.facetAndResultsHolder);
 
             // Create facet tabs
             thisB.facetTabs = new TabContainer({style: "flex: 1 0 0; "}, thisB.facetTabHolder);
@@ -405,7 +425,10 @@ function (
             thisB.facetTabs.startup();
 
             // Create results tabs
-            thisB.resultsTabs = new TabContainer({style: "flex: 3 0 0; "}, thisB.searchResultsTabHolder);
+            thisB.prettyFacetHolder = dom.create('div', { style: { 'flex': '3 0 0' } }, thisB.searchResultsVerticalHolder);
+
+            thisB.searchResultsTabHolder = dom.create('div', { style: { width: '100%', height: '100%'  } }, thisB.searchResultsVerticalHolder);
+            thisB.resultsTabs = new TabContainer({ style: {width: '100%', height: '100%'  } }, thisB.searchResultsTabHolder);
 
             thisB.donorResultsTab = new ContentPane({
                 title: "Donor"
@@ -717,6 +740,20 @@ function (
         },
 
         /**
+         * Clears all of the facets
+         */
+        clearFacets: function() {
+            var thisB = this;
+            thisB.donorFilters = {};
+            thisB.mutationFilters = {};
+            thisB.geneFilters = {};
+            for (var type of thisB.types) {
+                thisB.updateAccordion(type);
+                thisB.updateSearchResults(type);
+            }
+        },
+
+        /**
          * Check if the term is found in the given facet
          * @param {*} facet name of the facet
          * @param {*} term name of option within facet
@@ -733,7 +770,7 @@ function (
         updateAccordion: function(type) {
             var thisB = this;
             thisB.destroyAccordions(type);
-            thisB.accordionCount = thisB.accordionCount + 1;
+            thisB.accordionCount = thisB.guid();
             thisB.createAccordions(type);
         },
 
@@ -776,6 +813,14 @@ function (
               return titleCase;
         },
 
+        guid: function() {
+            function s4() {
+              return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+            }
+            return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+        },
 
         show: function (browser, callback) {
             this.browser = browser;
