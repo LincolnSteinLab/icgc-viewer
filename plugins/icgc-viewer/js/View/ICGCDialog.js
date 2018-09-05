@@ -36,7 +36,7 @@ function (
 
         resultsTabs: undefined,
         donorResultsTab: undefined,
-        geneResultstTab: undefined,
+        geneResultsTab: undefined,
         mutationResultsTab: undefined,
 
         donorAccordion: undefined,
@@ -49,7 +49,9 @@ function (
         mutationFilters: {},
         geneFilters: {},
 
-        page: 1,
+        donorPage: 1,
+        mutationPage: 1,
+        genePage: 1,
         pageSize: 20,
 
         types: ['donor', 'mutation', 'gene'],
@@ -257,7 +259,6 @@ function (
             var combinedFacets = Object.assign({}, thisB.donorFilters, thisB.mutationFilters, thisB.geneFilters);
             thisB.prettyPrintFilters(thisB.prettyFacetHolder, combinedFacets);
 
-            thisB.page = 1;
             if (type === 'donor') {
                 dom.empty(thisB.donorResultsTab.containerNode);
                 var resultsInfo = thisB.createLoadingIcon(thisB.donorResultsTab.containerNode);
@@ -270,7 +271,7 @@ function (
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
                                 var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.donorResultsTab.containerNode);
                                 thisB.createDonorsTable(facetsJsonResponse.hits, thisB.donorResultsTab.containerNode, combinedFacetObject);
-                                thisB.createPaginationButtons(thisB.donorResultsTab.containerNode, facetsJsonResponse.pagination);
+                                thisB.createPaginationButtons(thisB.donorResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.donorPage);
                             }
                         }, function (res3) {
                             console.error('error', res3);
@@ -287,8 +288,6 @@ function (
                     dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
-                                dom.create('div', { innerHTML: 'Mutations found: ' + facetsJsonResponse.pagination.total }, thisB.mutationResultsTab.containerNode);
-
                                 var addMutationsButton = new Button({
                                     label: "Add SSMs",
                                     iconClass: "dijitIconSave",
@@ -296,6 +295,12 @@ function (
                                         thisB.addSSMTrack(combinedFacetObject)
                                     }
                                 }, "addMutations").placeAt(thisB.mutationResultsTab.containerNode);
+
+                                var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
+                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.mutationResultsTab.containerNode);
+                           
+                                thisB.createMutationsTable(facetsJsonResponse.hits, thisB.mutationResultsTab.containerNode, combinedFacetObject);
+                                thisB.createPaginationButtons(thisB.mutationResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.mutationPage);
                             }
                         }, function (res3) {
                             console.error('error', res3);
@@ -312,8 +317,6 @@ function (
                     dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
-                                dom.create('div', { innerHTML: 'Genes found: ' + facetsJsonResponse.pagination.total }, thisB.geneResultsTab.containerNode);
-
                                 var addGenesButton = new Button({
                                     label: "Add Genes",
                                     iconClass: "dijitIconSave",
@@ -321,6 +324,12 @@ function (
                                         thisB.addGeneTrack(combinedFacetObject)
                                     }
                                 }, "addGenes").placeAt(thisB.geneResultsTab.containerNode);
+
+                                var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
+                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.geneResultsTab.containerNode);
+                                
+                                thisB.createGenesTable(facetsJsonResponse.hits, thisB.geneResultsTab.containerNode, combinedFacetObject);
+                                thisB.createPaginationButtons(thisB.geneResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.genePage);
                             }
                         }, function (res3) {
                             console.error('error', res3);
@@ -348,7 +357,7 @@ function (
          */
         createDonorUrl: function(combinedFacetObject) {
             var thisB = this;
-            return encodeURI('https://dcc.icgc.org/api/v1/donors?include=facets&from=' + thisB.getDonorStartIndex()  + '&size=' + thisB.pageSize + '&sort=ssmAffectedGenes&filters=' + combinedFacetObject);
+            return encodeURI('https://dcc.icgc.org/api/v1/donors?from=' + thisB.getStartIndex(thisB.donorPage)  + '&size=' + thisB.pageSize + '&sort=ssmAffectedGenes&filters=' + combinedFacetObject);
         },
 
         /**
@@ -357,7 +366,7 @@ function (
          */
         createGeneUrl: function(combinedFacetObject) {
             var thisB = this;
-            return encodeURI('https://dcc.icgc.org/api/v1/genes?filters=' + combinedFacetObject);
+            return encodeURI('https://dcc.icgc.org/api/v1/genes?from=' + thisB.getStartIndex(thisB.genePage) + '&size=' + thisB.pageSize + '&filters=' + combinedFacetObject);
         },
 
         /**
@@ -366,15 +375,15 @@ function (
          */
         createMutationUrl: function(combinedFacetObject) {
             var thisB = this;
-            return encodeURI('https://dcc.icgc.org/api/v1/mutations?filters=' + combinedFacetObject);
+            return encodeURI('https://dcc.icgc.org/api/v1/mutations?from=' + thisB.getStartIndex(thisB.mutationPage) + '&size=' + thisB.pageSize + '&filters=' + combinedFacetObject);
         },
 
         /**
          * Calculate the 'from' parameter for the URL call
          */
-        getDonorStartIndex: function() {
+        getStartIndex: function(page) {
             var thisB = this;
-            return thisB.pageSize * (thisB.page - 1) + 1;
+            return thisB.pageSize * (page - 1) + 1;
         },
 
         /**
@@ -522,7 +531,7 @@ function (
                 var hit = hits[hitId];
 
                 var donorRowContent = `
-                        <td>${thisB.prettyString(hit.id)}</td>
+                        <td><a target="_blank"  href="https://dcc.icgc.org/donors/${thisB.prettyString(hit.id)}">${thisB.prettyString(hit.id)}</a></td>
                         <td>${thisB.prettyString(hit.projectId)}</td>
                         <td>${thisB.prettyString(hit.primarySite)}</td>
                         <td>${thisB.prettyString(hit.gender)}</td>
@@ -550,31 +559,101 @@ function (
             dom.place(tableNode, location);
         },
 
+        createGenesTable: function(hits, location) {
+            var thisB = this;
+            var table = `<table class="results-table"></table>`;
+            var tableNode = dom.toDom(table);
+            var rowsHolder = `
+                <tr>
+                    <th>Symbol</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                </tr>
+            `;
+
+            var rowsHolderNode = dom.toDom(rowsHolder);
+
+            for (var hitId in hits) {
+                var hit = hits[hitId];
+
+                var donorRowContent = `
+                        <td><a target="_blank" href="https://dcc.icgc.org/genes/${thisB.prettyString(hit.id)}">${thisB.prettyString(hit.symbol)}</a></td>
+                        <td>${thisB.prettyString(hit.name)}</td>
+                        <td>chr${hit.chromosome}:${hit.start}-${hit.end}</td>
+                        <td>${thisB.prettyString(hit.type)}</td>
+                `
+                var donorRowContentNode = dom.toDom(donorRowContent);
+
+                var row = `<tr></tr>`;
+                var rowNodeHolder = dom.toDom(row);
+                dom.place(donorRowContentNode, rowNodeHolder);
+                dom.place(rowNodeHolder, rowsHolderNode);
+
+            }
+            dom.place(rowsHolderNode, tableNode);
+            dom.place(tableNode, location);
+        },
+
+        createMutationsTable: function(hits, location) {
+            var thisB = this;
+            var table = `<table class="results-table"></table>`;
+            var tableNode = dom.toDom(table);
+            var rowsHolder = `
+                <tr>
+                    <th>ID</th>
+                    <th>DNA Change</th>
+                    <th>Type</th>
+                </tr>
+            `;
+
+            var rowsHolderNode = dom.toDom(rowsHolder);
+
+            for (var hitId in hits) {
+                var hit = hits[hitId];
+
+                var donorRowContent = `
+                        <td><a target="_blank"  href="https://dcc.icgc.org/mutations/${thisB.prettyString(hit.id)}">${thisB.prettyString(hit.id)}</a></td>
+                        <td>chr${hit.chromosome}:${hit.start}${hit.mutation}</td>
+                        <td>${thisB.prettyString(hit.type)}</td>
+                `
+                var donorRowContentNode = dom.toDom(donorRowContent);
+
+                var row = `<tr></tr>`;
+                var rowNodeHolder = dom.toDom(row);
+                dom.place(donorRowContentNode, rowNodeHolder);
+                dom.place(rowNodeHolder, rowsHolderNode);
+
+            }
+            dom.place(rowsHolderNode, tableNode);
+            dom.place(tableNode, location);
+        },
+
         /**
          * Creates pagination buttons for search results in the given 'holder' using the 'pagination' object from the ICGC response
          * @param {*} holder
          * @param {*} pagination
          */
-        createPaginationButtons: function(holder, pagination) {
+        createPaginationButtons: function(holder, pagination, type, pageNum) {
             var thisB = this;
 
             var paginationHolder = dom.create('div', { style:"display: flex;justify-content: center;"}, holder);
             
-            if (thisB.page > 1) {
+            if (pageNum > 1) {
                 var previousButton = new Button({
                     label: "Previous",
                     onClick: function() {
-                        thisB.previousPage();
+                        thisB.previousPage(type);
                     }
                 }, "previousButton").placeAt(paginationHolder);
 
             }
 
-            if (thisB.page < pagination.pages) {
+            if (pageNum < pagination.pages) {
                 var nextButton = new Button({
                     label: "Next",
                     onClick: function() {
-                        thisB.nextPage();
+                        thisB.nextPage(type);
                     }
                 }, "nextButton").placeAt(paginationHolder);
             }
@@ -583,21 +662,31 @@ function (
         /**
          * Loads the facet results at the previous page
          */
-        previousPage: function() {
+        previousPage: function(type) {
             var thisB = this;
-            thisB.page = thisB.page - 1;
-            thisB.updateAccordion('donor');
-            thisB.updateSearchResults('donor');
+            if (type === 'donor') {
+                thisB.donorPage = thisB.donorPage - 1;
+            } else if (type === 'mutation') {
+                thisB.mutationPage = thisB.mutationPage - 1;
+            } else if (type === 'gene') {
+                thisB.genePage = thisB.genePage - 1;
+            }
+            thisB.updateSearchResults(type);
         },
 
         /**
          * Loads the facet results at the next page
          */
-        nextPage: function() {
+        nextPage: function(type) {
             var thisB = this;
-            thisB.page = thisB.page + 1;
-            thisB.updateAccordion('donor');
-            thisB.updateSearchResults('donor');
+            if (type === 'donor') {
+                thisB.donorPage = thisB.donorPage + 1;
+            } else if (type === 'mutation') {
+                thisB.mutationPage = thisB.mutationPage + 1;
+            } else if (type === 'gene') {
+                thisB.genePage = thisB.genePage + 1;
+            }
+            thisB.updateSearchResults(type);
         },
 
         /**
@@ -772,6 +861,9 @@ function (
             thisB.destroyAccordions(type);
             thisB.accordionCount = thisB.guid();
             thisB.createAccordions(type);
+            thisB.donorPage = 1;
+            thisB.genePage = 1;
+            thisB.mutationPage = 1;
         },
 
         /**
