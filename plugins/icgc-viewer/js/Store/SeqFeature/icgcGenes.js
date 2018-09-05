@@ -98,8 +98,8 @@ function(
             var thisB = this;
 
             // If empty need to create skeleton
-            if (Object.keys(thisB.filters).length === 0) {
-                thisB.filters = {"gene": {}};
+            if (Object.keys(thisB.filters).length === 0 || thisB.filters.gene == undefined) {
+                thisB.filters.gene = {};
             }
 
             thisB.filters.gene.location = { "is": [ ref + ':' + start + '-' + end ]};

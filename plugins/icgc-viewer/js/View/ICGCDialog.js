@@ -346,7 +346,7 @@ function (
          */
         createLoadingIcon: function(location) {
             var thisB = this;
-            var loadingIcon = dom.create('div', { className: 'loading' }, location);
+            var loadingIcon = dom.create('div', { className: 'loading-icgc' }, location);
             var spinner = dom.create('div', {}, loadingIcon);
             return loadingIcon;
         },

@@ -61,12 +61,12 @@ table.results-table tr:nth-child(odd) {
     align-items: center;
 }
 
-.loading {
+.loading-icgc {
     display: flex;
     justify-content: center;
 }
 
-.loading > div {
+.loading-icgc > div {
     border: 8px solid #f3f3f3;
     border-radius: 50%;
     border-top: 8px solid #166aa2;
