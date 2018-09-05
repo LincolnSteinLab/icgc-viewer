@@ -15,6 +15,7 @@ function(
     return declare(SeqFeatureStore, {
 
         constructor: function(args) {
+            this.donor = args.donor;
             this.filters = args.filters !== undefined ? args.filters : {};
         },
 
@@ -98,8 +99,8 @@ function(
             var thisB = this;
 
             // If empty need to create skeleton
-            if (Object.keys(thisB.filters).length === 0) {
-                thisB.filters = {"gene": {}};
+            if (Object.keys(thisB.filters).length === 0 || thisB.filters.gene == undefined) {
+                thisB.filters.gene = {};
             }
 
             thisB.filters.gene.location = { "is": [ ref + ':' + start + '-' + end ]};
@@ -124,7 +125,16 @@ function(
             var ref = query.ref.replace(/chr/, '');
             end = thisB.getChromosomeEnd(ref, end);
 
-            var url = encodeURI('https://dcc.icgc.org/api/v1/genes?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&size=1000&include=externalDbIds');
+            // var url = encodeURI('https://dcc.icgc.org/api/v1/genes?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&size=1000&include=externalDbIds');
+
+            // Alter URL if looking at a donor
+            var searchBaseUrl = 'https://dcc.icgc.org/api/v1';
+            if (thisB.donor) {
+                searchBaseUrl = searchBaseUrl + '/donors/' + thisB.donor;
+            }
+
+            // Retrieve all mutations in the given chromosome range
+            var url = encodeURI(searchBaseUrl +  '/genes?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&size=1000&include=externalDbIds');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },

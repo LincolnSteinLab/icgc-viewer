@@ -214,8 +214,8 @@ function(
             var thisB = this;
 
             // If empty need to create skeleton
-            if (Object.keys(thisB.filters).length === 0) {
-                thisB.filters = {"mutation": {}};
+            if (Object.keys(thisB.filters).length === 0 || thisB.filters.mutation == undefined) {
+                thisB.filters.mutation = {};
             }
 
             thisB.filters.mutation.location = { "is": [ ref + ':' + start + '-' + end ]};
