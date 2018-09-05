@@ -289,7 +289,7 @@ function (
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
                                 var addMutationsButton = new Button({
-                                    label: "Add SSMs",
+                                    label: "Add All SSMs",
                                     iconClass: "dijitIconSave",
                                     onClick: function() {
                                         thisB.addSSMTrack(combinedFacetObject)
@@ -318,7 +318,7 @@ function (
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
                                 var addGenesButton = new Button({
-                                    label: "Add Genes",
+                                    label: "Add All Genes",
                                     iconClass: "dijitIconSave",
                                     onClick: function() {
                                         thisB.addGeneTrack(combinedFacetObject)
