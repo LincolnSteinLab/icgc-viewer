@@ -366,7 +366,7 @@ function (
          */
         createGeneUrl: function(combinedFacetObject) {
             var thisB = this;
-            return encodeURI('https://dcc.icgc.org/api/v1/genes?from=' + thisB.getStartIndex(thisB.genePage) + '&size=' + thisB.pageSize + '&filters=' + combinedFacetObject);
+            return encodeURI('https://dcc.icgc.org/api/v1/genes?from=' + thisB.getStartIndex(thisB.genePage) + '&size=' + thisB.pageSize + '&sort=affectedDonorCountFiltered&filters=' + combinedFacetObject);
         },
 
         /**
@@ -375,7 +375,7 @@ function (
          */
         createMutationUrl: function(combinedFacetObject) {
             var thisB = this;
-            return encodeURI('https://dcc.icgc.org/api/v1/mutations?from=' + thisB.getStartIndex(thisB.mutationPage) + '&size=' + thisB.pageSize + '&filters=' + combinedFacetObject);
+            return encodeURI('https://dcc.icgc.org/api/v1/mutations?from=' + thisB.getStartIndex(thisB.mutationPage) + '&size=' + thisB.pageSize + '&sort=affectedDonorCountFiltered&filters=' + combinedFacetObject);
         },
 
         /**
@@ -519,9 +519,8 @@ function (
                     <th>Age</th>
                     <th>Stage</th>
                     <th>Survival (days)</th>
-                    <th># Mutations</th>
                     <th># Genes</th>
-                    <th>SSM</th>
+                    <th># SSMs</th>
                 </tr>
             `;
 
@@ -538,14 +537,18 @@ function (
                         <td>${thisB.prettyString(hit.ageAtDiagnosis)}</td>
                         <td>${thisB.prettyString(hit.state)}</td>
                         <td>${thisB.prettyString(hit.survivalTime)}</td>
-                        <td>${thisB.prettyString(hit.ssmCount)}</td>
-                        <td>${thisB.prettyString(hit.ssmAffectedGenes)}</td>
                 `
                 var donorRowContentNode = dom.toDom(donorRowContent);
 
+                var geneButton = `<td></td>`;
+                var geneButtonNode = dom.toDom(geneButton);
+                thisB.createDonorGeneButton(hit.id, geneButtonNode, combinedFacetObject, hit.ssmAffectedGenes);
+
+                dom.place(geneButtonNode, donorRowContentNode);
+
                 var ssmButton = `<td></td>`;
                 var ssmButtonNode = dom.toDom(ssmButton);
-                thisB.createDonorButtons(hit.id, hit.availableDataTypes, ssmButtonNode, combinedFacetObject);
+                thisB.createDonorButtons(hit.id, hit.availableDataTypes, ssmButtonNode, combinedFacetObject, hit.ssmCount);
 
                 dom.place(ssmButtonNode, donorRowContentNode);
 
@@ -696,16 +699,28 @@ function (
          * @param {*} holder HTML element to place the buttons in
          * @param {*} combinedFacetObject combined object of facets
          */
-        createDonorButtons: function(donorId, availableDataTypes, holder, combinedFacetObject) {
+        createDonorButtons: function(donorId, availableDataTypes, holder, combinedFacetObject, ssmCount) {
             var thisB = this;
             if (availableDataTypes.includes("ssm")) {
                 var ssmButton = new Button({
+                    label: ssmCount,
                     iconClass: "dijitIconSave",
                     onClick: function() {
                         thisB.addDonorSSMTrack(donorId, combinedFacetObject);
                     }
                 }, "ssmButton").placeAt(holder);
             }
+        },
+
+        createDonorGeneButton: function(donorId, holder, combinedFacetObject, ssmAffectedGenes) {
+            var thisB = this;
+            var geneButton = new Button({
+                label: ssmAffectedGenes,
+                iconClass: "dijitIconSave",
+                onClick: function() {
+                    thisB.addDonorGeneTrack(donorId, combinedFacetObject);
+                }
+            }, "geneButton").placeAt(holder);
         },
 
         /**
@@ -744,6 +759,28 @@ function (
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcGenes',
                 filters: JSON.parse(combinedFacetObject)
+            };
+            var storeName = this.browser.addStoreConfig(null, storeConf);
+
+            var randomId = Math.random().toString(36).substring(7);
+            var trackConf = {
+                type: 'JBrowse/View/Track/CanvasVariants',
+                store: storeName,
+                label: "ICGC_Genes_" + randomId
+            };
+            trackConf.store = storeName;
+            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
+            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
+        },
+
+        addDonorGeneTrack: function (donorId, combinedFacetObject) {
+            var thisB = this;
+            var storeConf = {
+                browser: this.browser,
+                refSeq: this.browser.refSeq,
+                type: 'icgc-viewer/Store/SeqFeature/icgcGenes',
+                filters: JSON.parse(combinedFacetObject),
+                donor: donorId
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
