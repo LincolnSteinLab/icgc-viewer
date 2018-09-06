@@ -125,8 +125,6 @@ function(
             var ref = query.ref.replace(/chr/, '');
             end = thisB.getChromosomeEnd(ref, end);
 
-            // var url = encodeURI('https://dcc.icgc.org/api/v1/genes?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&size=1000&include=externalDbIds');
-
             // Alter URL if looking at a donor
             var searchBaseUrl = 'https://dcc.icgc.org/api/v1';
             if (thisB.donor) {
