@@ -519,8 +519,8 @@ function (
                     <th>Age</th>
                     <th>Stage</th>
                     <th>Survival (days)</th>
-                    <th># Genes</th>
-                    <th># SSMs</th>
+                    <th>Genes</th>
+                    <th>File Types</th>
                 </tr>
             `;
 
@@ -562,6 +562,11 @@ function (
             dom.place(tableNode, location);
         },
 
+        /**
+         * Creates the genes table for the given hits in some location
+         * @param {*} hits array of gene hits
+         * @param {*} location dom element to place the table
+         */
         createGenesTable: function(hits, location) {
             var thisB = this;
             var table = `<table class="results-table"></table>`;
@@ -598,6 +603,11 @@ function (
             dom.place(tableNode, location);
         },
 
+        /**
+         * Creates the mutations table for the given hits in some location
+         * @param {*} hits array of mutation hits
+         * @param {*} location dom element to place the table
+         */
         createMutationsTable: function(hits, location) {
             var thisB = this;
             var table = `<table class="results-table"></table>`;
@@ -703,7 +713,7 @@ function (
             var thisB = this;
             if (availableDataTypes.includes("ssm")) {
                 var ssmButton = new Button({
-                    label: ssmCount,
+                    label: "SSMs",
                     iconClass: "dijitIconSave",
                     onClick: function() {
                         thisB.addDonorSSMTrack(donorId, combinedFacetObject);
@@ -712,19 +722,22 @@ function (
             }
             if (availableDataTypes.includes("cnsm")) {
                 var geneButton = new Button({
-                    label: 'CNSM',
+                    label: 'CNSMs',
                     iconClass: "dijitIconSave",
                     onClick: function() {
-                        thisB.addCNSMTrack(donorId);
+                        thisB.addDonorCNSMTrack(donorId);
                     }
                 }, "geneButton").placeAt(holder);
             }
         },
 
+        /**
+         * Create a button to add a donor gene button that will create a gene track based on the given
+         * donor ID and facet object
+         */
         createDonorGeneButton: function(donorId, holder, combinedFacetObject, ssmAffectedGenes) {
             var thisB = this;
             var geneButton = new Button({
-                label: ssmAffectedGenes,
                 iconClass: "dijitIconSave",
                 onClick: function() {
                     thisB.addDonorGeneTrack(donorId, combinedFacetObject);
@@ -750,7 +763,7 @@ function (
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_Donor_" + donorId
+                label: "ICGC_SSM_Donor_" + donorId
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -782,6 +795,11 @@ function (
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
         },
 
+        /**
+         * Adds a gene track based on the chosen facets and donor ID
+         * @param {*} donorId the id of the donor
+         * @param {*} combinedFacetObject combined object of facets
+         */
         addDonorGeneTrack: function (donorId, combinedFacetObject) {
             var thisB = this;
             var storeConf = {
@@ -793,11 +811,10 @@ function (
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
-            var randomId = Math.random().toString(36).substring(7);
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_Genes_" + randomId
+                label: "ICGC_Genes_Donor" + donorId
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -829,7 +846,11 @@ function (
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
         },
 
-        addCNSMTrack: function (donorId) {
+        /**
+         * Adds a CNSM track based on the donor Id
+         * @param {*} donorId Id of the donor of interest
+         */
+        addDonorCNSMTrack: function (donorId) {
             var thisB = this;
             var storeConf = {
                 browser: this.browser,
@@ -843,7 +864,7 @@ function (
             var trackConf = {
                 type: 'JBrowse/View/Track/Wiggle/XYPlot',
                 store: storeName,
-                label: "ICGC_CNSM_" + donorId + "_" + randomId,
+                label: "ICGC_CNSM_" + donorId,
                 max_score: 1,
                 min_score: -1,
                 bicolor_pivot: 0
@@ -975,6 +996,9 @@ function (
               return titleCase;
         },
 
+        /**
+         * Generate a GUID
+         */
         guid: function() {
             function s4() {
               return Math.floor((1 + Math.random()) * 0x10000)
