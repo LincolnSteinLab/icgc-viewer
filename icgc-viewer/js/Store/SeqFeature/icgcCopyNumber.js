@@ -19,7 +19,8 @@ function(
 
         constructor: function(args) {
             var thisB = this;
-            this.donor = 'DO229446';
+            this.donor = args.donor;
+            console.log(this.donor);
             var url = 'https://dcc.icgc.org/api/v1/download/submit?filters={"donor":{"id":{"is":["' + this.donor + '"]}}}&info=[{"key":"cnsm","value":"JSON"}]';
             thisB.zipPromise = fetch(url, {
                 method: 'GET'
@@ -28,7 +29,6 @@ function(
             }).then(function(res) {
                 var downloadId = res.downloadId;
                 var downloadLink = 'https://dcc.icgc.org/api/v1/download/' + downloadId;
-                console.log(downloadLink);
                 return new Promise((resolve, reject) => {
                     http.get(downloadLink, function(res) {
                         var gunzip = zlib.createGunzip();            
@@ -39,7 +39,6 @@ function(
                         }).on("end", function() {
                             thisB.buffer = thisB.buffer.join("");               
                         }).on("error", function(e) {
-                            console.log('error!');
                             console.log(e);
                             thisB.buffer = thisB.buffer.join("");
                             resolve("failure");
@@ -73,6 +72,7 @@ function(
                     var chrStart = 0;
                     var chrEnd = 1;
                     var segMean = null;
+                    var donorId = null;
 
                     var splitFile = thisB.buffer.split(/\n/);
                     splitFile.forEach((element, index, array) => {
@@ -82,8 +82,9 @@ function(
                             chrStart = splitLine.indexOf("chromosome_start");
                             chrEnd = splitLine.indexOf("chromosome_end");
                             segMean = splitLine.indexOf("segment_mean");
+                            donorId = splitLine.indexOf("icgc_donor_id");
                         } else {
-                            if (splitLine[chr] === ref) {
+                            if (splitLine[chr] === ref && thisB.donor === splitLine[donorId]) {
                                 featureCallback(new SimpleFeature({
                                     id: splitLine[chr] + "_" + splitLine[chrStart] + "_" + splitLine[chrEnd] + "_copyNumber",
                                     data: {

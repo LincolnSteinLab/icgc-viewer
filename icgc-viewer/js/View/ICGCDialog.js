@@ -710,6 +710,15 @@ function (
                     }
                 }, "ssmButton").placeAt(holder);
             }
+            if (availableDataTypes.includes("cnsm")) {
+                var geneButton = new Button({
+                    label: 'CNSM',
+                    iconClass: "dijitIconSave",
+                    onClick: function() {
+                        thisB.addCNSMTrack(donorId);
+                    }
+                }, "geneButton").placeAt(holder);
+            }
         },
 
         createDonorGeneButton: function(donorId, holder, combinedFacetObject, ssmAffectedGenes) {
@@ -814,6 +823,30 @@ function (
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
                 label: "ICGC_SSM_" + randomId
+            };
+            trackConf.store = storeName;
+            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
+            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
+        },
+
+        addCNSMTrack: function (donorId) {
+            var thisB = this;
+            var storeConf = {
+                browser: this.browser,
+                refSeq: this.browser.refSeq,
+                type: 'icgc-viewer/Store/SeqFeature/icgcCopyNumber',
+                donor: donorId
+            };
+            var storeName = this.browser.addStoreConfig(null, storeConf);
+
+            var randomId = Math.random().toString(36).substring(7);
+            var trackConf = {
+                type: 'JBrowse/View/Track/Wiggle/XYPlot',
+                store: storeName,
+                label: "ICGC_CNSM_" + donorId + "_" + randomId,
+                max_score: 1,
+                min_score: -1,
+                bicolor_pivot: 0
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
