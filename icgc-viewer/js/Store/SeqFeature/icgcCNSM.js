@@ -1,5 +1,4 @@
 const zlib = cjsRequire("zlib");
-const request = cjsRequire("request");
 const http = cjsRequire("http");
 
 define([

@@ -25,7 +25,6 @@
   },
   "homepage": "https://github.com/agduncan94/icgc-viewer#readme",
   "dependencies": {
-    "request": "^2.88.0",
     "zlib": "^1.0.5"
   },
   "jbrowsePlugin": {
