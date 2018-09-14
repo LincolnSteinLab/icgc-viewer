@@ -68,29 +68,29 @@ function(
             thisB.zipPromise.then(function(zip) {
                 if (thisB.buffer) {
                     var isHeaderLine = true;
-                    var chr = null;
-                    var chrStart = 0;
-                    var chrEnd = 1;
-                    var segMean = null;
-                    var donorId = null;
+                    var chrPosition = -1;
+                    var chrStartPosition = -1;
+                    var chrEndPosition = -1;
+                    var segMeanPosition = -1;
+                    var donorIdPosition = -1;
 
                     var splitFile = thisB.buffer.split(/\n/);
                     splitFile.forEach((element, index, array) => {
                         var splitLine = element.split(/\t/);
                         if (isHeaderLine) {
-                            chr = splitLine.indexOf("chromosome");
-                            chrStart = splitLine.indexOf("chromosome_start");
-                            chrEnd = splitLine.indexOf("chromosome_end");
-                            segMean = splitLine.indexOf("segment_mean");
-                            donorId = splitLine.indexOf("icgc_donor_id");
+                            chrPosition = splitLine.indexOf("chromosome");
+                            chrStartPosition = splitLine.indexOf("chromosome_start");
+                            chrEndPosition = splitLine.indexOf("chromosome_end");
+                            segMeanPosition = splitLine.indexOf("segment_mean");
+                            donorIdPosition = splitLine.indexOf("icgc_donor_id");
                         } else {
-                            if (splitLine[chr] === ref && thisB.donor === splitLine[donorId]) {
+                            if (splitLine[chrPosition] === ref && thisB.donor === splitLine[donorIdPosition]) {
                                 featureCallback(new SimpleFeature({
-                                    id: splitLine[chr] + "_" + splitLine[chrStart] + "_" + splitLine[chrEnd] + "_copyNumber",
+                                    id: splitLine[chrPosition] + "_" + splitLine[chrStartPosition] + "_" + splitLine[chrEndPosition] + "_copyNumber",
                                     data: {
-                                        start: splitLine[chrStart],
-                                        end: splitLine[chrEnd],
-                                        score: splitLine[segMean]
+                                        start: splitLine[chrStartPosition],
+                                        end: splitLine[chrEndPosition],
+                                        score: splitLine[segMeanPosition]
                                     }
                                 }));
                             }
