@@ -756,7 +756,7 @@ function (
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcSimpleSomaticMutations',
                 donor: donorId,
-                filters: JSON.parse(combinedFacetObject)
+                filters: combinedFacetObject
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
@@ -780,7 +780,7 @@ function (
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcGenes',
-                filters: JSON.parse(combinedFacetObject)
+                filters: combinedFacetObject
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
@@ -806,7 +806,7 @@ function (
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcGenes',
-                filters: JSON.parse(combinedFacetObject),
+                filters: combinedFacetObject,
                 donor: donorId
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
@@ -831,7 +831,7 @@ function (
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcSimpleSomaticMutations',
-                filters: JSON.parse(combinedFacetObject)
+                filters: combinedFacetObject
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 

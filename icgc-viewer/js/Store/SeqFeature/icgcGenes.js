@@ -16,7 +16,7 @@ function(
 
         constructor: function(args) {
             this.donor = args.donor;
-            this.filters = args.filters !== undefined ? args.filters : {};
+            this.filters = args.filters !== undefined ? JSON.parse(args.filters) : {};
         },
 
         /**

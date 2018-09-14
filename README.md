@@ -15,20 +15,20 @@ Ex. Chromosome 1
 
 # Available Store SeqFeature
 ## icgcGenes
-A simple view of all genes returned by the ICGC portal for a given range of the chromosome you are looking at. If you specify a donor ID (donor field) in the track config file, only genes related to that donor will appear.
+A simple view of all genes returned by the ICGC portal for a given range of the chromosome you are looking at.
+
+If you specify a donor ID (donor field) in the track config file, only genes related to that donor will appear.
+```
+donor: DO229446
+```
 
 You can also use the filters field to pass filters to be applied to the track. The expected input is a filter object like the following:
 
 ```
 {
-    gene: {
-        location: {
-            is: [
-                "14:75023491-107349540"
-            ]
-        },
-        type: {
-            is: [
+    "gene" : {
+        "type": {
+            "is": [
                 "protein_coding"
             ]
         }
@@ -36,26 +36,59 @@ You can also use the filters field to pass filters to be applied to the track. T
 }
 ```
 
-Example Track:
+To put it in the track config file you may want to minimize it as such:
+```
+filters: {"gene":{"type":{"is":["protein_coding"]}}}
+```
 
+Example Track:
+```
 [tracks.ICGC_Genes]
 storeClass=icgc-viewer/Store/SeqFeature/icgcGenes
 type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Genes
+```
 
 ## icgcSimpleSomaticMutations
-A simple view of all the simple somatic mutations across all donors in the ICGC portal. If you specify a donor ID (donor field) in the track config file, only mutations related to the given donor will be shown (if the donor exists).
+A simple view of all the simple somatic mutations across all donors in the ICGC portal. 
+
+If you specify a donor ID (donor field) in the track config file, only mutations related to the given donor will be shown (if the donor exists).
+```
+donor: DO229446
+```
+
+You can also use the filters field to pass filters to be applied to the track. The expected input is a filter object like the following:
+
+```
+{
+    "mutation" : {
+        "functionalImpact": {
+            "is": [
+                "High"
+            ]
+        }
+    }
+}
+```
+
+To put it in the track config file you may want to minimize it as such:
+```
+filters: {"mutation":{"functionalImpact":{"is":["High"]}}}
+```
 
 Example Track:
+```
 [tracks.ICGC_Mutations]
 storeClass=icgc-viewer/Store/SeqFeature/icgcSimpleSomaticMutations
 type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Mutations
+```
 
 ## icgcCopyNumber
 A simple view of all of the CNSM for a given donor. A donor ID (donor field) must be specified in the track config file.
 
 Example Track:
+```
 [tracks.CNSM_D0229446]
 storeClass=icgc-viewer/Store/SeqFeature/icgcCopyNumber
 type=JBrowse/View/Track/Wiggle/XYPlot
@@ -63,6 +96,7 @@ donor=DO229446
 max_score=1
 min_score=-1
 bicolor_pivot=0
+```
 
 # Menu option for searching ICGC
 In the tools menu there is an option to search ICGC. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. This will create a filtered list of matching donors, genes and mutations.
