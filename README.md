@@ -17,8 +17,102 @@ Ex. Chromosome 1
 ## icgcGenes
 A simple view of all genes returned by the ICGC portal for a given range of the chromosome you are looking at.
 
+If you specify a donor ID (donor field) in the track config file, only genes related to that donor will appear.
+```
+donor: DO229446
+```
+
+You can also use the filters field to pass filters to be applied to the track. The expected input is a filter object like the following:
+
+```
+{
+    "gene" : {
+        "type": {
+            "is": [
+                "protein_coding"
+            ]
+        }
+    }
+}
+```
+
+To put it in the track config file you may want to minimize it as such:
+```
+filters: {"gene":{"type":{"is":["protein_coding"]}}}
+```
+
+Example Track:
+```
+[tracks.ICGC_Genes]
+storeClass=icgc-viewer/Store/SeqFeature/icgcGenes
+type=JBrowse/View/Track/CanvasVariants
+key=ICGC_Genes
+```
+
 ## icgcSimpleSomaticMutations
-A simple view of all the simple somatic mutations across all donors in the ICGC portal. If you specify a donor ID in the track config file, only mutations related to the given donor will be shown (if the donor exists).
+A simple view of all the simple somatic mutations across all donors in the ICGC portal. 
+
+If you specify a donor ID (donor field) in the track config file, only mutations related to the given donor will be shown (if the donor exists).
+```
+donor: DO229446
+```
+
+You can also use the filters field to pass filters to be applied to the track. The expected input is a filter object like the following:
+
+```
+{
+    "mutation" : {
+        "functionalImpact": {
+            "is": [
+                "High"
+            ]
+        }
+    }
+}
+```
+
+To put it in the track config file you may want to minimize it as such:
+```
+filters: {"mutation":{"functionalImpact":{"is":["High"]}}}
+```
+
+Example Track:
+```
+[tracks.ICGC_Mutations]
+storeClass=icgc-viewer/Store/SeqFeature/icgcSimpleSomaticMutations
+type=JBrowse/View/Track/CanvasVariants
+key=ICGC_Mutations
+```
+
+## icgcCNSM
+A simple view of all of the CNSM for a given donor. A donor ID (donor field) must be specified in the track config file.
+
+Example Track:
+```
+[tracks.CNSM_D0229446]
+storeClass=icgc-viewer/Store/SeqFeature/icgcCNSM
+type=JBrowse/View/Track/Wiggle/XYPlot
+donor=DO229446
+max_score=1
+min_score=-1
+bicolor_pivot=0
+```
 
 # Menu option for searching ICGC
-In the tools menu there is an option to search ICGC for a donor. This will open a popup where the user can search for a donor in the ICGC portal by donor ID (for now). If the donor exists, then for each type of data available that can be viewed in JBrowse, a button will appear. Clicking one of these buttons will add the corresponding track for that donor. Currently only SSM are functional.
+In the tools menu there is an option to search ICGC. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. This will create a filtered list of matching donors, genes and mutations.
+
+Donors Tab:
+* View donors that match the selected facets
+* For each donor
+    * Add track for affected genes
+    * Add track for SSMs
+    * Add track for CNSMs
+    * More tracks to come...
+
+Genes Tab:
+* View genes that match the selected facets
+* Create a track of all matching genes
+
+Mutations Tab:
+* View mutations that match the selected facets
+* Create a track of all matching SSMs

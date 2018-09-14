@@ -3,14 +3,16 @@ define([
         'dojo/_base/lang',
         'JBrowse/Plugin',
         'dijit/MenuItem',
-        './View/ICGCDialog'
+        './View/ICGCDialog',
+        'require'
        ],
        function(
             declare,
             lang,
             JBrowsePlugin,
             MenuItem,
-            ICGCDialog
+            ICGCDialog,
+            require
        ) {
 return declare(JBrowsePlugin, {
         constructor: function () {
@@ -22,8 +24,7 @@ return declare(JBrowsePlugin, {
                         onClick: lang.hitch(this, 'createICGCTrack')
                     }));
                     this.browser.renderGlobalMenu('icgc', {text: 'ICGC'}, this.browser.menuBar);
-            }, this);
-            
+            }, this);            
         },
 
         createICGCTrack: function () {

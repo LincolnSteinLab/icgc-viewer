@@ -17,7 +17,8 @@ function(
         constructor: function (args) {
             this.donor = args.donor;
             this.baseUrl = args.baseUrl;
-            this.filters = args.filters !== undefined ? args.filters : {};
+            this.filters = args.filters !== undefined ? JSON.parse(args.filters) : {};
+            console.log(this.filters);
         },
 
         /**
