@@ -84,13 +84,13 @@ type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Mutations
 ```
 
-## icgcCopyNumber
+## icgcCNSM
 A simple view of all of the CNSM for a given donor. A donor ID (donor field) must be specified in the track config file.
 
 Example Track:
 ```
 [tracks.CNSM_D0229446]
-storeClass=icgc-viewer/Store/SeqFeature/icgcCopyNumber
+storeClass=icgc-viewer/Store/SeqFeature/icgcCNSM
 type=JBrowse/View/Track/Wiggle/XYPlot
 donor=DO229446
 max_score=1

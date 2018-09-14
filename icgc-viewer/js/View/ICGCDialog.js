@@ -855,7 +855,7 @@ function (
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcCopyNumber',
+                type: 'icgc-viewer/Store/SeqFeature/icgcCNSM',
                 donor: donorId
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
