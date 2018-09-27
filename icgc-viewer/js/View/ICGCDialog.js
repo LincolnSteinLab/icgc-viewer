@@ -75,6 +75,7 @@ function (
             var thisB = this;
             var container = dom.create('div', { className: 'dialog-container', style: { width: '1000px', height: '700px' } });
 
+            // Unique ID for accordion
             thisB.accordionId = thisB.guid();
 
             // Create header section
@@ -98,7 +99,7 @@ function (
 
         /**
          * Creates an accordion of the given type
-         * @param {*} type The type of accordion
+         * @param {string} type The type of accordion
          */
         createAccordions: function(type) {
             var thisB = this;
@@ -121,7 +122,7 @@ function (
 
         /**
          * Destroys an accordion of the given type
-         * @param {*} type The type of accordion
+         * @param {string} type The type of accordion
          */
         destroyAccordions: function(type) {
             var thisB = this;
@@ -136,7 +137,7 @@ function (
 
         /**
          * Creates a facet URL based on some type
-         * @param {*} type The type of accordion
+         * @param {string} type The type of accordion
          */
         createFacetUrl: function(type) {
             var thisB = this;
@@ -156,7 +157,7 @@ function (
 
         /**
          * Retrieves the filters of some type
-         * @param {*} type The type of accordion
+         * @param {string} type The type of accordion
          */
         getFiltersForType: function(type) {
             var thisB = this;
@@ -173,8 +174,8 @@ function (
 
         /**
          * Creates a facet accordion of some type and places them in the given accordion
-         * @param {*} type The type of accordion
-         * @param {*} accordion The accordion to put the facets in
+         * @param {string} type The type of accordion
+         * @param {AccordionContainer} accordion The accordion to put the facets in
          */
         createFacet: function(type, accordion, loadingIcon) {
             var thisB = this;
@@ -221,9 +222,9 @@ function (
                                                     }
                                                 }
                                                 thisB.updateAccordion(type);
-                                                thisB.updateSearchResults('donor');
-                                                thisB.updateSearchResults('mutation');
-                                                thisB.updateSearchResults('gene');
+                                                for (var type of thisB.types) {
+                                                    thisB.updateSearchResults(type);
+                                                }
                                             }
                                         }, 'checkbox').placeAt(facetCheckbox);
                                         var label = dom.create("label", { "for" : facet + '-' + term.term + '-' + type + '-' + thisB.accordionId, innerHTML: term.term + ' (' + term.count + ')' }, facetCheckbox);
@@ -247,7 +248,7 @@ function (
 
         /**
          * Updates the search results of some type based on the facets
-         * @param {*} type The type of accordion
+         * @param {string} type The type of accordion
          */
         updateSearchResults: function(type) {
             var thisB = this;
@@ -349,7 +350,7 @@ function (
 
         /**
          * Creates a loading icon in the given location and returns
-         * @param {*} location Place to put the loading icon
+         * @param {object} location Place to put the loading icon
          */
         createLoadingIcon: function(location) {
             var loadingIcon = dom.create('div', { className: 'loading-icgc' }, location);
@@ -359,7 +360,7 @@ function (
 
         /**
          * Creates the donor URL for grabbing mutations
-         * @param {*} combinedFacetObject Object containing facet information
+         * @param {object} combinedFacetObject Object containing facet information
          */
         createDonorUrl: function(combinedFacetObject) {
             var thisB = this;
@@ -368,7 +369,7 @@ function (
 
         /**
          * Creates the gene URL for grabbing mutations
-         * @param {*} combinedFacetObject Object containing facet information
+         * @param {object} combinedFacetObject Object containing facet information
          */
         createGeneUrl: function(combinedFacetObject) {
             var thisB = this;
@@ -377,7 +378,7 @@ function (
 
         /**
          * Creates the mutation URL for grabbing mutations
-         * @param {*} combinedFacetObject Object containing facet information
+         * @param {object} combinedFacetObject Object containing facet information
          */
         createMutationUrl: function(combinedFacetObject) {
             var thisB = this;
@@ -386,7 +387,7 @@ function (
 
         /**
          * Calculate the 'from' parameter for the URL call
-         * @param {*} page current page
+         * @param {integer} page current page
          */
         getStartIndex: function(page) {
             var thisB = this;
@@ -408,7 +409,7 @@ function (
 
         /**
          * Creates the scaffolding to place all of the accordions and search results in
-         * @param {*} container Location to place the scaffolding in
+         * @param {object} container Location to place the scaffolding in
          */
         createScaffolding: function(container) {
             var thisB = this;
@@ -466,8 +467,8 @@ function (
 
         /**
          * Pretty prints the current filters
-         * @param {*} location  place to display the filters
-         * @param {*} filters filters to display
+         * @param {object} location  place to display the filters
+         * @param {object} filters filters to display
          */
         prettyPrintFilters: function(location, filters) {
             var thisB = this;
@@ -508,9 +509,9 @@ function (
 
         /**
          * Creates the donors table for the given hits in some location
-         * @param {*} hits array of donor hits
-         * @param {*} location dom element to place the table
-         * @param {*} combinedFacetObject combined object of facets
+         * @param {List<object>} hits array of donor hits
+         * @param {object} location dom element to place the table
+         * @param {object} combinedFacetObject combined object of facets
          */
         createDonorsTable: function(hits, location, combinedFacetObject) {
             var thisB = this;
@@ -570,8 +571,8 @@ function (
 
         /**
          * Creates the genes table for the given hits in some location
-         * @param {*} hits array of gene hits
-         * @param {*} location dom element to place the table
+         * @param {List<object>} hits array of gene hits
+         * @param {object} location dom element to place the table
          */
         createGenesTable: function(hits, location) {
             var thisB = this;
@@ -611,8 +612,8 @@ function (
 
         /**
          * Creates the mutations table for the given hits in some location
-         * @param {*} hits array of mutation hits
-         * @param {*} location dom element to place the table
+         * @param {List<object>} hits array of mutation hits
+         * @param {object} location dom element to place the table
          */
         createMutationsTable: function(hits, location) {
             var thisB = this;
@@ -650,8 +651,8 @@ function (
 
         /**
          * Creates pagination buttons for search results in the given 'holder' using the 'pagination' object from the ICGC response
-         * @param {*} holder
-         * @param {*} pagination
+         * @param {object} holder
+         * @param {integer} pagination
          */
         createPaginationButtons: function(holder, pagination, type, pageNum) {
             var thisB = this;
@@ -680,7 +681,7 @@ function (
 
         /**
          * Loads the facet results at the previous page
-         * @param {*} type Page type
+         * @param {string} type Page type
          */
         previousPage: function(type) {
             var thisB = this;
@@ -696,7 +697,7 @@ function (
 
         /**
          * Loads the facet results at the next page
-         * @param {*} type Page type
+         * @param {string} type Page type
          */
         nextPage: function(type) {
             var thisB = this;
@@ -712,10 +713,10 @@ function (
 
         /**
          * Creates the donor buttons for the available data types (for now only SSM)
-         * @param {*} donorId Id of the donor to add
-         * @param {*} availableDataTypes Array of available data types
-         * @param {*} holder HTML element to place the buttons in
-         * @param {*} combinedFacetObject combined object of facets
+         * @param {string} donorId Id of the donor to add
+         * @param {List<String>} availableDataTypes Array of available data types
+         * @param {object} holder HTML element to place the buttons in
+         * @param {object} combinedFacetObject combined object of facets
          */
         createDonorButtons: function(donorId, availableDataTypes, holder, combinedFacetObject) {
             var thisB = this;
@@ -742,9 +743,9 @@ function (
         /**
          * Create a button to add a donor gene button that will create a gene track based on the given
          * donor ID and facet object
-         * @param {*} donorId Id of donor
-         * @param {*} holder Div to place the button in
-         * @param {*} combinedFacetObject combined object of facets
+         * @param {string} donorId Id of donor
+         * @param {object} holder Div to place the button in
+         * @param {object} combinedFacetObject combined object of facets
          */
         createDonorGeneButton: function(donorId, holder, combinedFacetObject) {
             var thisB = this;
@@ -758,8 +759,8 @@ function (
 
         /**
          * Adds a donor SSM track based on the donor ID and the chosen facets
-         * @param {*} donorId Id of donor
-         * @param {*} combinedFacetObject combined object of facets
+         * @param {string} donorId Id of donor
+         * @param {object} combinedFacetObject combined object of facets
          */
         addDonorSSMTrack: function(donorId, combinedFacetObject) {
             var storeConf = {
@@ -783,7 +784,7 @@ function (
 
         /**
          * Adds a gene track based on the chosen facets
-         * @param {*} combinedFacetObject combined object of facets
+         * @param {object} combinedFacetObject combined object of facets
          */
         addGeneTrack: function (combinedFacetObject) {
             var storeConf = {
@@ -807,8 +808,8 @@ function (
 
         /**
          * Adds a gene track based on the chosen facets and donor ID
-         * @param {*} donorId the id of the donor
-         * @param {*} combinedFacetObject combined object of facets
+         * @param {string} donorId the id of the donor
+         * @param {object} combinedFacetObject combined object of facets
          */
         addDonorGeneTrack: function (donorId, combinedFacetObject) {
             var storeConf = {
@@ -832,7 +833,7 @@ function (
 
         /**
          * Adds an SSM track based on the chosen facets
-         * @param {*} combinedFacetObject combined object of facets
+         * @param {object} combinedFacetObject combined object of facets
          */
         addSSMTrack: function (combinedFacetObject) {
             var storeConf = {
@@ -856,7 +857,7 @@ function (
 
         /**
          * Adds a CNSM track based on the donor Id
-         * @param {*} donorId Id of the donor of interest
+         * @param {string} donorId Id of the donor of interest
          */
         addDonorCNSMTrack: function (donorId) {
             var storeConf = {
@@ -883,7 +884,7 @@ function (
 
         /**
          * Makes a string pretty (N/A if does not exist)
-         * @param {*}  value String to pretty
+         * @param {string}  value String to pretty
          */
         prettyString: function(value) {
             return value ? value : "N/A";
@@ -891,8 +892,8 @@ function (
 
         /**
          * Adds the facet and term to the filters object and returns
-         * @param {*} value object holding facet and term to add
-         * @param {*} filters filters object to add to
+         * @param {string} value object holding facet and term to add
+         * @param {object} filters filters object to add to
          */
         addToFilters: function(value, filters) {
             facet = value.facet;
@@ -908,8 +909,8 @@ function (
 
         /**
          *  Removes the term from the facet in the filters object and returns
-         * @param {*} value object holding facet and term to remove
-         * @param {*} filters filters object to remove from
+         * @param {string} value object holding facet and term to remove
+         * @param {object} filters filters object to remove from
          */
         removeFromFilters: function(value, filters) {
             facet = value.facet;
@@ -942,9 +943,9 @@ function (
 
         /**
          * Check if the term is found in the given facet
-         * @param {*} facet name of the facet
-         * @param {*} term name of option within facet
-         * @param {*} filters list of filters to check
+         * @param {string} facet name of the facet
+         * @param {string} term name of option within facet
+         * @param {object} filters list of filters to check
          */
         isChecked: function(facet, term, filters) {
             return filters[facet] && filters[facet].indexOf(term) > -1;
@@ -952,7 +953,7 @@ function (
 
         /**
          * Updates the accordion of the given type based on current facets
-         * @param {*} type The type of the accordion to update
+         * @param {string} type The type of the accordion to update
          */
         updateAccordion: function(type) {
             var thisB = this;
@@ -966,8 +967,8 @@ function (
 
         /**
          * Converts the filters object to an ICGC compatable string
-         * @param {*} type Type of filter group
-         * @param {*} filters List of filters
+         * @param {string} type Type of filter group
+         * @param {object} filters List of filters
          */
         convertFiltersObjectToString: function(type, filters) {
             if (Object.keys(filters).length === 0) {
@@ -985,7 +986,7 @@ function (
 
         /**
          * Converts a camelCase word to Title Case
-         * @param {*} word A word in camelCase 
+         * @param {string} word A word in camelCase 
          */
         camelCaseToTitleCase: function(word) {
             var titleCase = '';
