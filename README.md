@@ -2,7 +2,7 @@
 A plugin for JBrowse for viewing ICGC data
 
 # Setup
-See plugins/data/trackList.json and plugins/data/tracks.conf for the track files used to setup this plugin.
+See data/trackList.json and data/tracks.conf for the track files used to setup this plugin.
 
 Remember to add the plugin to your configuration file.
 
@@ -49,6 +49,9 @@ type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Genes
 ```
 
+### Extra notes
+You can also set the 'maxGeneCount' attribute (defaults to 1000). This is the theoretical maximum number of genes displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
+
 ## icgcSimpleSomaticMutations
 A simple view of all the simple somatic mutations across all donors in the ICGC portal. 
 
@@ -83,6 +86,9 @@ storeClass=icgc-viewer/Store/SeqFeature/icgcSimpleSomaticMutations
 type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Mutations
 ```
+
+### Extra notes
+You can also set the 'maxMutationCount' attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
 
 ## icgcCNSM
 A simple view of all of the CNSM for a given donor. A donor ID (donor field) must be specified in the track config file.

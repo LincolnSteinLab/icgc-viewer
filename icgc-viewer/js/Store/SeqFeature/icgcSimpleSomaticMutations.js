@@ -15,40 +15,36 @@ function(
     return declare(SeqFeatureStore, {
 
         constructor: function (args) {
+            // ID of the donor
             this.donor = args.donor;
-            this.baseUrl = args.baseUrl;
+
+            // Filters to apply to mutation query
             this.filters = args.filters !== undefined ? JSON.parse(args.filters) : {};
-            console.log(this.filters);
+
+            // Maximum mutation count to retrieve from ICGC
+            this.maxMutationCount = args.maxMutationCount !== undefined ? parseInt(args.maxMutationCount) : 500;
         },
 
         /**
          * Creates a link to a given ID
-         * @param {*} link
-         * @param {*} id
+         * @param {string} link Base URL for link
+         * @param {string} id ID to apped to base URL
          */
         createLinkWithId: function(link, id) {
-            if (id !== null) {
-                return "<a href='" + link + id + "' target='_blank'>" + id + "</a>";
-            } else {
-                return "n/a";
-            }
+            return id !== null ? "<a href='" + link + id + "' target='_blank'>" + id + "</a>" : "n/a";
         },
 
         /**
          * Return string showing fraction of total donors affected by the mutation
-         * @param {*} variant 
+         * @param {Variant} variant Variant object
          */
         getDonorFraction: function(variant) {
-            if (variant.affectedDonorCountTotal && variant.testedDonorCount) {
-                return variant.affectedDonorCountTotal + "/" + variant.testedDonorCount;
-            } else {
-                return "n/a";
-            }
+            return variant.affectedDonorCountTotal && variant.testedDonorCount ? variant.affectedDonorCountTotal + "/" + variant.testedDonorCount : "n/a";
         },
 
         /**
          * Return a list of transcripts
-         * @param {*} transcripts 
+         * @param {List<Transcript>} transcripts  List of transcripts
          */
         getTranscripts: function(transcripts) {
             if (transcripts.length > 0) {
@@ -70,17 +66,17 @@ function(
 
         /**
          * If a value is undefined, returns empty string, else return value
-         * @param {*} value 
+         * @param {string} value Value to make pretty
          */
         prettyValue: function(value) {
-            return !value ? '' : value;
+            return value ? value : "";
         },
 
         /**
          * Creates a table of projects and their associated tumour type and incidence rate for the given mutation
-         * @param {*} projects Object of the form projectId -> projectObject
-         * @param {*} projectCounts Occurrence count for each project given the mutationId
-         * @param {*} mutationId ICGC ID for the mutation
+         * @param {object} projects Object of the form projectId -> projectObject
+         * @param {object} projectCounts Occurrence count for each project given the mutationId
+         * @param {string} mutationId ICGC ID for the mutation
          */
         createProjectIncidenceTable: function(projects, projectCounts, mutationId) {
             var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
@@ -122,7 +118,7 @@ function(
 
         /**
          * Creates a table of consequences for a mutation
-         * @param {*} consequences 
+         * @param {List<Consequence>} consequences 
          */
         createConsequencesTable: function(consequences) {
             var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
@@ -167,8 +163,8 @@ function(
 
         /**
          * Returns the end value to be used for querying ICGC
-         * @param {*} chr 
-         * @param {*} end 
+         * @param {string} chr Chromosome number (ex. 1)
+         * @param {integer} end End location of JBrowse view
          */
         getChromosomeEnd: function(chr, end) {
             var chromosomeSizes = {
@@ -207,9 +203,9 @@ function(
 
         /**
          * Creates the filter string based on the input to the track
-         * @param {*} ref 
-         * @param {*} start 
-         * @param {*} end
+         * @param {string} ref Chromosome number (ex. 1)
+         * @param {integer} start Start location of JBrowse view
+         * @param {integer} end End location of JBrowse view
          */
         getFilterQuery: function(ref, start, end) {
             var thisB = this;
@@ -225,13 +221,18 @@ function(
 
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
             var thisB = this;
+
+            // Validate user provided attributes
+            if (Number.isNaN(this.maxMutationCount) || !Number.isInteger(this.maxMutationCount) || (Number.isInteger(this.maxMutationCount) && this.maxMutationCount < 0)) {
+                errorCallback('Invalid maxMutationCount provided. Must be a positive integer. User provided \"' + this.maxMutationCount + '\"');
+            }
+
+            // Collection of remote link base structures
             const CIVIC_LINK = "https://civic.genome.wustl.edu/links/variants/";
             const CLINVAR_LINK = "https://www.ncbi.nlm.nih.gov/clinvar/variation/";
             const ICGC_LINK = "https://dcc.icgc.org/mutations/";
 
-            /**
-             * Fetch the mutations from the ICGC within a given range
-             */
+            // Setup query parameters
             var start = query.start;
             var end = query.end;
             var ref = query.ref.replace(/chr/, '');
@@ -244,14 +245,14 @@ function(
             }
 
             // Retrieve all mutations in the given chromosome range
-            var url = encodeURI(searchBaseUrl +  '/mutations?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&include=consequences&size=500');
+            var url = encodeURI(searchBaseUrl +  '/mutations?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&include=consequences&size=' + this.maxMutationCount);
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },
                 handleAs: 'json'
             }).then(function(mutationsResponse) {
                 featurePromiseArray = []
-                // Create a feature for each mutation found
+
                 array.forEach(mutationsResponse.hits, function(variant) {
                     featurePromiseArray.push(new Promise(function(resolve, reject) {
                         // Find projects related to the current mutation

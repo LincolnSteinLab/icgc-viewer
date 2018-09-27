@@ -70,3 +70,8 @@ table.results-table tr:nth-child(odd) {
 .nowrapTabStrip {
     width: 100% !important;
 }
+
+.accordionContainer {
+    height: 500px;
+    overflow: scroll;
+}

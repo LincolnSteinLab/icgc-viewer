@@ -15,33 +15,35 @@ function(
     return declare(SeqFeatureStore, {
 
         constructor: function(args) {
+            // ID of the donor
             this.donor = args.donor;
+
+            // Filters to apply to gene query
             this.filters = args.filters !== undefined ? JSON.parse(args.filters) : {};
+
+            // Maximum gene count to retrieve from ICGC
+            this.maxGeneCount = args.maxGeneCount !== undefined ? parseInt(args.maxGeneCount) : 1000;
         },
 
         /**
          * Creates a link to a given ID
-         * @param {*} link
-         * @param {*} id
+         * @param {string} link Base URL for link
+         * @param {string} id ID to apped to base URL
          */
         createLinkWithId: function(link, id) {
-            if (id) {
-                return "<a href='" + link + id + "' target='_blank'>" + id + "</a>";
-            } else {
-                return "n/a";
-            }
+            return id ? "<a href='" + link + id + "' target='_blank'>" + id + "</a>" : "n/a";
         },
 
         /**
-         * Given an array of ids and a link, creates a comma-separated list of links to the ids
-         * @param {*} link 
-         * @param {*} ids 
+         * Given an array of IDs and a link, creates a comma-separated list of links to the ids
+         * @param {string} link Base URL for link
+         * @param {array} ids IDs to apped to base URL
          */
         createLinksWithId: function(link, ids) {
             var linkList = "";
             if (ids) {
-                ids.forEach((element) => {
-                    linkList += this.createLinkWithId(link, element);
+                ids.forEach((id) => {
+                    linkList += this.createLinkWithId(link, id);
                 });
                 return linkList;
             } else {
@@ -50,9 +52,10 @@ function(
         },
 
         /**
-         * Returns the end value to be used for querying ICGC
-         * @param {*} chr 
-         * @param {*} end 
+         * Returns the end value to be used for querying ICGC (GrCh37)
+         * TODO: This is not ideal, and alternative options should be investigated
+         * @param {string} chr Chromosome number (ex. 1)
+         * @param {integer} end End location of JBrowse view
          */
         getChromosomeEnd: function getChromosomeEnd(chr, end) {
             var chromosomeSizes = {
@@ -91,9 +94,9 @@ function(
 
         /**
          * Creates the filter string based on the input to the track
-         * @param {*} ref 
-         * @param {*} start 
-         * @param {*} end
+         * @param {string} ref Chromosome number (ex. 1)
+         * @param {integer} start Start location of JBrowse view
+         * @param {integer} end End location of JBrowse view
          */
         getFilterQuery: function(ref, start, end) {
             var thisB = this;
@@ -109,6 +112,13 @@ function(
 
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
             var thisB = this;
+
+            // Validate user provided attributes
+            if (Number.isNaN(this.maxGeneCount) || !Number.isInteger(this.maxGeneCount) || (Number.isInteger(this.maxGeneCount) && this.maxGeneCount < 0)) {
+                errorCallback('Invalid maxGeneCount provided. Must be a positive integer. User provided \"' + this.maxGeneCount + '\"');
+            }
+
+            // Collection of remote link base structures
             const ENSEMBL_LINK = "http://feb2014.archive.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=";
             const ICGC_LINK = "https://dcc.icgc.org/genes/";
             const ENTREZ_LINK = "http://www.ncbi.nlm.nih.gov/gene/";
@@ -117,9 +127,7 @@ function(
             const UNIPROTKB_SWISSPROT_LINK = "http://www.uniprot.org/uniprot/";
             const COSMIC_LINK = "http://cancer.sanger.ac.uk/cosmic/gene/analysis?ln=";
 
-            /**
-             * Fetch the genes from the ICGC within a given range
-             */
+            // Setup query parameters
             var start = query.start;
             var end = query.end;
             var ref = query.ref.replace(/chr/, '');
@@ -131,8 +139,8 @@ function(
                 searchBaseUrl = searchBaseUrl + '/donors/' + thisB.donor;
             }
 
-            // Retrieve all mutations in the given chromosome range
-            var url = encodeURI(searchBaseUrl +  '/genes?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&size=1000&include=externalDbIds');
+            // Retrieve all mutations in the given chromosome range (limit to 1000)
+            var url = encodeURI(searchBaseUrl +  '/genes?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&size=' + this.maxGeneCount + '&include=externalDbIds');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },
