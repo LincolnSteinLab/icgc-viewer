@@ -20,6 +20,9 @@ function(
 
             // Filters to apply to mutation query
             this.filters = args.filters !== undefined ? JSON.parse(args.filters) : {};
+
+            // Maximum mutation count to retrieve from ICGC
+            this.maxMutationCount = args.maxMutationCount !== undefined ? parseInt(args.maxMutationCount) : 500;
         },
 
         /**
@@ -219,6 +222,11 @@ function(
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
             var thisB = this;
 
+            // Validate user provided attributes
+            if (Number.isNaN(this.maxMutationCount) || !Number.isInteger(this.maxMutationCount) || (Number.isInteger(this.maxMutationCount) && this.maxMutationCount < 0)) {
+                errorCallback('Invalid maxMutationCount provided. Must be a positive integer. User provided \"' + this.maxMutationCount + '\"');
+            }
+
             // Collection of remote link base structures
             const CIVIC_LINK = "https://civic.genome.wustl.edu/links/variants/";
             const CLINVAR_LINK = "https://www.ncbi.nlm.nih.gov/clinvar/variation/";
@@ -237,7 +245,7 @@ function(
             }
 
             // Retrieve all mutations in the given chromosome range
-            var url = encodeURI(searchBaseUrl +  '/mutations?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&include=consequences&size=500');
+            var url = encodeURI(searchBaseUrl +  '/mutations?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&include=consequences&size=' + this.maxMutationCount);
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },

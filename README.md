@@ -87,6 +87,9 @@ type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Mutations
 ```
 
+### Extra notes
+You can also set the 'maxMutationCount' attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
+
 ## icgcCNSM
 A simple view of all of the CNSM for a given donor. A donor ID (donor field) must be specified in the track config file.
 
