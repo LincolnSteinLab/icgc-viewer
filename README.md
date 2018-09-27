@@ -49,6 +49,9 @@ type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Genes
 ```
 
+### Extra notes
+You can also set the 'maxGeneCount' attribute (defaults to 1000). This is the theoretical maximum number of genes displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
+
 ## icgcSimpleSomaticMutations
 A simple view of all the simple somatic mutations across all donors in the ICGC portal. 
 
