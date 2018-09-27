@@ -23,37 +23,43 @@ function (
     ActionBarDialog
 ) {
     return declare(ActionBarDialog, {
+        // Backbone of the Dialog structure
         facetAndResultsHolder: undefined,
         facetTabHolder: undefined,
         searchResultsTabHolder: undefined,
         searchResultsVerticalHolder: undefined,
         prettyFacetHolder: undefined,
 
+        // Tab holder and tabs for facets
         facetTabs: undefined,
         donorFacetTab: undefined,
         geneFacetTab: undefined,
         mutationFacetTab: undefined,
 
+        // Tab holder and tabs for results
         resultsTabs: undefined,
         donorResultsTab: undefined,
         geneResultsTab: undefined,
         mutationResultsTab: undefined,
 
+        // Accordion for facets
         donorAccordion: undefined,
         geneAccordion: undefined,
         mutationAccordion: undefined,
+        accordionId: 0,
 
-        accordionCount: 0,
-
+        // Selected filter objects
         donorFilters: {},
         mutationFilters: {},
         geneFilters: {},
 
+        // Pagination variables
         donorPage: 1,
         mutationPage: 1,
         genePage: 1,
         pageSize: 20,
 
+        // Available types
         types: ['donor', 'mutation', 'gene'],
 
         constructor: function() {
@@ -69,7 +75,7 @@ function (
             var thisB = this;
             var container = dom.create('div', { className: 'dialog-container', style: { width: '1000px', height: '700px' } });
 
-            thisB.accordionCount = thisB.guid();
+            thisB.accordionId = thisB.guid();
 
             // Create header section
             dom.create('img', {
@@ -96,17 +102,18 @@ function (
          */
         createAccordions: function(type) {
             var thisB = this;
+            var newAccordionId = 'accordion_' + type + '_' + thisB.accordionId;
 
             if (type === 'donor') {
-                thisB.donorAccordion = new AccordionContainer({ id: 'accordion_donor' + '_' + thisB.accordionCount, style:"height: 500px;overflow: scroll;" }, thisB.donorFacetTab.containerNode);
+                thisB.donorAccordion = new AccordionContainer({ id: newAccordionId, className: "accordionContainer" }, thisB.donorFacetTab.containerNode);
                 var loadingIcon = thisB.createLoadingIcon(thisB.donorFacetTab.containerNode);
                 thisB.createFacet('donor', thisB.donorAccordion, loadingIcon);
             } else if (type === 'mutation') {
-                thisB.mutationAccordion = new AccordionContainer({ id: 'accordion_mutation' + '_' + thisB.accordionCount, style:"height: 500px;overflow: scroll;" }, thisB.mutationFacetTab.containerNode);
+                thisB.mutationAccordion = new AccordionContainer({ id: newAccordionId, className: "accordionContainer" }, thisB.mutationFacetTab.containerNode);
                 var loadingIcon = thisB.createLoadingIcon(thisB.mutationFacetTab.containerNode);
                 thisB.createFacet('mutation', thisB.mutationAccordion, loadingIcon);
             } else if (type === 'gene') {
-                thisB.geneAccordion = new AccordionContainer({ id: 'accordion_gene' + '_' + thisB.accordionCount, style:"height: 500px;overflow: scroll;" }, thisB.geneFacetTab.containerNode);
+                thisB.geneAccordion = new AccordionContainer({ id: newAccordionId, className: "accordionContainer" }, thisB.geneFacetTab.containerNode);
                 var loadingIcon = thisB.createLoadingIcon(thisB.geneFacetTab.containerNode);
                 thisB.createFacet('gene', thisB.geneAccordion, loadingIcon);
             }
@@ -182,7 +189,7 @@ function (
                                 var contentPane = new ContentPane({
                                     title: thisB.camelCaseToTitleCase(facet),
                                     style: "height: auto",
-                                    id: facet + '-' + type + '-' + thisB.accordionCount
+                                    id: facet + '-' + type + '-' + thisB.accordionId
                                 });
 
                                 var facetHolder = dom.create('span', { className: "flex-column" });
@@ -192,7 +199,7 @@ function (
 
                                         var checkBox = new CheckBox({
                                             name: facet + '-' + term.term,
-                                            id: facet + '-' + term.term + '-' + type + '-' + thisB.accordionCount,
+                                            id: facet + '-' + term.term + '-' + type + '-' + thisB.accordionId,
                                             value: { "facet": facet, "term" : term.term },
                                             checked: thisB.isChecked(facet, term.term, thisB.getFiltersForType(type)),
                                             onChange: function(isChecked) {
@@ -219,7 +226,7 @@ function (
                                                 thisB.updateSearchResults('gene');
                                             }
                                         }, 'checkbox').placeAt(facetCheckbox);
-                                        var label = dom.create("label", { "for" : facet + '-' + term.term + '-' + type + '-' + thisB.accordionCount, innerHTML: term.term + ' (' + term.count + ')' }, facetCheckbox);
+                                        var label = dom.create("label", { "for" : facet + '-' + term.term + '-' + type + '-' + thisB.accordionId, innerHTML: term.term + ' (' + term.count + ')' }, facetCheckbox);
                                     });
                                 }
 
@@ -345,7 +352,6 @@ function (
          * @param {*} location Place to put the loading icon
          */
         createLoadingIcon: function(location) {
-            var thisB = this;
             var loadingIcon = dom.create('div', { className: 'loading-icgc' }, location);
             var spinner = dom.create('div', {}, loadingIcon);
             return loadingIcon;
@@ -380,6 +386,7 @@ function (
 
         /**
          * Calculate the 'from' parameter for the URL call
+         * @param {*} page current page
          */
         getStartIndex: function(page) {
             var thisB = this;
@@ -493,7 +500,6 @@ function (
                     prettyFacetString += facetString;
                 }
                 currentFilter++;
-
             }
 
             var node = dom.toDom(prettyFacetString);
@@ -542,13 +548,13 @@ function (
 
                 var geneButton = `<td></td>`;
                 var geneButtonNode = dom.toDom(geneButton);
-                thisB.createDonorGeneButton(hit.id, geneButtonNode, combinedFacetObject, hit.ssmAffectedGenes);
+                thisB.createDonorGeneButton(hit.id, geneButtonNode, combinedFacetObject);
 
                 dom.place(geneButtonNode, donorRowContentNode);
 
                 var ssmButton = `<td></td>`;
                 var ssmButtonNode = dom.toDom(ssmButton);
-                thisB.createDonorButtons(hit.id, hit.availableDataTypes, ssmButtonNode, combinedFacetObject, hit.ssmCount);
+                thisB.createDonorButtons(hit.id, hit.availableDataTypes, ssmButtonNode, combinedFacetObject);
 
                 dom.place(ssmButtonNode, donorRowContentNode);
 
@@ -674,6 +680,7 @@ function (
 
         /**
          * Loads the facet results at the previous page
+         * @param {*} type Page type
          */
         previousPage: function(type) {
             var thisB = this;
@@ -689,6 +696,7 @@ function (
 
         /**
          * Loads the facet results at the next page
+         * @param {*} type Page type
          */
         nextPage: function(type) {
             var thisB = this;
@@ -709,7 +717,7 @@ function (
          * @param {*} holder HTML element to place the buttons in
          * @param {*} combinedFacetObject combined object of facets
          */
-        createDonorButtons: function(donorId, availableDataTypes, holder, combinedFacetObject, ssmCount) {
+        createDonorButtons: function(donorId, availableDataTypes, holder, combinedFacetObject) {
             var thisB = this;
             if (availableDataTypes.includes("ssm")) {
                 var ssmButton = new Button({
@@ -734,8 +742,11 @@ function (
         /**
          * Create a button to add a donor gene button that will create a gene track based on the given
          * donor ID and facet object
+         * @param {*} donorId Id of donor
+         * @param {*} holder Div to place the button in
+         * @param {*} combinedFacetObject combined object of facets
          */
-        createDonorGeneButton: function(donorId, holder, combinedFacetObject, ssmAffectedGenes) {
+        createDonorGeneButton: function(donorId, holder, combinedFacetObject) {
             var thisB = this;
             var geneButton = new Button({
                 iconClass: "dijitIconSave",
@@ -775,7 +786,6 @@ function (
          * @param {*} combinedFacetObject combined object of facets
          */
         addGeneTrack: function (combinedFacetObject) {
-            var thisB = this;
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
@@ -801,7 +811,6 @@ function (
          * @param {*} combinedFacetObject combined object of facets
          */
         addDonorGeneTrack: function (donorId, combinedFacetObject) {
-            var thisB = this;
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
@@ -826,7 +835,6 @@ function (
          * @param {*} combinedFacetObject combined object of facets
          */
         addSSMTrack: function (combinedFacetObject) {
-            var thisB = this;
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
@@ -851,7 +859,6 @@ function (
          * @param {*} donorId Id of the donor of interest
          */
         addDonorCNSMTrack: function (donorId) {
-            var thisB = this;
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
@@ -950,7 +957,7 @@ function (
         updateAccordion: function(type) {
             var thisB = this;
             thisB.destroyAccordions(type);
-            thisB.accordionCount = thisB.guid();
+            thisB.accordionId = thisB.guid();
             thisB.createAccordions(type);
             thisB.donorPage = 1;
             thisB.genePage = 1;
@@ -959,8 +966,8 @@ function (
 
         /**
          * Converts the filters object to an ICGC compatable string
-         * @param {*} type Either mutation or donor
-         * @param {*} filters list of filters
+         * @param {*} type Type of filter group
+         * @param {*} filters List of filters
          */
         convertFiltersObjectToString: function(type, filters) {
             if (Object.keys(filters).length === 0) {
@@ -978,7 +985,7 @@ function (
 
         /**
          * Converts a camelCase word to Title Case
-         * @param {*} word in camelCase 
+         * @param {*} word A word in camelCase 
          */
         camelCaseToTitleCase: function(word) {
             var titleCase = '';

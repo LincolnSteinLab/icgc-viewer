@@ -13,33 +13,39 @@ function(
 ) {
     return declare(SeqFeatureStore, {
 
-        zipPromise: undefined,
-        buffer: [],
+        zipFileDownloadPromise: undefined,
+        zipBuffer: [],
 
         constructor: function(args) {
             var thisB = this;
             this.donor = args.donor;
-            console.log(this.donor);
+            thisB.loadDonorCNSMFile();
+        },
+
+        /**
+         * Loads the CNSM file for the donor from ICGC
+         */
+        loadDonorCNSMFile: function() {
+            var thisB = this;
             var url = 'https://dcc.icgc.org/api/v1/download/submit?filters={"donor":{"id":{"is":["' + this.donor + '"]}}}&info=[{"key":"cnsm","value":"JSON"}]';
-            thisB.zipPromise = fetch(url, {
+            thisB.zipFileDownloadPromise = fetch(url, {
                 method: 'GET'
             }).then(function(res) {
                 return res.json()
             }).then(function(res) {
-                var downloadId = res.downloadId;
-                var downloadLink = 'https://dcc.icgc.org/api/v1/download/' + downloadId;
+                var downloadLink = 'https://dcc.icgc.org/api/v1/download/' + res.downloadId;
                 return new Promise((resolve, reject) => {
                     http.get(downloadLink, function(res) {
                         var gunzip = zlib.createGunzip();            
                         res.pipe(gunzip);
 
                         gunzip.on('data', function(data) {
-                            thisB.buffer.push(data.toString())
+                            thisB.zipBuffer.push(data.toString())
                         }).on("end", function() {
-                            thisB.buffer = thisB.buffer.join("");               
+                            thisB.zipBuffer = thisB.zipBuffer.join("");               
                         }).on("error", function(e) {
                             console.log(e);
-                            thisB.buffer = thisB.buffer.join("");
+                            thisB.zipBuffer = thisB.zipBuffer.join("");
                             resolve("failure");
                         })
                     }).on('error', function(e) {
@@ -51,45 +57,44 @@ function(
                 console.log(err);
                 errorCallback('Error contacting ICGC Portal');
             });
-
         },
 
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
             var thisB = this;
-
-            /**
-             * Fetch the genes from the ICGC within a given range
-             */
-            var start = query.start;
-            var end = query.end;
+            // Valid refs for chromosome i is chri and i
             var ref = query.ref.replace(/chr/, '');
 
-            thisB.zipPromise.then(function(zip) {
-                if (thisB.buffer) {
+            thisB.zipFileDownloadPromise.then(function() {
+                if (thisB.zipBuffer) {
                     var isHeaderLine = true;
+                    // Index position within header
                     var chrPosition = -1;
                     var chrStartPosition = -1;
                     var chrEndPosition = -1;
                     var segMeanPosition = -1;
                     var donorIdPosition = -1;
 
-                    var splitFile = thisB.buffer.split(/\n/);
-                    splitFile.forEach((element, index, array) => {
-                        var splitLine = element.split(/\t/);
+                    var splitFileByLine = thisB.zipBuffer.split(/\n/);
+                    splitFileByLine.forEach((element) => {
+                        var splitLineByTab = element.split(/\t/);
+                        //Determine index 
                         if (isHeaderLine) {
-                            chrPosition = splitLine.indexOf("chromosome");
-                            chrStartPosition = splitLine.indexOf("chromosome_start");
-                            chrEndPosition = splitLine.indexOf("chromosome_end");
-                            segMeanPosition = splitLine.indexOf("segment_mean");
-                            donorIdPosition = splitLine.indexOf("icgc_donor_id");
+                            chrPosition = splitLineByTab.indexOf("chromosome");
+                            chrStartPosition = splitLineByTab.indexOf("chromosome_start");
+                            chrEndPosition = splitLineByTab.indexOf("chromosome_end");
+                            segMeanPosition = splitLineByTab.indexOf("segment_mean");
+                            donorIdPosition = splitLineByTab.indexOf("icgc_donor_id");
+                            if (chrPosition == -1 || chrStartPosition == -1 || chrEndPosition == -1 || segMeanPosition == -1 || donorIdPosition == -1) {
+                                errorCallback("File is missing a required header field.");
+                            }
                         } else {
-                            if (splitLine[chrPosition] === ref && thisB.donor === splitLine[donorIdPosition]) {
+                            if (splitLineByTab[chrPosition] === ref && thisB.donor === splitLineByTab[donorIdPosition]) {
                                 featureCallback(new SimpleFeature({
-                                    id: splitLine[chrPosition] + "_" + splitLine[chrStartPosition] + "_" + splitLine[chrEndPosition] + "_copyNumber",
+                                    id: splitLineByTab[chrPosition] + "_" + splitLineByTab[chrStartPosition] + "_" + splitLineByTab[chrEndPosition] + "_copyNumber",
                                     data: {
-                                        start: splitLine[chrStartPosition],
-                                        end: splitLine[chrEndPosition],
-                                        score: splitLine[segMeanPosition]
+                                        start: splitLineByTab[chrStartPosition],
+                                        end: splitLineByTab[chrEndPosition],
+                                        score: splitLineByTab[segMeanPosition]
                                     }
                                 }));
                             }
