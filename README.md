@@ -1,7 +1,7 @@
 # icgc-viewer
 A plugin for [JBrowse](https://jbrowse.org/) for viewing ICGC data. For any bugs, issues, or feature recommendations please create an issue through GitHub.
 
-# Setup
+# Installation and Setup
 ## 1. Install JBrowse
 Quick setup of JBrowse - https://github.com/GMOD/jbrowse/#install-jbrowse-from-github-for-developers
 
@@ -68,7 +68,7 @@ You can also use the filters field to pass filters to be applied to the track. T
 
 To put it in the track config file you may want to minimize it as such:
 ```
-filters: {"gene":{"type":{"is":["protein_coding"]}}}
+filters={"gene":{"type":{"is":["protein_coding"]}}}
 ```
 
 Example Track:
@@ -106,7 +106,7 @@ You can also use the filters field to pass filters to be applied to the track. T
 
 To put it in the track config file you may want to minimize it as such:
 ```
-filters: {"mutation":{"functionalImpact":{"is":["High"]}}}
+filters={"mutation":{"functionalImpact":{"is":["High"]}}}
 ```
 
 Example Track:
@@ -154,4 +154,7 @@ Mutations Tab:
 * Create a track of all matching SSMs
 
 # Miscellaneous
-This is a catch all section.
+## Advanced Usage of Tracks
+You do not need to add tracks directly from the ICGC Dialog. You can also define them in the `tracks.conf` file.
+
+See `data/advanced-tracks.conf` for some more complex usages, including filters.
