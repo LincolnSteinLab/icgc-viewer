@@ -1,4 +1,4 @@
-# icgc-viewer
+# ICGC JBrowse Plugin - Faceted Search and New Store Classes
 A plugin for [JBrowse](https://jbrowse.org/) for viewing ICGC data. For any bugs, issues, or feature recommendations please create an issue through GitHub.
 
 # Installation and Setup
