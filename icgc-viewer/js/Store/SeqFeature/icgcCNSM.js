@@ -18,12 +18,15 @@ function(
 
         constructor: function(args) {
             var thisB = this;
+
+            // ID of the donor
             this.donor = args.donor;
+
             thisB.loadDonorCNSMFile();
         },
 
         /**
-         * Loads the CNSM file for the donor from ICGC
+         * Loads the CNSM file for the donor from ICGC (Promise)
          */
         loadDonorCNSMFile: function() {
             var thisB = this;
@@ -39,6 +42,7 @@ function(
                         var gunzip = zlib.createGunzip();            
                         res.pipe(gunzip);
 
+                        // TODO: Even valid zip files throw error, so even on error this chain will never reject
                         gunzip.on('data', function(data) {
                             thisB.zipBuffer.push(data.toString())
                         }).on("end", function() {
@@ -74,10 +78,12 @@ function(
                     var segMeanPosition = -1;
                     var donorIdPosition = -1;
 
+                    // TODO: Find a node package for parsing TSV files
                     var splitFileByLine = thisB.zipBuffer.split(/\n/);
                     splitFileByLine.forEach((element) => {
                         var splitLineByTab = element.split(/\t/);
-                        //Determine index 
+
+                        // Determine indices 
                         if (isHeaderLine) {
                             chrPosition = splitLineByTab.indexOf("chromosome");
                             chrStartPosition = splitLineByTab.indexOf("chromosome_start");
