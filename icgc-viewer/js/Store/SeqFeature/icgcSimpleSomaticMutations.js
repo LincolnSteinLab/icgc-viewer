@@ -31,7 +31,7 @@ function(
          * @param {string} id ID to apped to base URL
          */
         createLinkWithId: function(link, id) {
-            return id ? "<a href='" + link + id + "' target='_blank'>" + id + "</a>" : "n/a";
+            return id !== null ? "<a href='" + link + id + "' target='_blank'>" + id + "</a>" : "n/a";
         },
 
         /**
@@ -47,7 +47,7 @@ function(
          * @param {List<Transcript>} transcripts  List of transcripts
          */
         getTranscripts: function(transcripts) {
-            if (transcipts && transcripts.length > 0) {
+            if (transcripts.length > 0) {
                 var listOfTranscripts = '<ul>';
                 for (transcript of transcripts) {
                     if (transcript.name && transcript.id) {

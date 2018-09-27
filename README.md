@@ -2,7 +2,7 @@
 A plugin for JBrowse for viewing ICGC data
 
 # Setup
-See plugins/data/trackList.json and plugins/data/tracks.conf for the track files used to setup this plugin.
+See data/trackList.json and data/tracks.conf for the track files used to setup this plugin.
 
 Remember to add the plugin to your configuration file.
 
