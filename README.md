@@ -1,17 +1,47 @@
-# icgc-viewer
-A plugin for JBrowse for viewing ICGC data
+# ICGC JBrowse Plugin - Faceted Search and New Store Classes
+A plugin for [JBrowse](https://jbrowse.org/) for viewing ICGC data. For any bugs, issues, or feature recommendations please create an issue through GitHub.
 
-# Setup
-See data/trackList.json and data/tracks.conf for the track files used to setup this plugin.
+# Installation and Setup
+## 1. Install JBrowse
+Quick setup of JBrowse - https://github.com/GMOD/jbrowse/#install-jbrowse-from-github-for-developers
 
-Remember to add the plugin to your configuration file.
+## 2. Install Plugin
+See [JBrowse - Installing Plugins](https://jbrowse.org/docs/plugins.html) for a general approach to installing plugins.
 
-ICGC requires the GRCH37 Human reference files, which can be found at http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/.
+For installing icgc-viewer plugin:
+1) Copy the icgc-viewer folder into the JBrowse `plugins` directory.
+2) Add 'icgc-viewer' to the array of plugins in the `jbrowse_conf.json`.
 
-You'll need to download the files and then add them to the refseq.
+## 3. Install Reference Sequence Data
+Now setup the reference sequence used. ICGC requires the GRCh37 Human reference files, which can be found at http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/. You'll want to download the files of the form `Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz`.
+
+Then you can use the `bin/prepare-refeqs.pl` command to generate the RefSeq information.
+
+Below is an example of these two steps for Chr1.
+
 Ex. Chromosome 1
 1. Download Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz from the above site.
-2. Setup refeq with bin/prepare-refseqs.pl --fasta Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
+```
+wget http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
+```
+2. Setup refeq with the following command
+```
+bin/prepare-refseqs.pl --fasta Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
+```
+Note that you can specify multiple fast in one command by doing `--fasta fasta1.fa.gz --fasta fasta2.fa.gz ...`
+
+## 4. Adding new tracks
+We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse.
+
+## 5. Run JBrowse
+You'll have to run the following commands:
+
+```
+./setup.sh
+utils/jb_run.js -p 3000
+```
+
+JBrowse should now be running with the ICGC Plugin working!
 
 # Available Store SeqFeature
 ## icgcGenes
@@ -38,7 +68,7 @@ You can also use the filters field to pass filters to be applied to the track. T
 
 To put it in the track config file you may want to minimize it as such:
 ```
-filters: {"gene":{"type":{"is":["protein_coding"]}}}
+filters={"gene":{"type":{"is":["protein_coding"]}}}
 ```
 
 Example Track:
@@ -76,7 +106,7 @@ You can also use the filters field to pass filters to be applied to the track. T
 
 To put it in the track config file you may want to minimize it as such:
 ```
-filters: {"mutation":{"functionalImpact":{"is":["High"]}}}
+filters={"mutation":{"functionalImpact":{"is":["High"]}}}
 ```
 
 Example Track:
@@ -122,3 +152,9 @@ Genes Tab:
 Mutations Tab:
 * View mutations that match the selected facets
 * Create a track of all matching SSMs
+
+# Miscellaneous
+## Advanced Usage of Tracks
+You do not need to add tracks directly from the ICGC Dialog. You can also define them in the `tracks.conf` file.
+
+See `data/advanced-tracks.conf` for some more complex usages, including filters.

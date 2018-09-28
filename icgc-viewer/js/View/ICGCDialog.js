@@ -222,9 +222,9 @@ function (
                                                     }
                                                 }
                                                 thisB.updateAccordion(type);
-                                                for (var type of thisB.types) {
-                                                    thisB.updateSearchResults(type);
-                                                }
+                                                thisB.updateSearchResults('donor');
+                                                thisB.updateSearchResults('mutation');
+                                                thisB.updateSearchResults('gene');
                                             }
                                         }, 'checkbox').placeAt(facetCheckbox);
                                         var label = dom.create("label", { "for" : facet + '-' + term.term + '-' + type + '-' + thisB.accordionId, innerHTML: term.term + ' (' + term.count + ')' }, facetCheckbox);
