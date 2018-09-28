@@ -12,8 +12,8 @@ For installing icgc-viewer plugin:
 1) Copy the icgc-viewer folder into the JBrowse `plugins` directory.
 2) Add 'icgc-viewer' to the array of plugins in the `jbrowse_conf.json`.
 
-## 3. Install RefSeq Data
-Now setup the Reference sequence used. ICGC requires the GRCh37 Human reference files, which can be found at http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/. You'll want to download the files of the form `Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz`.
+## 3. Install Reference Sequence Data
+Now setup the reference sequence used. ICGC requires the GRCh37 Human reference files, which can be found at http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/. You'll want to download the files of the form `Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz`.
 
 Then you can use the `bin/prepare-refeqs.pl` command to generate the RefSeq information.
 
