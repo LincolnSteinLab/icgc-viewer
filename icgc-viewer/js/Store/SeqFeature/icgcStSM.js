@@ -72,11 +72,25 @@ function(
                 if (thisB.zipBuffer) {
                     var isHeaderLine = true;
                     // Index position within header
-                    var chrPosition = -1;
-                    var chrStartPosition = -1;
-                    var chrEndPosition = -1;
-                    var segMeanPosition = -1;
+                    var chrToPosition = -1;
+                    var chrToStrandPosition = -1;
+                    var chrToBKPTPosition = -1;
+                    var chrToFlankPosition = -1;
+                    var chrToRangePosition = -1;
+
+                    var chrFromPosition = -1;
+                    var chrFromStrandPosition = -1;
+                    var chrFromBKPTPosition = -1;
+                    var chrFromFlankPosition = -1;
+                    var chrFromRangePosition = -1;
+
                     var donorIdPosition = -1;
+                    var variantTypePosition = -1;
+                    var projectCodePosition = -1;
+                    var evidencePosition = -1;
+                    var microhomologySequencePosition = -1;
+                    var annotationPosition = -1;
+                    var assemblyVersionPosition = -1;
 
                     // TODO: Find a node package for parsing TSV files
                     var splitFileByLine = thisB.zipBuffer.split(/\n/);
@@ -85,7 +99,6 @@ function(
 
                         // Determine indices 
                         if (isHeaderLine) {
-                            variantTypePosition = splitLineByTab.indexOf("variant_type");
                             chrToPosition = splitLineByTab.indexOf("chr_to");
                             chrToStrandPosition = splitLineByTab.indexOf("chr_to_strand");
                             chrToBKPTPosition = splitLineByTab.indexOf("chr_to_bkpt");
@@ -99,6 +112,7 @@ function(
                             chrFromRangePosition = splitLineByTab.indexOf("chr_from_range");
 
                             donorIdPosition = splitLineByTab.indexOf("icgc_donor_id");
+                            variantTypePosition = splitLineByTab.indexOf("variant_type");
                             projectCodePosition = splitLineByTab.indexOf("project_code");
                             evidencePosition = splitLineByTab.indexOf("evidence");
                             microhomologySequencePosition = splitLineByTab.indexOf("microhomology_sequence");
