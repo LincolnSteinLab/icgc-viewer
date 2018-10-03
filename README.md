@@ -134,7 +134,7 @@ min_score=-1
 bicolor_pivot=0
 ```
 
-## icgcCNSM
+## icgcStSM
 A simple view of all of the StSMs for a given donor. A donor ID (donor field) must be specified in the track config file.
 
 Example Track:
