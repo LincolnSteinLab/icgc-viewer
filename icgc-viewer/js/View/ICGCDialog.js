@@ -738,15 +738,6 @@ function (
                     }
                 }, "geneButton").placeAt(holder);
             }
-            if (availableDataTypes.includes("stsm")) {
-                var stsmButton = new Button({
-                    label: "StSMs",
-                    iconClass: "dijitIconSave",
-                    onClick: function() {
-                        thisB.addDonorStSM(donorId);
-                    }
-                }, "ssmButton").placeAt(holder);
-            }
         },
 
         /**
@@ -785,29 +776,6 @@ function (
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
                 label: "ICGC_SSM_Donor_" + donorId
-            };
-            trackConf.store = storeName;
-            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
-            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
-
-        /**
-         * Adds a donor StSM track based on the donor ID
-         * @param {string} donorId Id of donor
-         */
-        addDonorStSM: function(donorId) {
-            var storeConf = {
-                browser: this.browser,
-                refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcStSM',
-                donor: donorId
-            };
-            var storeName = this.browser.addStoreConfig(null, storeConf);
-
-            var trackConf = {
-                type: 'JBrowse/View/Track/CanvasVariants',
-                store: storeName,
-                label: "ICGC_STSM_Donor_" + donorId
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
