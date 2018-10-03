@@ -125,13 +125,24 @@ A simple view of all of the CNSM for a given donor. A donor ID (donor field) mus
 
 Example Track:
 ```
-[tracks.CNSM_D0229446]
+[tracks.CNSM_DO229446]
 storeClass=icgc-viewer/Store/SeqFeature/icgcCNSM
 type=JBrowse/View/Track/Wiggle/XYPlot
 donor=DO229446
 max_score=1
 min_score=-1
 bicolor_pivot=0
+```
+
+## icgcCNSM
+A simple view of all of the StSMs for a given donor. A donor ID (donor field) must be specified in the track config file.
+
+Example Track:
+```
+[tracks.StSM_DO222843]
+storeClass=icgc-viewer/Store/SeqFeature/icgcStSM
+type=JBrowse/View/Track/Wiggle/CanvasVariants
+donor=DO222843
 ```
 
 # Menu option for searching ICGC
