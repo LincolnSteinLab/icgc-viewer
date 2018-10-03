@@ -131,7 +131,7 @@ function(
                                 var start = parseInt(splitLineByTab[chrToBKPTPosition]) - parseInt(splitLineByTab[chrToRangePosition]);
                                 var end = parseInt(splitLineByTab[chrToBKPTPosition]) + parseInt(splitLineByTab[chrToRangePosition]);
                                 featureCallback(new SimpleFeature({
-                                    id: splitLineByTab[chrToPosition] + "_" + start + "_" + end + "_copyNumber",
+                                    id: splitLineByTab[chrToPosition] + "_" + start + "_" + end + "_StSMs",
                                     data: {
                                         start: start,
                                         end: end,
@@ -153,7 +153,7 @@ function(
                                 var start = parseInt(splitLineByTab[chrFromBKPTPosition]) - parseInt(splitLineByTab[chrFromRangePosition]);
                                 var end = parseInt(splitLineByTab[chrFromBKPTPosition]) + parseInt(splitLineByTab[chrFromRangePosition]);
                                 featureCallback(new SimpleFeature({
-                                    id: splitLineByTab[chrFromPosition] + "_" + start + "_" + end + "_copyNumber",
+                                    id: splitLineByTab[chrFromPosition] + "_" + start + "_" + end + "_StSMs",
                                     data: {
                                         start: start,
                                         end: end,
