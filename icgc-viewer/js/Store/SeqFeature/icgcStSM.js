@@ -99,18 +99,21 @@ function(
 
                         // Determine indices 
                         if (isHeaderLine) {
+                            // Chr To related positions
                             chrToPosition = splitLineByTab.indexOf("chr_to");
                             chrToStrandPosition = splitLineByTab.indexOf("chr_to_strand");
                             chrToBKPTPosition = splitLineByTab.indexOf("chr_to_bkpt");
                             chrToFlankPosition = splitLineByTab.indexOf("chr_to_flanking_seq");
                             chrToRangePosition = splitLineByTab.indexOf("chr_to_range");
 
+                            // Chr From related positions
                             chrFromPosition = splitLineByTab.indexOf("chr_from");
                             chrFromStrandPosition = splitLineByTab.indexOf("chr_from_strand");
                             chrFromBKPTPosition = splitLineByTab.indexOf("chr_from_bkpt");
                             chrFromFlankPosition = splitLineByTab.indexOf("chr_from_flanking_seq");
                             chrFromRangePosition = splitLineByTab.indexOf("chr_from_range");
 
+                            // Common positions
                             donorIdPosition = splitLineByTab.indexOf("icgc_donor_id");
                             variantTypePosition = splitLineByTab.indexOf("variant_type");
                             projectCodePosition = splitLineByTab.indexOf("project_code");
@@ -123,6 +126,7 @@ function(
                                 errorCallback("File is missing a required header field.");
                             }
                         } else {
+                            // Create a feature for the TO position
                             if (splitLineByTab[chrToPosition] === ref && thisB.donor === splitLineByTab[donorIdPosition]) {
                                 var start = parseInt(splitLineByTab[chrToBKPTPosition]) - parseInt(splitLineByTab[chrToRangePosition]);
                                 var end = parseInt(splitLineByTab[chrToBKPTPosition]) + parseInt(splitLineByTab[chrToRangePosition]);
@@ -143,6 +147,8 @@ function(
                                     }
                                 }));
                             }
+
+                            // Create a feature for the FROM position
                             if (splitLineByTab[chrFromPosition] === ref && thisB.donor === splitLineByTab[donorIdPosition]) {
                                 var start = parseInt(splitLineByTab[chrFromBKPTPosition]) - parseInt(splitLineByTab[chrFromRangePosition]);
                                 var end = parseInt(splitLineByTab[chrFromBKPTPosition]) + parseInt(splitLineByTab[chrFromRangePosition]);
