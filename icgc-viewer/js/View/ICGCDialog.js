@@ -762,6 +762,15 @@ function (
                     }
                 }, "expaButton").placeAt(holder);
             }
+
+            if (availableDataTypes.includes("pexx")) {
+                var stsmButton = new Button({
+                    label: "PExp",
+                    onClick: function() {
+                        thisB.addDonorPexp(donorId);
+                    }
+                }, "pexpButton").placeAt(holder);
+            }
         },
 
         /**
@@ -846,6 +855,31 @@ function (
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
                 label: "ICGC_EXPA_Donor_" + donorId
+            };
+            trackConf.store = storeName;
+            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
+            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
+        },
+
+        /**
+         * Adds a donor PExp track based on the donor ID
+         * @param {string} donorId Id of donor
+         */
+        addDonorPExp: function(donorId) {
+            var storeConf = {
+                browser: this.browser,
+                refSeq: this.browser.refSeq,
+                type: 'icgc-viewer/Store/SeqFeature/icgcPExp',
+                donor: donorId,
+                autoscale: local,
+                bicolor_pivot: 0
+            };
+            var storeName = this.browser.addStoreConfig(null, storeConf);
+
+            var trackConf = {
+                type: 'JBrowse/View/Track/CanvasVariants',
+                store: storeName,
+                label: "ICGC_PEXP_Donor_" + donorId
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
