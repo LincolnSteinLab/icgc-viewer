@@ -32,14 +32,12 @@ function(
         loadDonorExpSFile: function() {
             var thisB = this;
             var url = 'https://dcc.icgc.org/api/v1/download/submit?filters={"donor":{"id":{"is":["' + this.donor + '"]}}}&info=[{"key":"exp_seq","value":"JSON"}]';
-            console.log(url);
             thisB.zipFileDownloadPromise = fetch(url, {
                 method: 'GET'
             }).then(function(res) {
                 return res.json()
             }).then(function(res) {
                 var downloadLink = 'https://dcc.icgc.org/api/v1/download/' + res.downloadId;
-                console.log(downloadLink);
                 return new Promise((resolve, reject) => {
                     http.get(downloadLink, function(res) {
                         var gunzip = zlib.createGunzip();            
@@ -87,7 +85,6 @@ function(
 
                     splitFileByLine.forEach((element) => {
                         var splitLineByTab = element.split(/\t/);
-
                         // Determine indices 
                         if (isHeaderLine) {
                             donorIdPosition = splitLineByTab.indexOf("icgc_donor_id");
@@ -102,7 +99,6 @@ function(
                             if (thisB.donor === splitLineByTab[donorIdPosition]) {
                                 // Need to retrieve gene start and end positions
                                 var url = "https://dcc.icgc.org/api/v1/genes/" + splitLineByTab[geneIdPosition];
-                                // THIS IS HAPPENING FOR EVERY LINE OF THE FILE (50,000+)
                                 var genePositionPromise = fetch(url, {
                                     method: 'GET'
                                 }).then(function(res) {

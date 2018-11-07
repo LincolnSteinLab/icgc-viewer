@@ -723,7 +723,6 @@ function (
             if (availableDataTypes.includes("ssm")) {
                 var ssmButton = new Button({
                     label: "SSMs",
-                    iconClass: "dijitIconSave",
                     onClick: function() {
                         thisB.addDonorSSMTrack(donorId, combinedFacetObject);
                     }
@@ -732,20 +731,18 @@ function (
             if (availableDataTypes.includes("cnsm")) {
                 var geneButton = new Button({
                     label: 'CNSMs',
-                    iconClass: "dijitIconSave",
                     onClick: function() {
                         thisB.addDonorCNSMTrack(donorId);
                     }
-                }, "geneButton").placeAt(holder);
+                }, "cnsmButton").placeAt(holder);
             }
             if (availableDataTypes.includes("stsm")) {
                 var stsmButton = new Button({
                     label: "StSMs",
-                    iconClass: "dijitIconSave",
                     onClick: function() {
                         thisB.addDonorStSM(donorId);
                     }
-                }, "ssmButton").placeAt(holder);
+                }, "stsmButton").placeAt(holder);
             }
         },
 
@@ -759,7 +756,7 @@ function (
         createDonorGeneButton: function(donorId, holder, combinedFacetObject) {
             var thisB = this;
             var geneButton = new Button({
-                iconClass: "dijitIconSave",
+                label: "Genes",
                 onClick: function() {
                     thisB.addDonorGeneTrack(donorId, combinedFacetObject);
                 }
