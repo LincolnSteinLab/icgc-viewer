@@ -744,6 +744,24 @@ function (
                     }
                 }, "stsmButton").placeAt(holder);
             }
+
+            if (availableDataTypes.includes("exp_seq")) {
+                var stsmButton = new Button({
+                    label: "ExpS",
+                    onClick: function() {
+                        thisB.addDonorExpS(donorId);
+                    }
+                }, "expsButton").placeAt(holder);
+            }
+
+            if (availableDataTypes.includes("exp_array")) {
+                var stsmButton = new Button({
+                    label: "ExpA",
+                    onClick: function() {
+                        thisB.addDonorExpA(donorId);
+                    }
+                }, "expaButton").placeAt(holder);
+            }
         },
 
         /**
@@ -805,6 +823,52 @@ function (
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
                 label: "ICGC_STSM_Donor_" + donorId
+            };
+            trackConf.store = storeName;
+            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
+            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
+        },
+
+        /**
+         * Adds a donor ExpA track based on the donor ID
+         * @param {string} donorId Id of donor
+         */
+        addDonorExpA: function(donorId) {
+            var storeConf = {
+                browser: this.browser,
+                refSeq: this.browser.refSeq,
+                type: 'icgc-viewer/Store/SeqFeature/icgcExpA',
+                donor: donorId
+            };
+            var storeName = this.browser.addStoreConfig(null, storeConf);
+
+            var trackConf = {
+                type: 'JBrowse/View/Track/CanvasVariants',
+                store: storeName,
+                label: "ICGC_EXPA_Donor_" + donorId
+            };
+            trackConf.store = storeName;
+            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
+            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
+        },
+
+        /**
+         * Adds a donor ExpS track based on the donor ID
+         * @param {string} donorId Id of donor
+         */
+        addDonorExpS: function(donorId) {
+            var storeConf = {
+                browser: this.browser,
+                refSeq: this.browser.refSeq,
+                type: 'icgc-viewer/Store/SeqFeature/icgcExpS',
+                donor: donorId
+            };
+            var storeName = this.browser.addStoreConfig(null, storeConf);
+
+            var trackConf = {
+                type: 'JBrowse/View/Track/CanvasVariants',
+                store: storeName,
+                label: "ICGC_EXPS_Donor_" + donorId
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
