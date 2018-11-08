@@ -35,6 +35,16 @@ function(
         },
 
         /**
+         * Creates a link to a given ID and name
+         * @param {string} link Base URL for link
+         * @param {string} id ID to apped to base URL
+         */
+        createLinkWithIdAndName: function(link, id, name) {
+            return id !== null ? "<a href='" + link + id + "' target='_blank'>" + name + "</a>" : "n/a";
+        },
+
+
+        /**
          * Return string showing fraction of total donors affected by the mutation
          * @param {Variant} variant Variant object
          */
@@ -69,7 +79,11 @@ function(
          * @param {string} value Value to make pretty
          */
         prettyValue: function(value) {
-            return value ? value : "";
+            return value ? value : '';
+        },
+
+        convertIntToStrand: function(strand) {
+            return strand == 1 ? '+' : '-'
         },
 
         /**
@@ -99,7 +113,7 @@ function(
                     trStyle = 'style=\"background-color: #f2f2f2\"';
                 }
                 var projectRow = `<tr ${trStyle}>
-                    <td style="${thStyle}">${this.prettyValue(project)}</td>
+                    <td style="${thStyle}">${this.createLinkWithId('https://dcc.icgc.org/projects/', project)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].primarySite)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].tumourType)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].tumourSubtype)}</td>
@@ -127,7 +141,7 @@ function(
                     <th style="${thStyle}">Gene</th>
                     <th style="${thStyle}">AA Change</th>
                     <th style="${thStyle}">Consequence</th>
-                    <th style="${thStyle}">CDS Change</th> 
+                    <th style="${thStyle}">Coding DNA Change</th> 
                     <th style="${thStyle}">Functional Impact</th>
                     <th style="${thStyle}">Strand</th>
                     <th style="${thStyle}">Transcripts</th>
@@ -143,12 +157,12 @@ function(
                     trStyle = 'style=\"background-color: #f2f2f2\"';
                 }
                 var consequenceRow = `<tr ${trStyle}>
-                    <td style="${thStyle}">${this.prettyValue(consequence.geneAffectedSymbol)}</td>
+                    <td style="${thStyle}">${this.createLinkWithIdAndName('https://dcc.icgc.org/genes/', consequence.geneAffectedId ,consequence.geneAffectedSymbol)}</td>
                     <td style="${thStyle}">${this.prettyValue(consequence.aaMutation)}</td>
-                    <td style="${thStyle}">${this.prettyValue(consequence.type)}</td>
+                    <td style="${thStyle}">${this.prettyValue((consequence.type).replace(/_/g, ' '))}</td>
                     <td style="${thStyle}">${this.prettyValue(consequence.cdsMutation)}</td>
                     <td style="${thStyle}">${this.prettyValue(consequence.functionalImpact)}</td>
-                    <td style="${thStyle}">${this.prettyValue(consequence.geneStrand)}</td>
+                    <td style="${thStyle}">${this.prettyValue(this.convertIntToStrand(consequence.geneStrand))}</td>
                     <td style="${thStyle}">${this.getTranscripts(consequence.transcriptsAffected)}</td>
                     </tr>
                 `;
@@ -284,18 +298,18 @@ function(
                                             end: variant.end - 1,
                                             name: variant.id,
                                             mutation: variant.mutation,
-                                            reference_allele: variant.referenceGenomeAllele,
-                                            assembly_version: variant.assemblyVersion,
-                                            civic: thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
-                                            clinvar: thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
-                                            icgc: thisB.createLinkWithId(ICGC_LINK, variant.id),
-                                            affected_projects: variant.affectedProjectCount,
-                                            affected_donors: thisB.getDonorFraction(variant),
-                                            type: variant.type,
-                                            study: thisB.prettyValue(variant.study.join()),
-                                            description: variant.description,
-                                            consequences: thisB.createConsequencesTable(variant.consequences),
-                                            projects: thisB.createProjectIncidenceTable(projects, projectsResponse, variant.id)
+                                            'Allele in the reference assembly': variant.referenceGenomeAllele,
+                                            'Reference Genome Assembly': variant.assemblyVersion,
+                                            'CIViC': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
+                                            'ClinVar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
+                                            'ICGC': thisB.createLinkWithId(ICGC_LINK, variant.id),
+                                            'Affected projects': variant.affectedProjectCount,
+                                            'Affected donors': thisB.getDonorFraction(variant),
+                                            'Type': variant.type,
+                                            'Study': thisB.prettyValue(variant.study.join()),
+                                            'Description': variant.description,
+                                            'Consequences': thisB.createConsequencesTable(variant.consequences),
+                                            'Projects': thisB.createProjectIncidenceTable(projects, projectsResponse, variant.id)
                                         }
                                     }
                                     featureCallback(new SimpleFeature(variantFeature));
