@@ -771,6 +771,16 @@ function (
                     }
                 }, "pexpButton").placeAt(holder);
             }
+
+            if (availableDataTypes.includes("jcn")) {
+                var jcnButton = new Button({
+                    label: "JCN",
+                    iconClass: "dijitIconSave",
+                    onClick: function() {
+                        thisB.addDonorJCN(donorId);
+                    }
+                }, "jcnButton").placeAt(holder);
+            }
         },
 
         /**
@@ -847,7 +857,6 @@ function (
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcExpA',
-                donor: donorId
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
@@ -855,6 +864,28 @@ function (
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
                 label: "ICGC_EXPA_Donor_" + donorId
+            };
+            trackConf.store = storeName;
+            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
+            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
+        },
+        /**
+         * Adds a donor JCN track based on the donor ID
+         * @param {string} donorId Id of donor
+         */
+        addDonorJCN: function(donorId) {
+            var storeConf = {
+                browser: this.browser,
+                refSeq: this.browser.refSeq,
+                type: 'icgc-viewer/Store/SeqFeature/icgcJCN',
+                donor: donorId
+            };
+            var storeName = this.browser.addStoreConfig(null, storeConf);
+
+            var trackConf = {
+                type: 'JBrowse/View/Track/CanvasVariants',
+                store: storeName,
+                label: "ICGC_JCN_Donor_" + donorId
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
