@@ -15,6 +15,7 @@ function(
 
         zipFileDownloadPromise: undefined,
         zipBuffer: [],
+        addedFeaturesPromise: [],
 
         constructor: function(args) {
             var thisB = this;
@@ -22,15 +23,15 @@ function(
             // ID of the donor
             this.donor = args.donor;
 
-            thisB.loadDonorCNSMFile();
+            thisB.loadDonorPExpFile();
         },
 
         /**
-         * Loads the CNSM file for the donor from ICGC (Promise)
+         * Loads the PExp file for the donor from ICGC (Promise)
          */
-        loadDonorCNSMFile: function() {
+        loadDonorPExpFile: function() {
             var thisB = this;
-            var url = 'https://dcc.icgc.org/api/v1/download/submit?filters={"donor":{"id":{"is":["' + this.donor + '"]}}}&info=[{"key":"cnsm","value":"JSON"}]';
+            var url = 'https://dcc.icgc.org/api/v1/download/submit?filters={"donor":{"id":{"is":["' + this.donor + '"]}}}&info=[{"key":"pexp","value":"JSON"}]';
             thisB.zipFileDownloadPromise = fetch(url, {
                 method: 'GET'
             }).then(function(res) {
@@ -46,8 +47,8 @@ function(
                         gunzip.on('data', function(data) {
                             thisB.zipBuffer.push(data.toString())
                         }).on("end", function() {
-                            thisB.zipBuffer = thisB.zipBuffer.join("");  
-                            resolve("success");             
+                            thisB.zipBuffer = thisB.zipBuffer.join("");
+                            resolve("success");               
                         }).on("error", function(e) {
                             console.log(e);
                             thisB.zipBuffer = thisB.zipBuffer.join("");
@@ -73,45 +74,65 @@ function(
                 if (thisB.zipBuffer) {
                     var isHeaderLine = true;
                     // Index position within header
-                    var chrPosition = -1;
-                    var chrStartPosition = -1;
-                    var chrEndPosition = -1;
-                    var segMeanPosition = -1;
+                    var normalizedExpressionLevelPosition = -1;
                     var donorIdPosition = -1;
+
+                    var geneNamePosition = -1;
 
                     // TODO: Find a node package for parsing TSV files
                     var splitFileByLine = thisB.zipBuffer.split(/\n/);
+
                     splitFileByLine.forEach((element) => {
                         var splitLineByTab = element.split(/\t/);
-
                         // Determine indices 
                         if (isHeaderLine) {
-                            chrPosition = splitLineByTab.indexOf("chromosome");
-                            chrStartPosition = splitLineByTab.indexOf("chromosome_start");
-                            chrEndPosition = splitLineByTab.indexOf("chromosome_end");
-                            segMeanPosition = splitLineByTab.indexOf("segment_mean");
                             donorIdPosition = splitLineByTab.indexOf("icgc_donor_id");
-                            if (chrPosition == -1 || chrStartPosition == -1 || chrEndPosition == -1 || segMeanPosition == -1 || donorIdPosition == -1) {
+                            normalizedExpressionLevelPosition = splitLineByTab.indexOf("normalized_expression_level");
+                            geneNamePosition = splitLineByTab.indexOf("gene_name");
+
+                            if (normalizedExpressionLevelPosition == -1 || geneNamePosition == -1 || donorIdPosition == -1) {
                                 errorCallback("File is missing a required header field.");
                             }
                         } else {
-                            if (splitLineByTab[chrPosition] === ref && thisB.donor === splitLineByTab[donorIdPosition]) {
-                                featureCallback(new SimpleFeature({
-                                    id: splitLineByTab[chrPosition] + "_" + splitLineByTab[chrStartPosition] + "_" + splitLineByTab[chrEndPosition] + "_copyNumber",
-                                    data: {
-                                        start: splitLineByTab[chrStartPosition],
-                                        end: splitLineByTab[chrEndPosition],
-                                        score: splitLineByTab[segMeanPosition]
+                            if (thisB.donor === splitLineByTab[donorIdPosition]) {
+                                // Need to retrieve gene start and end positions
+                                var url = 'https://dcc.icgc.org/api/v1/genes?filters={"gene":{"symbol":{"is":["' + splitLineByTab[geneNamePosition] + '"]}}}';
+                                var genePositionPromise = fetch(url, {
+                                    method: 'GET'
+                                }).then(function(res) {
+                                    return res.json()
+                                }).then(function(res) {
+                                    var hit = res.hits[0];
+                                    if (hit != undefined) {
+                                        var start = hit.start;
+                                        var end = hit.end;
+                                        var chr = hit.chromosome;
+                                        if (ref === chr) {
+                                            var feature = {
+                                                id: chr + "_" + start + "_" + end + "_exps",
+                                                data: {
+                                                    start: start,
+                                                    end: end,
+                                                    score: splitLineByTab[normalizedExpressionLevelPosition]
+                                                }
+                                            }
+                                            featureCallback(new SimpleFeature(feature));
+                                        }
+                                    } else {
+                                        console.log(splitLineByTab[geneNamePosition] + ' cannot be found.')
                                     }
-                                }));
+                                });
+                                thisB.addedFeaturesPromise.push(genePositionPromise);
                             }
                         }
 
                         isHeaderLine = false;
                     });
+
+                    Promise.all(thisB.addedFeaturesPromise).then(function(res) {
+                        finishCallback();
+                    });
                 }
-    
-                finishCallback();
             }, function(err) {
                 console.log(err);
                 errorCallback(err);

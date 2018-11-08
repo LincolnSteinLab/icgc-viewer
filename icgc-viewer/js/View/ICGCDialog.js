@@ -723,7 +723,6 @@ function (
             if (availableDataTypes.includes("ssm")) {
                 var ssmButton = new Button({
                     label: "SSMs",
-                    iconClass: "dijitIconSave",
                     onClick: function() {
                         thisB.addDonorSSMTrack(donorId, combinedFacetObject);
                     }
@@ -732,21 +731,47 @@ function (
             if (availableDataTypes.includes("cnsm")) {
                 var geneButton = new Button({
                     label: 'CNSMs',
-                    iconClass: "dijitIconSave",
                     onClick: function() {
                         thisB.addDonorCNSMTrack(donorId);
                     }
-                }, "geneButton").placeAt(holder);
+                }, "cnsmButton").placeAt(holder);
             }
             if (availableDataTypes.includes("stsm")) {
                 var stsmButton = new Button({
                     label: "StSMs",
-                    iconClass: "dijitIconSave",
                     onClick: function() {
                         thisB.addDonorStSM(donorId);
                     }
                 }, "stsmButton").placeAt(holder);
             }
+
+            if (availableDataTypes.includes("exp_seq")) {
+                var stsmButton = new Button({
+                    label: "ExpS",
+                    onClick: function() {
+                        thisB.addDonorExpS(donorId);
+                    }
+                }, "expsButton").placeAt(holder);
+            }
+
+            if (availableDataTypes.includes("exp_array")) {
+                var stsmButton = new Button({
+                    label: "ExpA",
+                    onClick: function() {
+                        thisB.addDonorExpA(donorId);
+                    }
+                }, "expaButton").placeAt(holder);
+            }
+
+            if (availableDataTypes.includes("pexx")) {
+                var stsmButton = new Button({
+                    label: "PExp",
+                    onClick: function() {
+                        thisB.addDonorPexp(donorId);
+                    }
+                }, "pexpButton").placeAt(holder);
+            }
+
             if (availableDataTypes.includes("jcn")) {
                 var jcnButton = new Button({
                     label: "JCN",
@@ -768,7 +793,7 @@ function (
         createDonorGeneButton: function(donorId, holder, combinedFacetObject) {
             var thisB = this;
             var geneButton = new Button({
-                iconClass: "dijitIconSave",
+                label: "Genes",
                 onClick: function() {
                     thisB.addDonorGeneTrack(donorId, combinedFacetObject);
                 }
@@ -824,6 +849,27 @@ function (
         },
 
         /**
+         * Adds a donor ExpA track based on the donor ID
+         * @param {string} donorId Id of donor
+         */
+        addDonorExpA: function(donorId) {
+            var storeConf = {
+                browser: this.browser,
+                refSeq: this.browser.refSeq,
+                type: 'icgc-viewer/Store/SeqFeature/icgcExpA',
+            };
+            var storeName = this.browser.addStoreConfig(null, storeConf);
+
+            var trackConf = {
+                type: 'JBrowse/View/Track/CanvasVariants',
+                store: storeName,
+                label: "ICGC_EXPA_Donor_" + donorId
+            };
+            trackConf.store = storeName;
+            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
+            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
+        },
+        /**
          * Adds a donor JCN track based on the donor ID
          * @param {string} donorId Id of donor
          */
@@ -840,6 +886,54 @@ function (
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
                 label: "ICGC_JCN_Donor_" + donorId
+            };
+            trackConf.store = storeName;
+            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
+            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
+        },
+
+        /**
+         * Adds a donor PExp track based on the donor ID
+         * @param {string} donorId Id of donor
+         */
+        addDonorPExp: function(donorId) {
+            var storeConf = {
+                browser: this.browser,
+                refSeq: this.browser.refSeq,
+                type: 'icgc-viewer/Store/SeqFeature/icgcPExp',
+                donor: donorId,
+                autoscale: local,
+                bicolor_pivot: 0
+            };
+            var storeName = this.browser.addStoreConfig(null, storeConf);
+
+            var trackConf = {
+                type: 'JBrowse/View/Track/CanvasVariants',
+                store: storeName,
+                label: "ICGC_PEXP_Donor_" + donorId
+            };
+            trackConf.store = storeName;
+            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
+            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
+        },
+
+        /**
+         * Adds a donor ExpS track based on the donor ID
+         * @param {string} donorId Id of donor
+         */
+        addDonorExpS: function(donorId) {
+            var storeConf = {
+                browser: this.browser,
+                refSeq: this.browser.refSeq,
+                type: 'icgc-viewer/Store/SeqFeature/icgcExpS',
+                donor: donorId
+            };
+            var storeName = this.browser.addStoreConfig(null, storeConf);
+
+            var trackConf = {
+                type: 'JBrowse/View/Track/CanvasVariants',
+                store: storeName,
+                label: "ICGC_EXPS_Donor_" + donorId
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
