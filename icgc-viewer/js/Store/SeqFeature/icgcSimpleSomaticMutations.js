@@ -95,7 +95,7 @@ function(
         createProjectIncidenceTable: function(projects, projectCounts, mutationId) {
             var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
             var headerRow = `
-                <tr>
+                <tr style=\"background-color: #f2f2f2\">
                     <th style="${thStyle}">Project</th>
                     <th style="${thStyle}">Site</th>
                     <th style="${thStyle}">Tumour Type</th>
@@ -109,7 +109,7 @@ function(
             var count = 0;
             Object.keys(projects).forEach(project => {
                 var trStyle = '';
-                if (count % 2 == 0) {
+                if (count % 2 != 0) {
                     trStyle = 'style=\"background-color: #f2f2f2\"';
                 }
                 var projectRow = `<tr ${trStyle}>
@@ -137,7 +137,7 @@ function(
         createConsequencesTable: function(consequences) {
             var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
             var headerRow = `
-                <tr>
+                <tr style=\"background-color: #f2f2f2\">
                     <th style="${thStyle}">Gene</th>
                     <th style="${thStyle}">AA Change</th>
                     <th style="${thStyle}">Consequence</th>
@@ -153,7 +153,7 @@ function(
             var count = 0;
             for (consequence of consequences) {
                 var trStyle = '';
-                if (count % 2 == 0) {
+                if (count % 2 != 0) {
                     trStyle = 'style=\"background-color: #f2f2f2\"';
                 }
                 var consequenceRow = `<tr ${trStyle}>

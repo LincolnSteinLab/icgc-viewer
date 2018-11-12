@@ -1031,8 +1031,7 @@ function (
                 type: 'JBrowse/View/Track/Wiggle/XYPlot',
                 store: storeName,
                 label: "ICGC_CNSM_" + donorId,
-                max_score: 1,
-                min_score: -1,
+                autoscale: local,
                 bicolor_pivot: 0
             };
             trackConf.store = storeName;

@@ -129,10 +129,11 @@ Example Track:
 storeClass=icgc-viewer/Store/SeqFeature/icgcCNSM
 type=JBrowse/View/Track/Wiggle/XYPlot
 donor=DO229446
-max_score=1
-min_score=-1
+autoscale=local
 bicolor_pivot=0
 ```
+
+Note: You can also use a density plot for the copy number data. Simply change the type from `JBrowse/View/Track/Wiggle/XYPlot` to `JBrowse/View/Track/Wiggle/Density.`
 
 ## icgcStSM
 A simple view of all of the StSMs for a given donor. A donor ID (donor field) must be specified in the track config file.
