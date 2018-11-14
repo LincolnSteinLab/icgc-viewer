@@ -818,7 +818,12 @@ function (
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_SSM_Donor_" + donorId
+                label: "ICGC_SSM_Donor_" + donorId,
+                key: "ICGC SSM",
+                metadata: {
+                    datatype: "SSM",
+                    donor: donorId
+                }
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -841,7 +846,12 @@ function (
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_STSM_Donor_" + donorId
+                label: "ICGC_STSM_Donor_" + donorId,
+                key: "ICGC StSM",
+                metadata: {
+                    datatype: "StSM",
+                    donor: donorId
+                }
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -863,7 +873,12 @@ function (
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_EXPA_Donor_" + donorId
+                label: "ICGC_EXPA_Donor_" + donorId,
+                key: "ICGC ExpA",
+                metadata: {
+                    datatype: "ExpA",
+                    donor: donorId
+                }
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -885,7 +900,12 @@ function (
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_JCN_Donor_" + donorId
+                label: "ICGC_JCN_Donor_" + donorId,
+                key: "ICGC JCN",
+                metadata: {
+                    datatype: "JCN",
+                    donor: donorId
+                }
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -910,7 +930,12 @@ function (
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_PEXP_Donor_" + donorId
+                label: "ICGC_PEXP_Donor_" + donorId,
+                key: "ICGC PExp",
+                metadata: {
+                    datatype: "PExp",
+                    donor: donorId
+                }
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -933,7 +958,12 @@ function (
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_EXPS_Donor_" + donorId
+                label: "ICGC_EXPS_Donor_" + donorId,
+                key: "ICGC ExpS Donor",
+                metadata: {
+                    datatype: "ExpS",
+                    donor: donorId
+                }
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -957,7 +987,11 @@ function (
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_Genes_" + randomId
+                label: "ICGC_Genes_" + randomId,
+                key: "ICGC Genes",
+                metadata: {
+                    datatype: "Gene"
+                }
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -982,7 +1016,12 @@ function (
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_Genes_Donor" + donorId
+                label: "ICGC_Genes_Donor_" + donorId,
+                key: "ICGC Genes",
+                metadata: {
+                    datatype: "Gene",
+                    donor: donorId
+                }
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -1006,7 +1045,11 @@ function (
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_SSM_" + randomId
+                label: "ICGC_SSM_" + randomId,
+                key: "ICGC SSM",
+                metadata: {
+                    datatype: "SSM"
+                }
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
@@ -1031,8 +1074,13 @@ function (
                 type: 'JBrowse/View/Track/Wiggle/XYPlot',
                 store: storeName,
                 label: "ICGC_CNSM_" + donorId,
+                key: "ICGC CNSM",
                 autoscale: local,
-                bicolor_pivot: 0
+                bicolor_pivot: 0,
+                metadata: {
+                    datatype: "CNSM",
+                    donor: donorId
+                }
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
