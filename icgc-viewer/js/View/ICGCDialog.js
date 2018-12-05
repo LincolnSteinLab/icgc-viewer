@@ -1075,7 +1075,7 @@ function (
                 store: storeName,
                 label: "ICGC_CNSM_" + donorId,
                 key: "ICGC CNSM",
-                autoscale: local,
+                autoscale: "local",
                 bicolor_pivot: 0,
                 metadata: {
                     datatype: "CNSM",
