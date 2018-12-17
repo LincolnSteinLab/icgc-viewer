@@ -82,7 +82,6 @@ function(
 
                     // TODO: Find a node package for parsing TSV files
                     var splitFileByLine = thisB.zipBuffer.split(/\n/);
-                    splitFileByLine = splitFileByLine.splice(0,500);
 
                     splitFileByLine.forEach((element) => {
                         var splitLineByTab = element.split(/\t/);

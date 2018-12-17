@@ -728,6 +728,7 @@ function (
                     }
                 }, "ssmButton").placeAt(holder);
             }
+
             if (availableDataTypes.includes("cnsm")) {
                 var geneButton = new Button({
                     label: 'CNSMs',
@@ -736,6 +737,7 @@ function (
                     }
                 }, "cnsmButton").placeAt(holder);
             }
+
             if (availableDataTypes.includes("stsm")) {
                 var stsmButton = new Button({
                     label: "StSMs",
@@ -745,29 +747,29 @@ function (
                 }, "stsmButton").placeAt(holder);
             }
 
-            if (availableDataTypes.includes("exp_seq")) {
-                var stsmButton = new Button({
-                    label: "ExpS",
-                    onClick: function() {
-                        thisB.addDonorExpS(donorId);
-                    }
-                }, "expsButton").placeAt(holder);
-            }
+            // if (availableDataTypes.includes("exp_seq")) {
+            //     var expsButton = new Button({
+            //         label: "ExpS",
+            //         onClick: function() {
+            //             thisB.addDonorExpS(donorId);
+            //         }
+            //     }, "expsButton").placeAt(holder);
+            // }
 
-            if (availableDataTypes.includes("exp_array")) {
-                var stsmButton = new Button({
-                    label: "ExpA",
-                    onClick: function() {
-                        thisB.addDonorExpA(donorId);
-                    }
-                }, "expaButton").placeAt(holder);
-            }
+            // if (availableDataTypes.includes("exp_array")) {
+            //     var expaButton = new Button({
+            //         label: "ExpA",
+            //         onClick: function() {
+            //             thisB.addDonorExpA(donorId);
+            //         }
+            //     }, "expaButton").placeAt(holder);
+            // }
 
-            if (availableDataTypes.includes("pexx")) {
-                var stsmButton = new Button({
+            if (availableDataTypes.includes("pexp")) {
+                var pexpButton = new Button({
                     label: "PExp",
                     onClick: function() {
-                        thisB.addDonorPexp(donorId);
+                        thisB.addDonorPExp(donorId);
                     }
                 }, "pexpButton").placeAt(holder);
             }
@@ -871,7 +873,7 @@ function (
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
             var trackConf = {
-                type: 'JBrowse/View/Track/CanvasVariants',
+                type: 'JBrowse/View/Track/Wiggle/Density',
                 store: storeName,
                 label: "ICGC_EXPA_Donor_" + donorId,
                 key: "ICGC ExpA",
@@ -884,6 +886,7 @@ function (
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
         },
+
         /**
          * Adds a donor JCN track based on the donor ID
          * @param {string} donorId Id of donor
@@ -922,13 +925,13 @@ function (
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcPExp',
                 donor: donorId,
-                autoscale: local,
+                autoscale: 'local',
                 bicolor_pivot: 0
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
             var trackConf = {
-                type: 'JBrowse/View/Track/CanvasVariants',
+                type: 'JBrowse/View/Track/Wiggle/Density',
                 store: storeName,
                 label: "ICGC_PEXP_Donor_" + donorId,
                 key: "ICGC PExp",
@@ -956,7 +959,7 @@ function (
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
             var trackConf = {
-                type: 'JBrowse/View/Track/CanvasVariants',
+                type: 'JBrowse/View/Track/Wiggle/Density',
                 store: storeName,
                 label: "ICGC_EXPS_Donor_" + donorId,
                 key: "ICGC ExpS Donor",
