@@ -192,6 +192,7 @@ function(
                                 featureCallback(new SimpleFeature({
                                     id: splitLineByTab[chrToPosition] + "_" + start + "_" + end + "_StSMs",
                                     data: {
+                                        'name': splitLineByTab[svIdPosition] + ' - To',
                                         'start': start,
                                         'end': end,
                                         'type': splitLineByTab[variantTypePosition],
@@ -203,7 +204,6 @@ function(
                                         'From Flanking Sequence': splitLineByTab[chrFromFlankPosition],
                                         'Annotation': splitLineByTab[annotationPosition],
                                         'Assembly Version': splitLineByTab[assemblyVersionPosition],
-                                        'name': splitLineByTab[svIdPosition] + ' - To',
                                         'Sequencing Strategy': splitLineByTab[sequencingStrategyPosition],
                                         'Non Template Sequence': splitLineByTab[nonTemplateSequencePosition],
                                         'Quality Score': splitLineByTab[qualityScorePosition],
@@ -243,6 +243,7 @@ function(
                                 featureCallback(new SimpleFeature({
                                     id: splitLineByTab[chrFromPosition] + "_" + start + "_" + end + "_StSMs",
                                     data: {
+                                        'name': splitLineByTab[svIdPosition] + '- From',
                                         'start': start,
                                         'end': end,
                                         'type': splitLineByTab[variantTypePosition],
@@ -254,7 +255,6 @@ function(
                                         'To Flanking Sequence': splitLineByTab[chrToFlankPosition],
                                         'Annotation': splitLineByTab[annotationPosition],
                                         'Assembly Version': splitLineByTab[assemblyVersionPosition],
-                                        'name': splitLineByTab[svIdPosition] + '- From',
                                         'Sequencing Strategy': splitLineByTab[sequencingStrategyPosition],
                                         'Non Template Sequence': splitLineByTab[nonTemplateSequencePosition],
                                         'Quality Score': splitLineByTab[qualityScorePosition],
