@@ -130,6 +130,8 @@ function(
                         }
 
                         isHeaderLine = false;
+                    }).catch(function(error) {
+                        console.log(error);
                     });
 
                     Promise.all(thisB.addedFeaturesPromise).then(function(res) {

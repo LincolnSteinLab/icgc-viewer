@@ -186,7 +186,7 @@ function(
                             }
                         } else {
                             // Create a feature for the TO position
-                            if (splitLineByTab[chrToPosition] === ref && thisB.donor === splitLineByTab[donorIdPosition]) {
+                            if (splitLineByTab[chrToPosition] == ref && thisB.donor == splitLineByTab[donorIdPosition]) {
                                 var start = parseInt(splitLineByTab[chrToBKPTPosition]) - parseInt(splitLineByTab[chrToRangePosition]);
                                 var end = parseInt(splitLineByTab[chrToBKPTPosition]) + parseInt(splitLineByTab[chrToRangePosition]);
                                 featureCallback(new SimpleFeature({
@@ -237,7 +237,7 @@ function(
                             }
 
                             // Create a feature for the FROM position
-                            if (splitLineByTab[chrFromPosition] === ref && thisB.donor === splitLineByTab[donorIdPosition]) {
+                            if (splitLineByTab[chrFromPosition] == ref && thisB.donor == splitLineByTab[donorIdPosition]) {
                                 var start = parseInt(splitLineByTab[chrFromBKPTPosition]) - parseInt(splitLineByTab[chrFromRangePosition]);
                                 var end = parseInt(splitLineByTab[chrFromBKPTPosition]) + parseInt(splitLineByTab[chrFromRangePosition]);
                                 featureCallback(new SimpleFeature({

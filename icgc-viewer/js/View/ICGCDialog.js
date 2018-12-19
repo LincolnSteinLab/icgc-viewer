@@ -745,23 +745,23 @@ function (
                 }, "stsmButton").placeAt(holder);
             }
 
-            // if (availableDataTypes.includes("exp_seq")) {
-            //     var expsButton = new Button({
-            //         label: "ExpS",
-            //         onClick: function() {
-            //             thisB.addDonorExpS(donorId);
-            //         }
-            //     }, "expsButton").placeAt(holder);
-            // }
+            if (availableDataTypes.includes("exp_seq")) {
+                var expsButton = new Button({
+                    label: "ExpS",
+                    onClick: function() {
+                        thisB.addDonorExpS(donorId);
+                    }
+                }, "expsButton").placeAt(holder);
+            }
 
-            // if (availableDataTypes.includes("exp_array")) {
-            //     var expaButton = new Button({
-            //         label: "ExpA",
-            //         onClick: function() {
-            //             thisB.addDonorExpA(donorId);
-            //         }
-            //     }, "expaButton").placeAt(holder);
-            // }
+            if (availableDataTypes.includes("exp_array")) {
+                var expaButton = new Button({
+                    label: "ExpA",
+                    onClick: function() {
+                        thisB.addDonorExpA(donorId);
+                    }
+                }, "expaButton").placeAt(holder);
+            }
 
             if (availableDataTypes.includes("pexp")) {
                 var pexpButton = new Button({
@@ -813,12 +813,13 @@ function (
                 filters: combinedFacetObject
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
+            var randomId = Math.random().toString(36).substring(7);
 
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_SSM_Donor_" + donorId,
-                key: "ICGC SSM",
+                label: "ICGC_SSM_Donor_" + donorId + "-" + randomId,
+                key: "ICGC SSM " + donorId,
                 metadata: {
                     datatype: "SSM",
                     donor: donorId
@@ -841,12 +842,13 @@ function (
                 donor: donorId
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
+            var randomId = Math.random().toString(36).substring(7);
 
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_STSM_Donor_" + donorId,
-                key: "ICGC StSM",
+                label: "ICGC_STSM_Donor_" + donorId + "-" + randomId,
+                key: "ICGC StSM " + donorId,
                 metadata: {
                     datatype: "StSM",
                     donor: donorId
@@ -866,14 +868,16 @@ function (
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcExpA',
+                donor: donorId
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
+            var randomId = Math.random().toString(36).substring(7);
 
             var trackConf = {
                 type: 'JBrowse/View/Track/Wiggle/Density',
                 store: storeName,
-                label: "ICGC_EXPA_Donor_" + donorId,
-                key: "ICGC ExpA",
+                label: "ICGC_EXPA_Donor_" + donorId + "-" + randomId,
+                key: "ICGC ExpA " + donorId,
                 metadata: {
                     datatype: "ExpA",
                     donor: donorId
@@ -896,12 +900,13 @@ function (
                 donor: donorId
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
+            var randomId = Math.random().toString(36).substring(7);
 
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_JCN_Donor_" + donorId,
-                key: "ICGC JCN",
+                label: "ICGC_JCN_Donor_" + donorId + "-" + randomId,
+                key: "ICGC JCN " + donorId,
                 metadata: {
                     datatype: "JCN",
                     donor: donorId
@@ -924,12 +929,13 @@ function (
                 donor: donorId
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
+            var randomId = Math.random().toString(36).substring(7);
 
             var trackConf = {
                 type: 'JBrowse/View/Track/Wiggle/XYPlot',
                 store: storeName,
-                label: "ICGC_PEXP_Donor_" + donorId,
-                key: "ICGC PExp",
+                label: "ICGC_PEXP_Donor_" + donorId + "-" + randomId,
+                key: "ICGC PExp " + donorId,
                 autoscale: "local",
                 bicolor_pivot: 0,
                 metadata: {
@@ -954,12 +960,13 @@ function (
                 donor: donorId
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
+            var randomId = Math.random().toString(36).substring(7);
 
             var trackConf = {
                 type: 'JBrowse/View/Track/Wiggle/Density',
                 store: storeName,
-                label: "ICGC_EXPS_Donor_" + donorId,
-                key: "ICGC ExpS Donor",
+                label: "ICGC_EXPS_Donor_" + donorId + "-" + randomId,
+                key: "ICGC ExpS " + donorId,
                 metadata: {
                     datatype: "ExpS",
                     donor: donorId
@@ -982,6 +989,7 @@ function (
                 filters: combinedFacetObject
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
+            var randomId = Math.random().toString(36).substring(7);
 
             var randomId = Math.random().toString(36).substring(7);
             var trackConf = {
@@ -1012,12 +1020,13 @@ function (
                 donor: donorId
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
+            var randomId = Math.random().toString(36).substring(7);
 
             var trackConf = {
                 type: 'JBrowse/View/Track/CanvasVariants',
                 store: storeName,
-                label: "ICGC_Genes_Donor_" + donorId,
-                key: "ICGC Genes",
+                label: "ICGC_Genes_Donor_" + donorId + "-" + randomId,
+                key: "ICGC Genes " + donorId,
                 metadata: {
                     datatype: "Gene",
                     donor: donorId
@@ -1068,13 +1077,14 @@ function (
                 donor: donorId
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
+            var randomId = Math.random().toString(36).substring(7);
 
             var randomId = Math.random().toString(36).substring(7);
             var trackConf = {
                 type: 'JBrowse/View/Track/Wiggle/XYPlot',
                 store: storeName,
-                label: "ICGC_CNSM_" + donorId,
-                key: "ICGC CNSM",
+                label: "ICGC_CNSM_" + donorId + "-" + randomId,
+                key: "ICGC CNSM " + donorId,
                 autoscale: "local",
                 bicolor_pivot: 0,
                 metadata: {
