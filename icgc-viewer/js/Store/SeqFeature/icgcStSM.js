@@ -85,12 +85,41 @@ function(
                     var chrFromRangePosition = -1;
 
                     var donorIdPosition = -1;
-                    var variantTypePosition = -1;
                     var projectCodePosition = -1;
+                    var icgcSpecimenIdPosition = -1;
+                    var icgcSampleIdPosition = -1;
+                    var submittedSampleIdPosition = -1;
+                    var submittedMatchedSampleIdPosition = -1;
+                    var variantTypePosition = -1;
                     var evidencePosition = -1;
                     var microhomologySequencePosition = -1;
                     var annotationPosition = -1;
+                    var interpretedAnnotationPosition = -1;
                     var assemblyVersionPosition = -1;
+                    var svIdPosition = -1;
+                    var sequencingStrategyPosition = -1;
+                    var nonTemplateSequencePosition = -1;
+                    var qualityScorePosition = -1;
+                    var probabilityPosition = -1;
+                    var zygosityPosition = -1;
+                    var verificationPosition = -1;
+                    var verificationPlatformPosition = -1;
+                    var geneAffectedByBKPTFromPosition = -1;
+                    var geneAffectedByBKPTToPosition = -1;
+                    var transcriptAffectedByBKPTFromPosition = -1;
+                    var transcriptAffectedByBKPTToPosition = -1;
+                    var bkptFromContextPosition = -1;
+                    var bkptToContextPosition = -1;
+                    var geneBuildVersionPosition = -1;
+                    var platformPosition = -1;
+                    var experimentalProtocolPosition = -1;
+                    var baseCallingAlgorithmPosition = -1;
+                    var alignmentAlgorithmPosition = -1;
+                    var variantCallingAlgorithmPosition = -1;
+                    var otherAnalysisPlatformPosition = -1;
+                    var seqCoveragePosition = -1;
+                    var rawDataRepositoryPosition = -1;
+                    var rawDataAccessionPosition = -1;
 
                     // TODO: Find a node package for parsing TSV files
                     var splitFileByLine = thisB.zipBuffer.split(/\n/);
@@ -121,51 +150,139 @@ function(
                             microhomologySequencePosition = splitLineByTab.indexOf("microhomology_sequence");
                             annotationPosition = splitLineByTab.indexOf("annotation");
                             assemblyVersionPosition = splitLineByTab.indexOf("assembly_version");
+                            svIdPosition = splitLineByTab.indexOf("sv_id");
+                            sequencingStrategyPosition = splitLineByTab.indexOf("sequencing_strategy");
+                            nonTemplateSequencePosition = splitLineByTab.indexOf("non_templated_sequence");
+                            qualityScorePosition = splitLineByTab.indexOf("quality_score");
+                            probabilityPosition = splitLineByTab.indexOf("probability");
+                            zygosityPosition = splitLineByTab.indexOf("zygosity");
+                            verificationPosition = splitLineByTab.indexOf("verification_status");
+                            verificationPlatformPosition = splitLineByTab.indexOf("verification_platform");
+                            platformPosition = splitLineByTab.indexOf("platform");
+                            experimentalProtocolPosition = splitLineByTab.indexOf("experimental_protocol");
+                            baseCallingAlgorithmPosition = splitLineByTab.indexOf("base_calling_algorithm");
+                            alignmentAlgorithmPosition = splitLineByTab.indexOf("alignment_algorithm");
+                            variantCallingAlgorithmPosition = splitLineByTab.indexOf("variation_calling_algorithm");
+                            otherAnalysisPlatformPosition = splitLineByTab.indexOf("other_analysis_algorithm");
+                            seqCoveragePosition = splitLineByTab.indexOf("seq_coverage");
+                            rawDataRepositoryPosition = splitLineByTab.indexOf("raw_data_repository");
+                            rawDataAccessionPosition = splitLineByTab.indexOf("raw_data_accession");
+                            icgcSpecimenIdPosition = splitLineByTab.indexOf("icgc_specimen_id");
+                            icgcSampleIdPosition = splitLineByTab.indexOf("icgc_sample_id");
+                            submittedSampleIdPosition = splitLineByTab.indexOf("submitted_sample_id");
+                            submittedMatchedSampleIdPosition = splitLineByTab.indexOf("submitted_matched_sample_id");
+                            interpretedAnnotationPosition = splitLineByTab.indexOf("interpreted_annotation");
+                            geneAffectedByBKPTFromPosition = splitLineByTab.indexOf("gene_affected_by_bkpt_from");
+                            geneAffectedByBKPTToPosition = splitLineByTab.indexOf("gene_affected_by_bkpt_to");
+                            transcriptAffectedByBKPTFromPosition = splitLineByTab.indexOf("transcript_affected_by_bkpt_from");
+                            transcriptAffectedByBKPTToPosition = splitLineByTab.indexOf("transcript_affected_by_bkpt_to");
+                            bkptFromContextPosition = splitLineByTab.indexOf("bkpt_from_context");
+                            bkptToContextPosition = splitLineByTab.indexOf("bkpt_to_context");
+                            geneBuildVersionPosition = splitLineByTab.indexOf("gene_build_version");
 
+                            
                             if (chrFromPosition == -1 || chrFromBKPTPosition == -1 || chrFromStrandPosition == -1 || chrToPosition == -1 || chrToBKPTPosition == -1 || chrToStrandPosition == -1) {
                                 errorCallback("File is missing a required header field.");
                             }
                         } else {
                             // Create a feature for the TO position
-                            if (splitLineByTab[chrToPosition] === ref && thisB.donor === splitLineByTab[donorIdPosition]) {
+                            if (splitLineByTab[chrToPosition] == ref && thisB.donor == splitLineByTab[donorIdPosition]) {
                                 var start = parseInt(splitLineByTab[chrToBKPTPosition]) - parseInt(splitLineByTab[chrToRangePosition]);
                                 var end = parseInt(splitLineByTab[chrToBKPTPosition]) + parseInt(splitLineByTab[chrToRangePosition]);
                                 featureCallback(new SimpleFeature({
                                     id: splitLineByTab[chrToPosition] + "_" + start + "_" + end + "_StSMs",
                                     data: {
-                                        start: start,
-                                        end: end,
-                                        type: splitLineByTab[variantTypePosition],
-                                        strand: splitLineByTab[chrToStrandPosition],
-                                        project: splitLineByTab[projectCodePosition],
-                                        from: "Chr " + splitLineByTab[chrFromPosition] + " , Position " + splitLineByTab[chrFromBKPTPosition] + ", Strand " + splitLineByTab[chrFromStrandPosition],
-                                        evidence: splitLineByTab[evidencePosition],
-                                        microhomology: splitLineByTab[microhomologySequencePosition],
-                                        fromFlankingSequence: splitLineByTab[chrFromFlankPosition],
-                                        annotation: splitLineByTab[annotationPosition],
-                                        assemblyVersion: splitLineByTab[assemblyVersionPosition]
+                                        'name': splitLineByTab[svIdPosition] + ' - To',
+                                        'start': start,
+                                        'end': end,
+                                        'type': splitLineByTab[variantTypePosition],
+                                        'strand': splitLineByTab[chrToStrandPosition],
+                                        'Project': splitLineByTab[projectCodePosition],
+                                        'From': "Chr " + splitLineByTab[chrFromPosition] + ", Position " + splitLineByTab[chrFromBKPTPosition] + " (+/-" + splitLineByTab[chrFromRangePosition] + " bases), Strand " + splitLineByTab[chrFromStrandPosition],
+                                        'Evidence': splitLineByTab[evidencePosition],
+                                        'Microhomology': splitLineByTab[microhomologySequencePosition],
+                                        'From Flanking Sequence': splitLineByTab[chrFromFlankPosition],
+                                        'Annotation': splitLineByTab[annotationPosition],
+                                        'Assembly Version': splitLineByTab[assemblyVersionPosition],
+                                        'Sequencing Strategy': splitLineByTab[sequencingStrategyPosition],
+                                        'Non Template Sequence': splitLineByTab[nonTemplateSequencePosition],
+                                        'Quality Score': splitLineByTab[qualityScorePosition],
+                                        'Probability': splitLineByTab[probabilityPosition],
+                                        'Zygosity': splitLineByTab[zygosityPosition],
+                                        'Verification Status': splitLineByTab[verificationPosition],
+                                        'Verification Platform': splitLineByTab[verificationPlatformPosition],
+                                        'Platform': splitLineByTab[platformPosition],
+                                        'Experimental Protocol': splitLineByTab[experimentalProtocolPosition],
+                                        'Base Calling Algorithm': splitLineByTab[baseCallingAlgorithmPosition],
+                                        'Alignment Algorithm': splitLineByTab[alignmentAlgorithmPosition],
+                                        'Variant Calling Algorithm': splitLineByTab[variantCallingAlgorithmPosition],
+                                        'Other Analysis Platform': splitLineByTab[otherAnalysisPlatformPosition],
+                                        'Seq Coverage Position': splitLineByTab[seqCoveragePosition],
+                                        'Raw Data Repository': splitLineByTab[rawDataRepositoryPosition],
+                                        'Raw Data Accession': splitLineByTab[rawDataAccessionPosition],
+                                        'ICGC Specimin Id': splitLineByTab[icgcSpecimenIdPosition],
+                                        'ICGC Sample Id': splitLineByTab[icgcSampleIdPosition],
+                                        'Submitted Sample Id': splitLineByTab[submittedSampleIdPosition],
+                                        'Submitted Matched Sample Id': splitLineByTab[submittedMatchedSampleIdPosition],
+                                        'Interpreted Annotation': splitLineByTab[interpretedAnnotationPosition],
+                                        'Gene Affected By BKPT From': splitLineByTab[geneAffectedByBKPTFromPosition],
+                                        'Gene Affected By BKPT To': splitLineByTab[geneAffectedByBKPTToPosition],
+                                        'Transcript Affected By BKPT From': splitLineByTab[transcriptAffectedByBKPTFromPosition],
+                                        'Transcript Affected By BKPT To': splitLineByTab[transcriptAffectedByBKPTToPosition],
+                                        'BKPT From Context': splitLineByTab[bkptFromContextPosition],
+                                        'BKPT To Context': splitLineByTab[bkptToContextPosition],
+                                        'Gene Build Version': splitLineByTab[geneBuildVersionPosition]
                                     }
                                 }));
                             }
 
                             // Create a feature for the FROM position
-                            if (splitLineByTab[chrFromPosition] === ref && thisB.donor === splitLineByTab[donorIdPosition]) {
+                            if (splitLineByTab[chrFromPosition] == ref && thisB.donor == splitLineByTab[donorIdPosition]) {
                                 var start = parseInt(splitLineByTab[chrFromBKPTPosition]) - parseInt(splitLineByTab[chrFromRangePosition]);
                                 var end = parseInt(splitLineByTab[chrFromBKPTPosition]) + parseInt(splitLineByTab[chrFromRangePosition]);
                                 featureCallback(new SimpleFeature({
                                     id: splitLineByTab[chrFromPosition] + "_" + start + "_" + end + "_StSMs",
                                     data: {
-                                        start: start,
-                                        end: end,
-                                        type: splitLineByTab[variantTypePosition],
-                                        strand: splitLineByTab[chrFromStrandPosition],
-                                        project: splitLineByTab[projectCodePosition],
-                                        to: "Chr " + splitLineByTab[chrToPosition] + ", Position " + splitLineByTab[chrToBKPTPosition] + ", Strand " + splitLineByTab[chrToStrandPosition],
-                                        evidence: splitLineByTab[evidencePosition],
-                                        microhomology: splitLineByTab[microhomologySequencePosition],
-                                        toFlankingSequence: splitLineByTab[chrToFlankPosition],
-                                        annotation: splitLineByTab[annotationPosition],
-                                        assemblyVersion: splitLineByTab[assemblyVersionPosition]
+                                        'name': splitLineByTab[svIdPosition] + '- From',
+                                        'start': start,
+                                        'end': end,
+                                        'type': splitLineByTab[variantTypePosition],
+                                        'strand': splitLineByTab[chrFromStrandPosition],
+                                        'Project': splitLineByTab[projectCodePosition],
+                                        'To': "Chr " + splitLineByTab[chrToPosition] + ", Position " + splitLineByTab[chrToBKPTPosition] + " (+/-" + splitLineByTab[chrToRangePosition] + " bases), Strand " + splitLineByTab[chrToStrandPosition],
+                                        'Evidence': splitLineByTab[evidencePosition],
+                                        'Microhomology': splitLineByTab[microhomologySequencePosition],
+                                        'To Flanking Sequence': splitLineByTab[chrToFlankPosition],
+                                        'Annotation': splitLineByTab[annotationPosition],
+                                        'Assembly Version': splitLineByTab[assemblyVersionPosition],
+                                        'Sequencing Strategy': splitLineByTab[sequencingStrategyPosition],
+                                        'Non Template Sequence': splitLineByTab[nonTemplateSequencePosition],
+                                        'Quality Score': splitLineByTab[qualityScorePosition],
+                                        'Probability': splitLineByTab[probabilityPosition],
+                                        'Zygosity': splitLineByTab[zygosityPosition],
+                                        'Verification Status': splitLineByTab[verificationPosition],
+                                        'Verification Platform': splitLineByTab[verificationPlatformPosition],
+                                        'Platform': splitLineByTab[platformPosition],
+                                        'Experimental Protocol': splitLineByTab[experimentalProtocolPosition],
+                                        'Base Calling Algorithm': splitLineByTab[baseCallingAlgorithmPosition],
+                                        'Alignment Algorithm': splitLineByTab[alignmentAlgorithmPosition],
+                                        'Variant Calling Algorithm': splitLineByTab[variantCallingAlgorithmPosition],
+                                        'Other Analysis Platform': splitLineByTab[otherAnalysisPlatformPosition],
+                                        'Seq Coverage Position': splitLineByTab[seqCoveragePosition],
+                                        'Raw Data Repository': splitLineByTab[rawDataRepositoryPosition],
+                                        'Raw Data Accession': splitLineByTab[rawDataAccessionPosition],
+                                        'ICGC Specimin Id': splitLineByTab[icgcSpecimenIdPosition],
+                                        'ICGC Sample Id': splitLineByTab[icgcSampleIdPosition],
+                                        'Submitted Sample Id': splitLineByTab[submittedSampleIdPosition],
+                                        'Submitted Matched Sample Id': splitLineByTab[submittedMatchedSampleIdPosition],
+                                        'Interpreted Annotation': splitLineByTab[interpretedAnnotationPosition],
+                                        'Gene Affected By BKPT From': splitLineByTab[geneAffectedByBKPTFromPosition],
+                                        'Gene Affected By BKPT To': splitLineByTab[geneAffectedByBKPTToPosition],
+                                        'Transcript Affected By BKPT From': splitLineByTab[transcriptAffectedByBKPTFromPosition],
+                                        'Transcript Affected By BKPT To': splitLineByTab[transcriptAffectedByBKPTToPosition],
+                                        'BKPT From Context': splitLineByTab[bkptFromContextPosition],
+                                        'BKPT To Context': splitLineByTab[bkptToContextPosition],
+                                        'Gene Build Version': splitLineByTab[geneBuildVersionPosition]
                                     }
                                 }));
                             }

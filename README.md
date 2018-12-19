@@ -43,6 +43,19 @@ utils/jb_run.js -p 3000
 
 JBrowse should now be running with the ICGC Plugin working!
 
+# JBrowse configuration
+## Faceted Track Selector
+Add the following to your jbrowse.conf to use the faceted track selector.
+```
+[trackSelector]
+type = Faceted
+displayColumns =
+  + label
+  + key
+  + datatype
+  + donor
+```
+
 # Available Store SeqFeature
 ## icgcGenes
 A simple view of all genes returned by the ICGC portal for a given range of the chromosome you are looking at.
@@ -129,10 +142,11 @@ Example Track:
 storeClass=icgc-viewer/Store/SeqFeature/icgcCNSM
 type=JBrowse/View/Track/Wiggle/XYPlot
 donor=DO229446
-max_score=1
-min_score=-1
+autoscale=local
 bicolor_pivot=0
 ```
+
+Note: You can also use a density plot for the copy number data. Simply change the type from `JBrowse/View/Track/Wiggle/XYPlot` to `JBrowse/View/Track/Wiggle/Density.`
 
 ## icgcStSM
 A simple view of all of the StSMs for a given donor. A donor ID (donor field) must be specified in the track config file.

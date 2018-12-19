@@ -150,21 +150,20 @@ function(
                     featureCallback(new SimpleFeature({
                         id: gene.id,
                         data: {
-                            start: gene.start - 1,
-                            end: gene.end - 1,
-                            strand: gene.strand,
-                            chromosome: gene.chromosome,
-                            name: gene.name,
-                            symbol: gene.symbol,
-                            icgc: thisB.createLinkWithId(ICGC_LINK, gene.id),
-                            ensembl: thisB.createLinkWithId(ENSEMBL_LINK, gene.id),
-                            entrez: thisB.createLinksWithId(ENTREZ_LINK, gene.externalDbIds.entrez_gene),
-                            hgnc: thisB.createLinksWithId(HGNC_LINK, gene.externalDbIds.hgnc),
-                            entrez: thisB.createLinksWithId(OMIM_LINK, gene.externalDbIds.omim_gene),
-                            uniprotkb_swissprot: thisB.createLinksWithId(UNIPROTKB_SWISSPROT_LINK, gene.externalDbIds.uniprotkb_swissprot),
-                            cosmic: thisB.createLinkWithId(COSMIC_LINK, gene.symbol),
-                            description: gene.description,
-                            type: gene.type
+                            'start': gene.start - 1,
+                            'end': gene.end - 1,
+                            'strand': gene.strand,
+                            'name': gene.name,
+                            'Symbol': gene.symbol,
+                            'ICGC': thisB.createLinkWithId(ICGC_LINK, gene.id),
+                            'Ensembl (release 75)': thisB.createLinkWithId(ENSEMBL_LINK, gene.id),
+                            'Entrez Gene': thisB.createLinksWithId(ENTREZ_LINK, gene.externalDbIds.entrez_gene),
+                            'HGNC Gene': thisB.createLinksWithId(HGNC_LINK, gene.externalDbIds.hgnc),
+                            'OMIM': thisB.createLinksWithId(OMIM_LINK, gene.externalDbIds.omim_gene),
+                            'UniProtKB/Swiss-Prot': thisB.createLinksWithId(UNIPROTKB_SWISSPROT_LINK, gene.externalDbIds.uniprotkb_swissprot),
+                            'COSMIC': thisB.createLinkWithId(COSMIC_LINK, gene.symbol),
+                            'description': gene.description,
+                            'type': (gene.type).replace(/_/g, ' ')
                         }
                     }));
                 });

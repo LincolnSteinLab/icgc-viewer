@@ -118,6 +118,8 @@ function(
                                         }
                                         featureCallback(new SimpleFeature(feature));
                                     }
+                                }).catch(function(error) {
+                                    console.log(error);
                                 });
                                 thisB.addedFeaturesPromise.push(genePositionPromise);
                             }

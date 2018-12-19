@@ -95,34 +95,39 @@ function(
                             }
                         } else {
                             if (thisB.donor === splitLineByTab[donorIdPosition]) {
-                                // Need to retrieve gene start and end positions
-                                var url = 'https://dcc.icgc.org/api/v1/genes?filters={"gene":{"symbol":{"is":["' + splitLineByTab[geneNamePosition] + '"]}}}';
-                                var genePositionPromise = fetch(url, {
-                                    method: 'GET'
-                                }).then(function(res) {
-                                    return res.json()
-                                }).then(function(res) {
-                                    var hit = res.hits[0];
-                                    if (hit != undefined) {
-                                        var start = hit.start;
-                                        var end = hit.end;
-                                        var chr = hit.chromosome;
-                                        if (ref === chr) {
-                                            var feature = {
-                                                id: chr + "_" + start + "_" + end + "_exps",
-                                                data: {
-                                                    start: start,
-                                                    end: end,
-                                                    score: splitLineByTab[normalizedExpressionLevelPosition]
+                                var splitBySpace = splitLineByTab[geneNamePosition].split(' ');
+                                
+                                splitBySpace.forEach(function(geneName) {
+                                    // Need to retrieve gene start and end positions
+                                    var url = 'https://dcc.icgc.org/api/v1/genes?filters={"gene":{"symbol":{"is":["' + geneName + '"]}}}';
+                                    var genePositionPromise = fetch(url, {
+                                        method: 'GET'
+                                    }).then(function(res) {
+                                        return res.json()
+                                    }).then(function(res) {
+                                        var hit = res.hits[0];
+                                        if (hit != undefined) {
+                                            var start = hit.start;
+                                            var end = hit.end;
+                                            var chr = hit.chromosome;
+                                            if (ref === chr) {
+                                                var feature = {
+                                                    id: chr + "_" + start + "_" + end + "_exps",
+                                                    data: {
+                                                        start: start,
+                                                        end: end,
+                                                        score: splitLineByTab[normalizedExpressionLevelPosition],
+                                                        gene: geneName
+                                                    }
                                                 }
+                                                featureCallback(new SimpleFeature(feature));
                                             }
-                                            featureCallback(new SimpleFeature(feature));
+                                        } else {
+                                            console.log(geneName + ' cannot be found.')
                                         }
-                                    } else {
-                                        console.log(splitLineByTab[geneNamePosition] + ' cannot be found.')
-                                    }
+                                    });
+                                    thisB.addedFeaturesPromise.push(genePositionPromise);
                                 });
-                                thisB.addedFeaturesPromise.push(genePositionPromise);
                             }
                         }
 
