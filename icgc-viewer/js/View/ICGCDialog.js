@@ -924,17 +924,17 @@ function (
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
                 type: 'icgc-viewer/Store/SeqFeature/icgcPExp',
-                donor: donorId,
-                autoscale: 'local',
-                bicolor_pivot: 0
+                donor: donorId
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
 
             var trackConf = {
-                type: 'JBrowse/View/Track/Wiggle/Density',
+                type: 'JBrowse/View/Track/Wiggle/XYPlot',
                 store: storeName,
                 label: "ICGC_PEXP_Donor_" + donorId,
                 key: "ICGC PExp",
+                autoscale: "local",
+                bicolor_pivot: 0,
                 metadata: {
                     datatype: "PExp",
                     donor: donorId
