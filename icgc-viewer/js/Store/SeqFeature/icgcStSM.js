@@ -86,7 +86,7 @@ function(
 
                     var donorIdPosition = -1;
                     var projectCodePosition = -1;
-                    var icgcSpecimenIdPositon = -1;
+                    var icgcSpecimenIdPosition = -1;
                     var icgcSampleIdPosition = -1;
                     var submittedSampleIdPosition = -1;
                     var submittedMatchedSampleIdPosition = -1;
@@ -98,8 +98,8 @@ function(
                     var assemblyVersionPosition = -1;
                     var svIdPosition = -1;
                     var sequencingStrategyPosition = -1;
-                    var nonTemplateSequencePositon = -1;
-                    var qualityScorePositon = -1;
+                    var nonTemplateSequencePosition = -1;
+                    var qualityScorePosition = -1;
                     var probabilityPosition = -1;
                     var zygosityPosition = -1;
                     var verificationPosition = -1;
@@ -152,8 +152,8 @@ function(
                             assemblyVersionPosition = splitLineByTab.indexOf("assembly_version");
                             svIdPosition = splitLineByTab.indexOf("sv_id");
                             sequencingStrategyPosition = splitLineByTab.indexOf("sequencing_strategy");
-                            nonTemplateSequencePositon = splitLineByTab.indexOf("non_templated_sequence");
-                            qualityScorePositon = splitLineByTab.indexOf("quality_score");
+                            nonTemplateSequencePosition = splitLineByTab.indexOf("non_templated_sequence");
+                            qualityScorePosition = splitLineByTab.indexOf("quality_score");
                             probabilityPosition = splitLineByTab.indexOf("probability");
                             zygosityPosition = splitLineByTab.indexOf("zygosity");
                             verificationPosition = splitLineByTab.indexOf("verification_status");
@@ -167,8 +167,7 @@ function(
                             seqCoveragePosition = splitLineByTab.indexOf("seq_coverage");
                             rawDataRepositoryPosition = splitLineByTab.indexOf("raw_data_repository");
                             rawDataAccessionPosition = splitLineByTab.indexOf("raw_data_accession");
-                            
-                            icgcSpecimenIdPositon = splitLineByTab.indexOf("icgc_specimen_id");
+                            icgcSpecimenIdPosition = splitLineByTab.indexOf("icgc_specimen_id");
                             icgcSampleIdPosition = splitLineByTab.indexOf("icgc_sample_id");
                             submittedSampleIdPosition = splitLineByTab.indexOf("submitted_sample_id");
                             submittedMatchedSampleIdPosition = splitLineByTab.indexOf("submitted_matched_sample_id");
@@ -206,8 +205,8 @@ function(
                                         'Assembly Version': splitLineByTab[assemblyVersionPosition],
                                         'name': splitLineByTab[svIdPosition] + ' - To',
                                         'Sequencing Strategy': splitLineByTab[sequencingStrategyPosition],
-                                        'Non Template Sequence': splitLineByTab[nonTemplateSequencePositon],
-                                        'Quality Score': splitLineByTab[qualityScorePositon],
+                                        'Non Template Sequence': splitLineByTab[nonTemplateSequencePosition],
+                                        'Quality Score': splitLineByTab[qualityScorePosition],
                                         'Probability': splitLineByTab[probabilityPosition],
                                         'Zygosity': splitLineByTab[zygosityPosition],
                                         'Verification Status': splitLineByTab[verificationPosition],
@@ -221,7 +220,7 @@ function(
                                         'Seq Coverage Position': splitLineByTab[seqCoveragePosition],
                                         'Raw Data Repository': splitLineByTab[rawDataRepositoryPosition],
                                         'Raw Data Accession': splitLineByTab[rawDataAccessionPosition],
-                                        'ICGC Specimin Id': splitLineByTab[icgcSpecimenIdPositon],
+                                        'ICGC Specimin Id': splitLineByTab[icgcSpecimenIdPosition],
                                         'ICGC Sample Id': splitLineByTab[icgcSampleIdPosition],
                                         'Submitted Sample Id': splitLineByTab[submittedSampleIdPosition],
                                         'Submitted Matched Sample Id': splitLineByTab[submittedMatchedSampleIdPosition],
@@ -257,8 +256,8 @@ function(
                                         'Assembly Version': splitLineByTab[assemblyVersionPosition],
                                         'name': splitLineByTab[svIdPosition] + '- From',
                                         'Sequencing Strategy': splitLineByTab[sequencingStrategyPosition],
-                                        'Non Template Sequence': splitLineByTab[nonTemplateSequencePositon],
-                                        'Quality Score': splitLineByTab[qualityScorePositon],
+                                        'Non Template Sequence': splitLineByTab[nonTemplateSequencePosition],
+                                        'Quality Score': splitLineByTab[qualityScorePosition],
                                         'Probability': splitLineByTab[probabilityPosition],
                                         'Zygosity': splitLineByTab[zygosityPosition],
                                         'Verification Status': splitLineByTab[verificationPosition],
@@ -272,11 +271,11 @@ function(
                                         'Seq Coverage Position': splitLineByTab[seqCoveragePosition],
                                         'Raw Data Repository': splitLineByTab[rawDataRepositoryPosition],
                                         'Raw Data Accession': splitLineByTab[rawDataAccessionPosition],
-                                        'ICGC Specimin Id': splitLineByTab[icgcSpecimenIdPositon],
+                                        'ICGC Specimin Id': splitLineByTab[icgcSpecimenIdPosition],
                                         'ICGC Sample Id': splitLineByTab[icgcSampleIdPosition],
                                         'Submitted Sample Id': splitLineByTab[submittedSampleIdPosition],
                                         'Submitted Matched Sample Id': splitLineByTab[submittedMatchedSampleIdPosition],
-                                        'Interpreted Annotation Id': splitLineByTab[interpretedAnnotationIdPosition],
+                                        'Interpreted Annotation': splitLineByTab[interpretedAnnotationPosition],
                                         'Gene Affected By BKPT From': splitLineByTab[geneAffectedByBKPTFromPosition],
                                         'Gene Affected By BKPT To': splitLineByTab[geneAffectedByBKPTToPosition],
                                         'Transcript Affected By BKPT From': splitLineByTab[transcriptAffectedByBKPTFromPosition],

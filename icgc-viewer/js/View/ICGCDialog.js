@@ -298,7 +298,6 @@ function (
                             if (!facetsJsonResponse.code) {
                                 var addMutationsButton = new Button({
                                     label: "Add All SSMs",
-                                    iconClass: "dijitIconSave",
                                     onClick: function() {
                                         thisB.addSSMTrack(combinedFacetObject)
                                     }
@@ -327,7 +326,6 @@ function (
                             if (!facetsJsonResponse.code) {
                                 var addGenesButton = new Button({
                                     label: "Add All Genes",
-                                    iconClass: "dijitIconSave",
                                     onClick: function() {
                                         thisB.addGeneTrack(combinedFacetObject)
                                     }
@@ -777,7 +775,6 @@ function (
             if (availableDataTypes.includes("jcn")) {
                 var jcnButton = new Button({
                     label: "JCN",
-                    iconClass: "dijitIconSave",
                     onClick: function() {
                         thisB.addDonorJCN(donorId);
                     }
