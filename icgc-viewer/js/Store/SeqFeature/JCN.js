@@ -1,3 +1,6 @@
+/**
+ * WARNING: This store class is in development. There are no guarantees that it will work.
+ */
 const zlib = cjsRequire("zlib");
 const http = cjsRequire("http");
 
