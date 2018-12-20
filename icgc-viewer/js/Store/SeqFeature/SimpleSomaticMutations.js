@@ -296,7 +296,6 @@ function(
                                         data: {
                                             start: variant.start - 1,
                                             end: variant.end - 1,
-                                            name: variant.id,
                                             mutation: variant.mutation,
                                             'Allele in the reference assembly': variant.referenceGenomeAllele,
                                             'Reference Genome Assembly': variant.assemblyVersion,
@@ -307,7 +306,7 @@ function(
                                             'Affected donors': thisB.getDonorFraction(variant),
                                             'Type': variant.type,
                                             'Study': thisB.prettyValue(variant.study.join()),
-                                            'Description': variant.description,
+                                            'Variant Description': variant.description,
                                             'Consequences': thisB.createConsequencesTable(variant.consequences),
                                             'Projects': thisB.createProjectIncidenceTable(projects, projectsResponse, variant.id)
                                         }

@@ -153,7 +153,7 @@ function(
                             'start': gene.start - 1,
                             'end': gene.end - 1,
                             'strand': gene.strand,
-                            'name': gene.name,
+                            'Gene Name': gene.name,
                             'Symbol': gene.symbol,
                             'ICGC': thisB.createLinkWithId(ICGC_LINK, gene.id),
                             'Ensembl (release 75)': thisB.createLinkWithId(ENSEMBL_LINK, gene.id),
@@ -162,7 +162,7 @@ function(
                             'OMIM': thisB.createLinksWithId(OMIM_LINK, gene.externalDbIds.omim_gene),
                             'UniProtKB/Swiss-Prot': thisB.createLinksWithId(UNIPROTKB_SWISSPROT_LINK, gene.externalDbIds.uniprotkb_swissprot),
                             'COSMIC': thisB.createLinkWithId(COSMIC_LINK, gene.symbol),
-                            'description': gene.description,
+                            'Gene Description': gene.description,
                             'type': (gene.type).replace(/_/g, ' ')
                         }
                     }));

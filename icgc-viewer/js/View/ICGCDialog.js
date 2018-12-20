@@ -173,6 +173,19 @@ function (
         },
 
         /**
+         * Compare function used for sorting facets
+         * @param {*} a 
+         * @param {*} b 
+         */
+        compareTermElements: function(a, b) {
+            if (a.term < b.term)
+                return -1;
+            if (a.term > b.term)
+                return 1;
+            return 0;
+        },
+
+        /**
          * Creates a facet accordion of some type and places them in the given accordion
          * @param {string} type The type of accordion
          * @param {AccordionContainer} accordion The accordion to put the facets in
@@ -195,6 +208,7 @@ function (
 
                                 var facetHolder = dom.create('span', { className: "flex-column" });
                                 if (facetsJsonResponse.facets[facet].terms) {
+                                    facetsJsonResponse.facets[facet].terms.sort(thisB.compareTermElements);
                                     facetsJsonResponse.facets[facet].terms.forEach((term) => {
                                         var facetCheckbox = dom.create('span', { className: "flex-row" }, facetHolder)
 
@@ -723,7 +737,7 @@ function (
             var thisB = this;
             if (availableDataTypes.includes("ssm")) {
                 var ssmButton = new Button({
-                    label: "SSMs",
+                    label: "Add",
                     onClick: function() {
                         thisB.addTrack('SimpleSomaticMutations', donorId, combinedFacetObject, 'CanvasVariants');
                     }
@@ -741,7 +755,7 @@ function (
         createDonorGeneButton: function(donorId, holder, combinedFacetObject) {
             var thisB = this;
             var geneButton = new Button({
-                label: "Genes",
+                label: "Add",
                 onClick: function() {
                     thisB.addTrack('Genes', donorId, combinedFacetObject, 'CanvasVariants');
                 }
