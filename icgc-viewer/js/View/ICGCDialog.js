@@ -173,6 +173,19 @@ function (
         },
 
         /**
+         * Compare function used for sorting facets
+         * @param {*} a 
+         * @param {*} b 
+         */
+        compareTermElements: function(a, b) {
+            if (a.term < b.term)
+                return -1;
+            if (a.term > b.term)
+                return 1;
+            return 0;
+        },
+
+        /**
          * Creates a facet accordion of some type and places them in the given accordion
          * @param {string} type The type of accordion
          * @param {AccordionContainer} accordion The accordion to put the facets in
@@ -195,6 +208,7 @@ function (
 
                                 var facetHolder = dom.create('span', { className: "flex-column" });
                                 if (facetsJsonResponse.facets[facet].terms) {
+                                    facetsJsonResponse.facets[facet].terms.sort(thisB.compareTermElements);
                                     facetsJsonResponse.facets[facet].terms.forEach((term) => {
                                         var facetCheckbox = dom.create('span', { className: "flex-row" }, facetHolder)
 
@@ -236,6 +250,7 @@ function (
                             }
 
                             accordion.startup();
+                            accordion.resize();
                             thisB.resize();
                         }
                     }, function (res3) {
@@ -301,7 +316,7 @@ function (
                                 var addMutationsButton = new Button({
                                     label: "Add All SSMs",
                                     onClick: function() {
-                                        thisB.addSSMTrack(combinedFacetObject)
+                                        thisB.addTrack('SimpleSomaticMutations', undefined, combinedFacetObject, 'CanvasVariants');
                                     }
                                 }, "addMutations").placeAt(thisB.mutationResultsTab.containerNode);
 
@@ -330,7 +345,7 @@ function (
                                 var addGenesButton = new Button({
                                     label: "Add All Genes",
                                     onClick: function() {
-                                        thisB.addGeneTrack(combinedFacetObject)
+                                        thisB.addTrack('Genes', undefined, combinedFacetObject, 'CanvasVariants');
                                     }
                                 }, "addGenes").placeAt(thisB.geneResultsTab.containerNode);
 
@@ -528,7 +543,7 @@ function (
                     <th>Stage</th>
                     <th>Survival (days)</th>
                     <th>Genes</th>
-                    <th>File Types</th>
+                    <th>Mutations</th>
                 </tr>
             `;
 
@@ -723,65 +738,11 @@ function (
             var thisB = this;
             if (availableDataTypes.includes("ssm")) {
                 var ssmButton = new Button({
-                    label: "SSMs",
+                    label: "Add",
                     onClick: function() {
-                        thisB.addDonorSSMTrack(donorId, combinedFacetObject);
+                        thisB.addTrack('SimpleSomaticMutations', donorId, combinedFacetObject, 'CanvasVariants');
                     }
                 }, "ssmButton").placeAt(holder);
-            }
-
-            if (availableDataTypes.includes("cnsm")) {
-                var geneButton = new Button({
-                    label: 'CNSMs',
-                    onClick: function() {
-                        thisB.addDonorCNSMTrack(donorId);
-                    }
-                }, "cnsmButton").placeAt(holder);
-            }
-
-            if (availableDataTypes.includes("stsm")) {
-                var stsmButton = new Button({
-                    label: "StSMs",
-                    onClick: function() {
-                        thisB.addDonorStSM(donorId);
-                    }
-                }, "stsmButton").placeAt(holder);
-            }
-
-            if (availableDataTypes.includes("exp_seq")) {
-                var expsButton = new Button({
-                    label: "ExpS",
-                    onClick: function() {
-                        thisB.addDonorExpS(donorId);
-                    }
-                }, "expsButton").placeAt(holder);
-            }
-
-            if (availableDataTypes.includes("exp_array")) {
-                var expaButton = new Button({
-                    label: "ExpA",
-                    onClick: function() {
-                        thisB.addDonorExpA(donorId);
-                    }
-                }, "expaButton").placeAt(holder);
-            }
-
-            if (availableDataTypes.includes("pexp")) {
-                var pexpButton = new Button({
-                    label: "PExp",
-                    onClick: function() {
-                        thisB.addDonorPExp(donorId);
-                    }
-                }, "pexpButton").placeAt(holder);
-            }
-
-            if (availableDataTypes.includes("jcn")) {
-                var jcnButton = new Button({
-                    label: "JCN",
-                    onClick: function() {
-                        thisB.addDonorJCN(donorId);
-                    }
-                }, "jcnButton").placeAt(holder);
             }
         },
 
@@ -795,303 +756,46 @@ function (
         createDonorGeneButton: function(donorId, holder, combinedFacetObject) {
             var thisB = this;
             var geneButton = new Button({
-                label: "Genes",
+                label: "Add",
                 onClick: function() {
-                    thisB.addDonorGeneTrack(donorId, combinedFacetObject);
+                    thisB.addTrack('Genes', donorId, combinedFacetObject, 'CanvasVariants');
                 }
             }, "geneButton").placeAt(holder);
         },
 
         /**
-         * Adds a donor SSM track based on the donor ID and the chosen facets
-         * @param {string} donorId Id of donor
-         * @param {object} combinedFacetObject combined object of facets
+         * Generic function for adding a track of some type
+         * @param {*} storeClass 
+         * @param {*} donorId 
+         * @param {*} combinedFacetObject 
+         * @param {*} trackType 
          */
-        addDonorSSMTrack: function(donorId, combinedFacetObject) {
+        addTrack: function (storeClass, donorId, combinedFacetObject, trackType) {
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcSimpleSomaticMutations',
+                type: 'icgc-viewer/Store/SeqFeature/' + storeClass,
                 donor: donorId,
                 filters: combinedFacetObject
             };
             var storeName = this.browser.addStoreConfig(null, storeConf);
             var randomId = Math.random().toString(36).substring(7);
 
-            var trackConf = {
-                type: 'JBrowse/View/Track/CanvasVariants',
-                store: storeName,
-                label: "ICGC_SSM_Donor_" + donorId + "-" + randomId,
-                key: "ICGC SSM " + donorId,
-                metadata: {
-                    datatype: "SSM",
-                    donor: donorId
-                }
-            };
-            trackConf.store = storeName;
-            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
-            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
+            var key = 'ICGC_' + storeClass;
+            var label = key + '_' + randomId;
 
-        /**
-         * Adds a donor StSM track based on the donor ID
-         * @param {string} donorId Id of donor
-         */
-        addDonorStSM: function(donorId) {
-            var storeConf = {
-                browser: this.browser,
-                refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcStSM',
-                donor: donorId
-            };
-            var storeName = this.browser.addStoreConfig(null, storeConf);
-            var randomId = Math.random().toString(36).substring(7);
+            if (donorId != null && donorId != undefined) {
+                key += '_' + donorId
+                label += '_' + donorId
+            }
 
             var trackConf = {
-                type: 'JBrowse/View/Track/CanvasVariants',
+                type: 'JBrowse/View/Track/' + trackType,
                 store: storeName,
-                label: "ICGC_STSM_Donor_" + donorId + "-" + randomId,
-                key: "ICGC StSM " + donorId,
+                label: label,
+                key: key,
                 metadata: {
-                    datatype: "StSM",
-                    donor: donorId
-                }
-            };
-            trackConf.store = storeName;
-            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
-            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
-
-        /**
-         * Adds a donor ExpA track based on the donor ID
-         * @param {string} donorId Id of donor
-         */
-        addDonorExpA: function(donorId) {
-            var storeConf = {
-                browser: this.browser,
-                refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcExpA',
-                donor: donorId
-            };
-            var storeName = this.browser.addStoreConfig(null, storeConf);
-            var randomId = Math.random().toString(36).substring(7);
-
-            var trackConf = {
-                type: 'JBrowse/View/Track/Wiggle/Density',
-                store: storeName,
-                label: "ICGC_EXPA_Donor_" + donorId + "-" + randomId,
-                key: "ICGC ExpA " + donorId,
-                metadata: {
-                    datatype: "ExpA",
-                    donor: donorId
-                }
-            };
-            trackConf.store = storeName;
-            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
-            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
-
-        /**
-         * Adds a donor JCN track based on the donor ID
-         * @param {string} donorId Id of donor
-         */
-        addDonorJCN: function(donorId) {
-            var storeConf = {
-                browser: this.browser,
-                refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcJCN',
-                donor: donorId
-            };
-            var storeName = this.browser.addStoreConfig(null, storeConf);
-            var randomId = Math.random().toString(36).substring(7);
-
-            var trackConf = {
-                type: 'JBrowse/View/Track/CanvasVariants',
-                store: storeName,
-                label: "ICGC_JCN_Donor_" + donorId + "-" + randomId,
-                key: "ICGC JCN " + donorId,
-                metadata: {
-                    datatype: "JCN",
-                    donor: donorId
-                }
-            };
-            trackConf.store = storeName;
-            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
-            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
-
-        /**
-         * Adds a donor PExp track based on the donor ID
-         * @param {string} donorId Id of donor
-         */
-        addDonorPExp: function(donorId) {
-            var storeConf = {
-                browser: this.browser,
-                refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcPExp',
-                donor: donorId
-            };
-            var storeName = this.browser.addStoreConfig(null, storeConf);
-            var randomId = Math.random().toString(36).substring(7);
-
-            var trackConf = {
-                type: 'JBrowse/View/Track/Wiggle/XYPlot',
-                store: storeName,
-                label: "ICGC_PEXP_Donor_" + donorId + "-" + randomId,
-                key: "ICGC PExp " + donorId,
-                autoscale: "local",
-                bicolor_pivot: 0,
-                metadata: {
-                    datatype: "PExp",
-                    donor: donorId
-                }
-            };
-            trackConf.store = storeName;
-            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
-            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
-
-        /**
-         * Adds a donor ExpS track based on the donor ID
-         * @param {string} donorId Id of donor
-         */
-        addDonorExpS: function(donorId) {
-            var storeConf = {
-                browser: this.browser,
-                refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcExpS',
-                donor: donorId
-            };
-            var storeName = this.browser.addStoreConfig(null, storeConf);
-            var randomId = Math.random().toString(36).substring(7);
-
-            var trackConf = {
-                type: 'JBrowse/View/Track/Wiggle/Density',
-                store: storeName,
-                label: "ICGC_EXPS_Donor_" + donorId + "-" + randomId,
-                key: "ICGC ExpS " + donorId,
-                metadata: {
-                    datatype: "ExpS",
-                    donor: donorId
-                }
-            };
-            trackConf.store = storeName;
-            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
-            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
-
-        /**
-         * Adds a gene track based on the chosen facets
-         * @param {object} combinedFacetObject combined object of facets
-         */
-        addGeneTrack: function (combinedFacetObject) {
-            var storeConf = {
-                browser: this.browser,
-                refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcGenes',
-                filters: combinedFacetObject
-            };
-            var storeName = this.browser.addStoreConfig(null, storeConf);
-            var randomId = Math.random().toString(36).substring(7);
-
-            var randomId = Math.random().toString(36).substring(7);
-            var trackConf = {
-                type: 'JBrowse/View/Track/CanvasVariants',
-                store: storeName,
-                label: "ICGC_Genes_" + randomId,
-                key: "ICGC Genes",
-                metadata: {
-                    datatype: "Gene"
-                }
-            };
-            trackConf.store = storeName;
-            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
-            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
-
-        /**
-         * Adds a gene track based on the chosen facets and donor ID
-         * @param {string} donorId the id of the donor
-         * @param {object} combinedFacetObject combined object of facets
-         */
-        addDonorGeneTrack: function (donorId, combinedFacetObject) {
-            var storeConf = {
-                browser: this.browser,
-                refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcGenes',
-                filters: combinedFacetObject,
-                donor: donorId
-            };
-            var storeName = this.browser.addStoreConfig(null, storeConf);
-            var randomId = Math.random().toString(36).substring(7);
-
-            var trackConf = {
-                type: 'JBrowse/View/Track/CanvasVariants',
-                store: storeName,
-                label: "ICGC_Genes_Donor_" + donorId + "-" + randomId,
-                key: "ICGC Genes " + donorId,
-                metadata: {
-                    datatype: "Gene",
-                    donor: donorId
-                }
-            };
-            trackConf.store = storeName;
-            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
-            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
-
-        /**
-         * Adds an SSM track based on the chosen facets
-         * @param {object} combinedFacetObject combined object of facets
-         */
-        addSSMTrack: function (combinedFacetObject) {
-            var storeConf = {
-                browser: this.browser,
-                refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcSimpleSomaticMutations',
-                filters: combinedFacetObject
-            };
-            var storeName = this.browser.addStoreConfig(null, storeConf);
-
-            var randomId = Math.random().toString(36).substring(7);
-            var trackConf = {
-                type: 'JBrowse/View/Track/CanvasVariants',
-                store: storeName,
-                label: "ICGC_SSM_" + randomId,
-                key: "ICGC SSM",
-                metadata: {
-                    datatype: "SSM"
-                }
-            };
-            trackConf.store = storeName;
-            this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
-            this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
-
-        /**
-         * Adds a CNSM track based on the donor Id
-         * @param {string} donorId Id of the donor of interest
-         */
-        addDonorCNSMTrack: function (donorId) {
-            var storeConf = {
-                browser: this.browser,
-                refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/icgcCNSM',
-                donor: donorId
-            };
-            var storeName = this.browser.addStoreConfig(null, storeConf);
-            var randomId = Math.random().toString(36).substring(7);
-
-            var randomId = Math.random().toString(36).substring(7);
-            var trackConf = {
-                type: 'JBrowse/View/Track/Wiggle/XYPlot',
-                store: storeName,
-                label: "ICGC_CNSM_" + donorId + "-" + randomId,
-                key: "ICGC CNSM " + donorId,
-                autoscale: "local",
-                bicolor_pivot: 0,
-                metadata: {
-                    datatype: "CNSM",
+                    datatype: storeClass,
                     donor: donorId
                 }
             };

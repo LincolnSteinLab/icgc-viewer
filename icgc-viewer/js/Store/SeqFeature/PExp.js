@@ -1,3 +1,6 @@
+/**
+ * WARNING: This store class is in development. There are no guarantees that it will work.
+ */
 const zlib = cjsRequire("zlib");
 const http = cjsRequire("http");
 
@@ -23,15 +26,15 @@ function(
             // ID of the donor
             this.donor = args.donor;
 
-            thisB.loadDonorExpAFile();
+            thisB.loadDonorPExpFile();
         },
 
         /**
-         * Loads the ExpA file for the donor from ICGC (Promise)
+         * Loads the PExp file for the donor from ICGC (Promise)
          */
-        loadDonorExpAFile: function() {
+        loadDonorPExpFile: function() {
             var thisB = this;
-            var url = 'https://dcc.icgc.org/api/v1/download/submit?filters={"donor":{"id":{"is":["' + this.donor + '"]}}}&info=[{"key":"exp_array","value":"JSON"}]';
+            var url = 'https://dcc.icgc.org/api/v1/download/submit?filters={"donor":{"id":{"is":["' + this.donor + '"]}}}&info=[{"key":"pexp","value":"JSON"}]';
             thisB.zipFileDownloadPromise = fetch(url, {
                 method: 'GET'
             }).then(function(res) {
@@ -74,11 +77,10 @@ function(
                 if (thisB.zipBuffer) {
                     var isHeaderLine = true;
                     // Index position within header
-                    var normalizedExpressionValue = -1;
+                    var normalizedExpressionLevelPosition = -1;
                     var donorIdPosition = -1;
 
-                    var geneModelPosition = -1;
-                    var geneIdPosition = -1;
+                    var geneNamePosition = -1;
 
                     // TODO: Find a node package for parsing TSV files
                     var splitFileByLine = thisB.zipBuffer.split(/\n/);
@@ -88,50 +90,51 @@ function(
                         // Determine indices 
                         if (isHeaderLine) {
                             donorIdPosition = splitLineByTab.indexOf("icgc_donor_id");
-                            normalizedExpressionValue = splitLineByTab.indexOf("normalized_expression_value");
-                            geneModelPosition = splitLineByTab.indexOf("gene_model");
-                            geneIdPosition = splitLineByTab.indexOf("gene_id");
+                            normalizedExpressionLevelPosition = splitLineByTab.indexOf("normalized_expression_level");
+                            geneNamePosition = splitLineByTab.indexOf("gene_name");
 
-                            if (normalizedExpressionValue == -1 || geneIdPosition == -1 || geneModelPosition == -1 || donorIdPosition == -1) {
+                            if (normalizedExpressionLevelPosition == -1 || geneNamePosition == -1 || donorIdPosition == -1) {
                                 errorCallback("File is missing a required header field.");
                             }
                         } else {
                             if (thisB.donor === splitLineByTab[donorIdPosition]) {
-                                // Need to retrieve gene start and end positions
-                                var url = 'https://dcc.icgc.org/api/v1/genes?filters={"gene":{"symbol":{"is":["' + splitLineByTab[geneIdPosition] + '"]}}}';
-                                var genePositionPromise = fetch(url, {
-                                    method: 'GET'
-                                }).then(function(res) {
-                                    return res.json()
-                                }).then(function(res) {
-                                    console.log(res);
-                                    var hit = res.hits[0];
-                                    if (hit != undefined) {
-                                        var start = hit.start;
-                                        var end = hit.end;
-                                        var chr = hit.chromosome;
-                                        if (ref === chr) {
-                                            var feature = {
-                                                id: chr + "_" + start + "_" + end + "_exps",
-                                                data: {
-                                                    start: start,
-                                                    end: end,
-                                                    score: splitLineByTab[normalizedExpressionValue]
+                                var splitBySpace = splitLineByTab[geneNamePosition].split(' ');
+                                
+                                splitBySpace.forEach(function(geneName) {
+                                    // Need to retrieve gene start and end positions
+                                    var url = 'https://dcc.icgc.org/api/v1/genes?filters={"gene":{"symbol":{"is":["' + geneName + '"]}}}';
+                                    var genePositionPromise = fetch(url, {
+                                        method: 'GET'
+                                    }).then(function(res) {
+                                        return res.json()
+                                    }).then(function(res) {
+                                        var hit = res.hits[0];
+                                        if (hit != undefined) {
+                                            var start = hit.start;
+                                            var end = hit.end;
+                                            var chr = hit.chromosome;
+                                            if (ref === chr) {
+                                                var feature = {
+                                                    id: chr + "_" + start + "_" + end + "_exps",
+                                                    data: {
+                                                        start: start,
+                                                        end: end,
+                                                        score: splitLineByTab[normalizedExpressionLevelPosition],
+                                                        gene: geneName
+                                                    }
                                                 }
+                                                featureCallback(new SimpleFeature(feature));
                                             }
-                                            featureCallback(new SimpleFeature(feature));
+                                        } else {
+                                            console.log(geneName + ' cannot be found.')
                                         }
-                                    } else {
-                                        console.log(splitLineByTab[geneIdPosition] + ' cannot be found.')
-                                    }
+                                    });
+                                    thisB.addedFeaturesPromise.push(genePositionPromise);
                                 });
-                                thisB.addedFeaturesPromise.push(genePositionPromise);
                             }
                         }
 
                         isHeaderLine = false;
-                    }).catch(function(error) {
-                        console.log(error);
                     });
 
                     Promise.all(thisB.addedFeaturesPromise).then(function(res) {
