@@ -250,6 +250,7 @@ function (
                             }
 
                             accordion.startup();
+                            accordion.resize();
                             thisB.resize();
                         }
                     }, function (res3) {
