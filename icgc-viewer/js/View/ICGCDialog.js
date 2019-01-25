@@ -317,6 +317,7 @@ function (
                                     label: "Add All SSMs",
                                     onClick: function() {
                                         thisB.addTrack('SimpleSomaticMutations', undefined, combinedFacetObject, 'CanvasVariants');
+                                        alert("Adding Simple Somatic Mutations track for all mutations.");
                                     }
                                 }, "addMutations").placeAt(thisB.mutationResultsTab.containerNode);
 
@@ -346,6 +347,7 @@ function (
                                     label: "Add All Genes",
                                     onClick: function() {
                                         thisB.addTrack('Genes', undefined, combinedFacetObject, 'CanvasVariants');
+                                        alert("Adding Genes track for all genes.");
                                     }
                                 }, "addGenes").placeAt(thisB.geneResultsTab.containerNode);
 
@@ -741,6 +743,7 @@ function (
                     label: "Add",
                     onClick: function() {
                         thisB.addTrack('SimpleSomaticMutations', donorId, combinedFacetObject, 'CanvasVariants');
+                        alert("Adding Simple Somatic Mutations track for the donor " + donorId);
                     }
                 }, "ssmButton").placeAt(holder);
             }
@@ -759,6 +762,7 @@ function (
                 label: "Add",
                 onClick: function() {
                     thisB.addTrack('Genes', donorId, combinedFacetObject, 'CanvasVariants');
+                    alert("Adding Genes track for the donor " + donorId);
                 }
             }, "geneButton").placeAt(holder);
         },
