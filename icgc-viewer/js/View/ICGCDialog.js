@@ -590,9 +590,15 @@ function (
 
                 // Create button and place in parent
                 var donorGeneButtonWithFilters = dom.toDom(`<span></span>`);
-                thisB.createDonorGeneButton(hit.id, donorGeneButtonWithFilters, combinedFacetObject);
+                thisB.createDonorGeneButton(hit.id, donorGeneButtonWithFilters, combinedFacetObject, false, "Filtered");
                 thisB.addTooltipToButton(donorGeneButtonWithFilters, "Add all genes for the given donor, filter with current facets");
                 dom.place(donorGeneButtonWithFilters, geneButtonNode);
+
+                // Create button and place in parent
+                var donorGeneButtonWithoutFilters = dom.toDom(`<span></span>`);
+                thisB.createDonorGeneButton(hit.id, donorGeneButtonWithoutFilters, combinedFacetObject, true, "All");
+                thisB.addTooltipToButton(donorGeneButtonWithoutFilters, "Add all genes for the given donor, do not filter with current facets");
+                dom.place(donorGeneButtonWithoutFilters, geneButtonNode);
 
                 // Place buttons in table
                 dom.place(geneButtonNode, donorRowContentNode);
@@ -602,9 +608,15 @@ function (
 
                 // Create button and place in parent
                 var donorSSMButtonWithFilters = dom.toDom(`<span></span>`);
-                thisB.createDonorButtons(hit.id, hit.availableDataTypes, donorSSMButtonWithFilters, combinedFacetObject);
+                thisB.createDonorButtons(hit.id, hit.availableDataTypes, donorSSMButtonWithFilters, combinedFacetObject, false, "Filtered");
                 thisB.addTooltipToButton(donorSSMButtonWithFilters, "Add all SSMs for the given donor, filter with current facets");
                 dom.place(donorSSMButtonWithFilters, ssmButtonNode);
+
+                // Create button and place in parent
+                var donorSSMButtonWithoutFilters = dom.toDom(`<span></span>`);
+                thisB.createDonorButtons(hit.id, hit.availableDataTypes, donorSSMButtonWithoutFilters, combinedFacetObject, true, "All");
+                thisB.addTooltipToButton(donorSSMButtonWithoutFilters, "Add all SSMs for the given donor, do not filter with current facets");
+                dom.place(donorSSMButtonWithoutFilters, ssmButtonNode);
 
                 // Place buttons in table
                 dom.place(ssmButtonNode, donorRowContentNode);
@@ -767,13 +779,18 @@ function (
          * @param {List<String>} availableDataTypes Array of available data types
          * @param {object} holder HTML element to place the buttons in
          * @param {object} combinedFacetObject combined object of facets
+         * @param {boolean} noFilters Whether or not to apply filters
+         * @param {string} text button label
          */
-        createDonorButtons: function(donorId, availableDataTypes, holder, combinedFacetObject) {
+        createDonorButtons: function(donorId, availableDataTypes, holder, combinedFacetObject, noFilters, text) {
             var thisB = this;
+            if (noFilters) {
+                combinedFacetObject = undefined;
+            }
             if (availableDataTypes.includes("ssm")) {
                 var ssmButton = new Button({
                     iconClass: "dijitIconNewTask",
-                    label: "Filtered",
+                    label: text,
                     onClick: function() {
                         thisB.addTrack('SimpleSomaticMutations', donorId, combinedFacetObject, 'CanvasVariants');
                         alert("Adding Simple Somatic Mutations track for the donor " + donorId);
@@ -788,12 +805,17 @@ function (
          * @param {string} donorId Id of donor
          * @param {object} holder Div to place the button in
          * @param {object} combinedFacetObject combined object of facets
+         * @param {boolean} noFilters Whether or not to apply filters
+         * @param {string} text button label
          */
-        createDonorGeneButton: function(donorId, holder, combinedFacetObject) {
+        createDonorGeneButton: function(donorId, holder, combinedFacetObject, noFilters, text) {
             var thisB = this;
+            if (noFilters) {
+                combinedFacetObject = undefined;
+            }
             var geneButton = new Button({
                 iconClass: "dijitIconNewTask",
-                label: "Filtered",
+                label: text,
                 onClick: function() {
                     thisB.addTrack('Genes', donorId, combinedFacetObject, 'CanvasVariants');
                     alert("Adding Genes track for the donor " + donorId);
