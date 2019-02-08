@@ -28,7 +28,13 @@ return declare(JBrowsePlugin, {
         },
 
         createICGCTrack: function () {
-            var searchDialog = new ICGCDialog();
+            var searchDialog = new ICGCDialog(
+                {
+                    onHide: function() {
+                        this.destroy();
+                }
+            }
+            );
             searchDialog.show(this.browser,
                 function () {
 

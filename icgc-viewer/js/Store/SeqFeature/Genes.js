@@ -22,7 +22,7 @@ function(
             this.filters = args.filters !== undefined ? JSON.parse(args.filters) : {};
 
             // Maximum gene count to retrieve from ICGC
-            this.maxGeneCount = args.maxGeneCount !== undefined ? parseInt(args.maxGeneCount) : 1000;
+            this.size = args.size !== undefined ? parseInt(args.size) : 1000;
         },
 
         /**
@@ -114,8 +114,8 @@ function(
             var thisB = this;
 
             // Validate user provided attributes
-            if (Number.isNaN(this.maxGeneCount) || !Number.isInteger(this.maxGeneCount) || (Number.isInteger(this.maxGeneCount) && this.maxGeneCount < 0)) {
-                errorCallback('Invalid maxGeneCount provided. Must be a positive integer. User provided \"' + this.maxGeneCount + '\"');
+            if (Number.isNaN(this.size) || !Number.isInteger(this.size) || (Number.isInteger(this.size) && this.size < 0)) {
+                errorCallback('Invalid size provided. Must be a positive integer. User provided \"' + this.size + '\"');
             }
 
             // Collection of remote link base structures
@@ -140,7 +140,7 @@ function(
             }
 
             // Retrieve all mutations in the given chromosome range (limit to 1000)
-            var url = encodeURI(searchBaseUrl +  '/genes?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&size=' + this.maxGeneCount + '&include=externalDbIds');
+            var url = encodeURI(searchBaseUrl +  '/genes?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&size=' + this.size + '&include=externalDbIds');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },
@@ -150,21 +150,20 @@ function(
                     featureCallback(new SimpleFeature({
                         id: gene.id,
                         data: {
-                            start: gene.start - 1,
-                            end: gene.end - 1,
-                            strand: gene.strand,
-                            chromosome: gene.chromosome,
-                            name: gene.name,
-                            symbol: gene.symbol,
-                            icgc: thisB.createLinkWithId(ICGC_LINK, gene.id),
-                            ensembl: thisB.createLinkWithId(ENSEMBL_LINK, gene.id),
-                            entrez: thisB.createLinksWithId(ENTREZ_LINK, gene.externalDbIds.entrez_gene),
-                            hgnc: thisB.createLinksWithId(HGNC_LINK, gene.externalDbIds.hgnc),
-                            entrez: thisB.createLinksWithId(OMIM_LINK, gene.externalDbIds.omim_gene),
-                            uniprotkb_swissprot: thisB.createLinksWithId(UNIPROTKB_SWISSPROT_LINK, gene.externalDbIds.uniprotkb_swissprot),
-                            cosmic: thisB.createLinkWithId(COSMIC_LINK, gene.symbol),
-                            description: gene.description,
-                            type: gene.type
+                            'start': gene.start - 1,
+                            'end': gene.end - 1,
+                            'strand': gene.strand,
+                            'Gene Name': gene.name,
+                            'Symbol': gene.symbol,
+                            'ICGC': thisB.createLinkWithId(ICGC_LINK, gene.id),
+                            'Ensembl (release 75)': thisB.createLinkWithId(ENSEMBL_LINK, gene.id),
+                            'Entrez Gene': thisB.createLinksWithId(ENTREZ_LINK, gene.externalDbIds.entrez_gene),
+                            'HGNC Gene': thisB.createLinksWithId(HGNC_LINK, gene.externalDbIds.hgnc),
+                            'OMIM': thisB.createLinksWithId(OMIM_LINK, gene.externalDbIds.omim_gene),
+                            'UniProtKB/Swiss-Prot': thisB.createLinksWithId(UNIPROTKB_SWISSPROT_LINK, gene.externalDbIds.uniprotkb_swissprot),
+                            'COSMIC': thisB.createLinkWithId(COSMIC_LINK, gene.symbol),
+                            'Gene Description': gene.description,
+                            'type': (gene.type).replace(/_/g, ' ')
                         }
                     }));
                 });

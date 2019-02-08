@@ -22,7 +22,7 @@ function(
             this.filters = args.filters !== undefined ? JSON.parse(args.filters) : {};
 
             // Maximum mutation count to retrieve from ICGC
-            this.maxMutationCount = args.maxMutationCount !== undefined ? parseInt(args.maxMutationCount) : 500;
+            this.size = args.size !== undefined ? parseInt(args.size) : 500;
         },
 
         /**
@@ -33,6 +33,16 @@ function(
         createLinkWithId: function(link, id) {
             return id !== null ? "<a href='" + link + id + "' target='_blank'>" + id + "</a>" : "n/a";
         },
+
+        /**
+         * Creates a link to a given ID and name
+         * @param {string} link Base URL for link
+         * @param {string} id ID to apped to base URL
+         */
+        createLinkWithIdAndName: function(link, id, name) {
+            return id !== null ? "<a href='" + link + id + "' target='_blank'>" + name + "</a>" : "n/a";
+        },
+
 
         /**
          * Return string showing fraction of total donors affected by the mutation
@@ -69,7 +79,11 @@ function(
          * @param {string} value Value to make pretty
          */
         prettyValue: function(value) {
-            return value ? value : "";
+            return value ? value : '';
+        },
+
+        convertIntToStrand: function(strand) {
+            return strand == 1 ? '+' : '-'
         },
 
         /**
@@ -81,7 +95,7 @@ function(
         createProjectIncidenceTable: function(projects, projectCounts, mutationId) {
             var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
             var headerRow = `
-                <tr>
+                <tr style=\"background-color: #f2f2f2\">
                     <th style="${thStyle}">Project</th>
                     <th style="${thStyle}">Site</th>
                     <th style="${thStyle}">Tumour Type</th>
@@ -95,11 +109,11 @@ function(
             var count = 0;
             Object.keys(projects).forEach(project => {
                 var trStyle = '';
-                if (count % 2 == 0) {
+                if (count % 2 != 0) {
                     trStyle = 'style=\"background-color: #f2f2f2\"';
                 }
                 var projectRow = `<tr ${trStyle}>
-                    <td style="${thStyle}">${this.prettyValue(project)}</td>
+                    <td style="${thStyle}">${this.createLinkWithId('https://dcc.icgc.org/projects/', project)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].primarySite)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].tumourType)}</td>
                     <td style="${thStyle}">${this.prettyValue(projects[project].tumourSubtype)}</td>
@@ -123,11 +137,11 @@ function(
         createConsequencesTable: function(consequences) {
             var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
             var headerRow = `
-                <tr>
+                <tr style=\"background-color: #f2f2f2\">
                     <th style="${thStyle}">Gene</th>
                     <th style="${thStyle}">AA Change</th>
                     <th style="${thStyle}">Consequence</th>
-                    <th style="${thStyle}">CDS Change</th> 
+                    <th style="${thStyle}">Coding DNA Change</th> 
                     <th style="${thStyle}">Functional Impact</th>
                     <th style="${thStyle}">Strand</th>
                     <th style="${thStyle}">Transcripts</th>
@@ -139,16 +153,16 @@ function(
             var count = 0;
             for (consequence of consequences) {
                 var trStyle = '';
-                if (count % 2 == 0) {
+                if (count % 2 != 0) {
                     trStyle = 'style=\"background-color: #f2f2f2\"';
                 }
                 var consequenceRow = `<tr ${trStyle}>
-                    <td style="${thStyle}">${this.prettyValue(consequence.geneAffectedSymbol)}</td>
+                    <td style="${thStyle}">${this.createLinkWithIdAndName('https://dcc.icgc.org/genes/', consequence.geneAffectedId ,consequence.geneAffectedSymbol)}</td>
                     <td style="${thStyle}">${this.prettyValue(consequence.aaMutation)}</td>
-                    <td style="${thStyle}">${this.prettyValue(consequence.type)}</td>
+                    <td style="${thStyle}">${this.prettyValue((consequence.type).replace(/_/g, ' '))}</td>
                     <td style="${thStyle}">${this.prettyValue(consequence.cdsMutation)}</td>
                     <td style="${thStyle}">${this.prettyValue(consequence.functionalImpact)}</td>
-                    <td style="${thStyle}">${this.prettyValue(consequence.geneStrand)}</td>
+                    <td style="${thStyle}">${this.prettyValue(this.convertIntToStrand(consequence.geneStrand))}</td>
                     <td style="${thStyle}">${this.getTranscripts(consequence.transcriptsAffected)}</td>
                     </tr>
                 `;
@@ -223,8 +237,8 @@ function(
             var thisB = this;
 
             // Validate user provided attributes
-            if (Number.isNaN(this.maxMutationCount) || !Number.isInteger(this.maxMutationCount) || (Number.isInteger(this.maxMutationCount) && this.maxMutationCount < 0)) {
-                errorCallback('Invalid maxMutationCount provided. Must be a positive integer. User provided \"' + this.maxMutationCount + '\"');
+            if (Number.isNaN(this.size) || !Number.isInteger(this.size) || (Number.isInteger(this.size) && this.size < 0)) {
+                errorCallback('Invalid size provided. Must be a positive integer. User provided \"' + this.size + '\"');
             }
 
             // Collection of remote link base structures
@@ -245,7 +259,7 @@ function(
             }
 
             // Retrieve all mutations in the given chromosome range
-            var url = encodeURI(searchBaseUrl +  '/mutations?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&include=consequences&size=' + this.maxMutationCount);
+            var url = encodeURI(searchBaseUrl +  '/mutations?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&include=consequences&size=' + this.size);
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },
@@ -282,20 +296,19 @@ function(
                                         data: {
                                             start: variant.start - 1,
                                             end: variant.end - 1,
-                                            name: variant.id,
                                             mutation: variant.mutation,
-                                            reference_allele: variant.referenceGenomeAllele,
-                                            assembly_version: variant.assemblyVersion,
-                                            civic: thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
-                                            clinvar: thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
-                                            icgc: thisB.createLinkWithId(ICGC_LINK, variant.id),
-                                            affected_projects: variant.affectedProjectCount,
-                                            affected_donors: thisB.getDonorFraction(variant),
-                                            type: variant.type,
-                                            study: thisB.prettyValue(variant.study.join()),
-                                            description: variant.description,
-                                            consequences: thisB.createConsequencesTable(variant.consequences),
-                                            projects: thisB.createProjectIncidenceTable(projects, projectsResponse, variant.id)
+                                            'Allele in the reference assembly': variant.referenceGenomeAllele,
+                                            'Reference Genome Assembly': variant.assemblyVersion,
+                                            'CIViC': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
+                                            'ClinVar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
+                                            'ICGC': thisB.createLinkWithId(ICGC_LINK, variant.id),
+                                            'Affected projects': variant.affectedProjectCount,
+                                            'Affected donors': thisB.getDonorFraction(variant),
+                                            'Type': variant.type,
+                                            'Study': thisB.prettyValue(variant.study.join()),
+                                            'Variant Description': variant.description,
+                                            'Consequences': thisB.createConsequencesTable(variant.consequences),
+                                            'Projects': thisB.createProjectIncidenceTable(projects, projectsResponse, variant.id)
                                         }
                                     }
                                     featureCallback(new SimpleFeature(variantFeature));
