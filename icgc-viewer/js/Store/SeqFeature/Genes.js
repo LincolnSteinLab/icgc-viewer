@@ -22,7 +22,7 @@ function(
             this.filters = args.filters !== undefined ? JSON.parse(args.filters) : {};
 
             // Maximum gene count to retrieve from ICGC
-            this.maxGeneCount = args.maxGeneCount !== undefined ? parseInt(args.maxGeneCount) : 1000;
+            this.size = args.size !== undefined ? parseInt(args.size) : 1000;
         },
 
         /**
@@ -114,8 +114,8 @@ function(
             var thisB = this;
 
             // Validate user provided attributes
-            if (Number.isNaN(this.maxGeneCount) || !Number.isInteger(this.maxGeneCount) || (Number.isInteger(this.maxGeneCount) && this.maxGeneCount < 0)) {
-                errorCallback('Invalid maxGeneCount provided. Must be a positive integer. User provided \"' + this.maxGeneCount + '\"');
+            if (Number.isNaN(this.size) || !Number.isInteger(this.size) || (Number.isInteger(this.size) && this.size < 0)) {
+                errorCallback('Invalid size provided. Must be a positive integer. User provided \"' + this.size + '\"');
             }
 
             // Collection of remote link base structures
@@ -140,7 +140,7 @@ function(
             }
 
             // Retrieve all mutations in the given chromosome range (limit to 1000)
-            var url = encodeURI(searchBaseUrl +  '/genes?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&size=' + this.maxGeneCount + '&include=externalDbIds');
+            var url = encodeURI(searchBaseUrl +  '/genes?filters=' + thisB.getFilterQuery(ref, start, end) + '&from=1&size=' + this.size + '&include=externalDbIds');
             return request(url, {
                 method: 'get',
                 headers: { 'X-Requested-With': null },
