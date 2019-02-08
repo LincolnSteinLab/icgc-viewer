@@ -308,7 +308,6 @@ function (
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
-                                var helpMessage = dom.create('div', { innerHTML: "Note: Gene and SSM tracks added through this browser will have all the current filters applied.", style: { 'font-style': 'italic' } }, thisB.donorResultsTab.containerNode);
                                 var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.donorResultsTab.containerNode);
                                 thisB.createDonorsTable(facetsJsonResponse.hits, thisB.donorResultsTab.containerNode, combinedFacetObject);
                                 thisB.createPaginationButtons(thisB.donorResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.donorPage);
@@ -328,7 +327,6 @@ function (
                     dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
-                                var helpMessage = dom.create('div', { innerHTML: "Note: Gene and SSM tracks added through this browser will have all the current filters applied.", style: { 'font-style': 'italic' } }, thisB.mutationResultsTab.containerNode);
                                 var addMutationsButton = new Button({
                                     label: "All SSMs With Facets",
                                     iconClass: "dijitIconNewTask",
@@ -360,7 +358,6 @@ function (
                     dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
-                                var helpMessage = dom.create('div', { innerHTML: "Note: Gene and SSM tracks added through this browser will have all the current filters applied.", style: { 'font-style': 'italic' } }, thisB.geneResultsTab.containerNode);
                                 var addGenesButton = new Button({
                                     label: "All Genes With Facets",
                                     iconClass: "dijitIconNewTask",
