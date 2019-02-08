@@ -332,10 +332,20 @@ function (
                                     iconClass: "dijitIconNewTask",
                                     onClick: function() {
                                         thisB.addTrack('SimpleSomaticMutations', undefined, combinedFacetObject, 'CanvasVariants');
-                                        alert("Adding Simple Somatic Mutations track for all mutations.");
+                                        alert("Adding Simple Somatic Mutations track for all mutations with filters.");
                                     }
                                 }, "addMutations").placeAt(thisB.mutationResultsTab.containerNode);
                                 thisB.addTooltipToButton(addMutationsButton, "Add track with all SSMs, filter with current facets");
+
+                                var addMutationsNoFiltersButton = new Button({
+                                    label: "All SSMs Without Facets",
+                                    iconClass: "dijitIconNewTask",
+                                    onClick: function() {
+                                        thisB.addTrack('SimpleSomaticMutations', undefined, undefined, 'CanvasVariants');
+                                        alert("Adding Simple Somatic Mutations track for all mutations without filters.");
+                                    }
+                                }, "addMutations").placeAt(thisB.mutationResultsTab.containerNode);
+                                thisB.addTooltipToButton(addMutationsNoFiltersButton, "Add track with all SSMs, do not filter with current facets");
 
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
                                 var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.mutationResultsTab.containerNode);
@@ -363,10 +373,20 @@ function (
                                     iconClass: "dijitIconNewTask",
                                     onClick: function() {
                                         thisB.addTrack('Genes', undefined, combinedFacetObject, 'CanvasVariants');
-                                        alert("Adding Genes track for all genes.");
+                                        alert("Adding Genes track for all genes with filters.");
                                     }
                                 }, "addGenes").placeAt(thisB.geneResultsTab.containerNode);
                                 thisB.addTooltipToButton(addGenesButton, "Add track with all genes, filter with current facets");
+
+                                var addGenesNoFiltersButton = new Button({
+                                    label: "All Genes With Facets",
+                                    iconClass: "dijitIconNewTask",
+                                    onClick: function() {
+                                        thisB.addTrack('Genes', undefined, undefined, 'CanvasVariants');
+                                        alert("Adding Genes track for all genes without filters.");
+                                    }
+                                }, "addGenes").placeAt(thisB.geneResultsTab.containerNode);
+                                thisB.addTooltipToButton(addGenesNoFiltersButton, "Add track with all genes, do not filter with current facets");
 
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
                                 var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.geneResultsTab.containerNode);
