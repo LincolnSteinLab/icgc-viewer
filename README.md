@@ -93,7 +93,7 @@ key=ICGC_Genes
 ```
 
 ### Extra notes
-You can also set the 'maxGeneCount' attribute (defaults to 1000). This is the theoretical maximum number of genes displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
+You can also set the 'size' attribute (defaults to 1000). This is the theoretical maximum number of genes displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
 
 ## SimpleSomaticMutations
 A simple view of all the simple somatic mutations across all donors in the ICGC portal. 
@@ -131,7 +131,7 @@ key=ICGC_Mutations
 ```
 
 ### Extra notes
-You can also set the 'maxMutationCount' attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
+You can also set the 'size' attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
 
 # Menu option for searching ICGC
 In the tools menu there is an option to search ICGC. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. This will create a filtered list of matching donors, genes and mutations.
@@ -141,7 +141,6 @@ Donors Tab:
 * For each donor
     * Add track for affected genes
     * Add track for SSMs
-    * Add track for CNSMs
     * More tracks to come...
 
 Genes Tab:
