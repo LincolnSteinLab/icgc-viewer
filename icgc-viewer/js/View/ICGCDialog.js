@@ -7,6 +7,7 @@ define([
     'dijit/layout/TabContainer',
     'dijit/layout/AccordionContainer',
     'dijit/layout/ContentPane',
+    'dijit/Tooltip',
     'dojo/aspect',
     'JBrowse/View/Dialog/WithActionBar'
 ],
@@ -19,6 +20,7 @@ function (
     TabContainer,
     AccordionContainer,
     ContentPane,
+    Tooltip,
     aspect,
     ActionBarDialog
 ) {
@@ -141,18 +143,8 @@ function (
          */
         createFacetUrl: function(type) {
             var thisB = this;
-            var filters = {};
-            if (type === 'donor') {
-                filters = thisB.donorFilters;
-            } else if (type === 'mutation') {
-                filters = thisB.mutationFilters;
-            } else if (type === 'gene') {
-                filters = thisB.geneFilters;
-            }
-
-            var facetURl = 'https://dcc.icgc.org/api/v1/' + type + 's?include=facets&filters=' + thisB.convertFiltersObjectToString(type, filters);
-
-            return facetURl;
+            var facetUrl = 'https://dcc.icgc.org/api/v1/' + type + 's?include=facets&filters=' + thisB.createCombinedFacets();
+            return facetUrl;
         },
 
         /**
@@ -206,7 +198,7 @@ function (
                                     id: facet + '-' + type + '-' + thisB.accordionId
                                 });
 
-                                var facetHolder = dom.create('span', { className: "flex-column" });
+                                var facetHolder = dom.create('span', { className: "flex-column", style: "width: 100%" });
                                 if (facetsJsonResponse.facets[facet].terms) {
                                     facetsJsonResponse.facets[facet].terms.sort(thisB.compareTermElements);
                                     facetsJsonResponse.facets[facet].terms.forEach((term) => {
@@ -235,7 +227,9 @@ function (
                                                         thisB.geneFilters = thisB.removeFromFilters(this.value, thisB.geneFilters);
                                                     }
                                                 }
-                                                thisB.updateAccordion(type);
+                                                thisB.updateAccordion('donor');
+                                                thisB.updateAccordion('mutation');
+                                                thisB.updateAccordion('gene');
                                                 thisB.updateSearchResults('donor');
                                                 thisB.updateSearchResults('mutation');
                                                 thisB.updateSearchResults('gene');
@@ -262,6 +256,19 @@ function (
         },
 
         /**
+         * Adds a tooltip with some text to a location
+         * @param {*} button Location to attach tooltip
+         * @param {*} tooltipText Text to display in tooltip
+         */
+        addTooltipToButton: function(button, tooltipText) {
+            var tooltip = new Tooltip({
+                label: tooltipText
+            });
+
+            tooltip.addTarget(button);
+        },
+
+        /**
          * Updates the search results of some type based on the facets
          * @param {string} type The type of accordion
          */
@@ -277,6 +284,7 @@ function (
                         thisB.clearFacets()
                     }
                 }, "clearFacets").placeAt(thisB.prettyFacetHolder);
+                thisB.addTooltipToButton(clearFacetButton, "Clears all facets");
             }
 
             var combinedFacets = Object.assign({}, thisB.donorFilters, thisB.mutationFilters, thisB.geneFilters);
@@ -292,7 +300,6 @@ function (
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
-                                var helpMessage = dom.create('div', { innerHTML: "Note: Gene and SSM tracks added through this browser will have all the current filters applied.", style: { 'font-style': 'italic' } }, thisB.donorResultsTab.containerNode);
                                 var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.donorResultsTab.containerNode);
                                 thisB.createDonorsTable(facetsJsonResponse.hits, thisB.donorResultsTab.containerNode, combinedFacetObject);
                                 thisB.createPaginationButtons(thisB.donorResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.donorPage);
@@ -312,14 +319,25 @@ function (
                     dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
-                                var helpMessage = dom.create('div', { innerHTML: "Note: Gene and SSM tracks added through this browser will have all the current filters applied.", style: { 'font-style': 'italic' } }, thisB.mutationResultsTab.containerNode);
                                 var addMutationsButton = new Button({
-                                    label: "Add All SSMs",
+                                    label: "All SSMs With Facets",
+                                    iconClass: "dijitIconNewTask",
                                     onClick: function() {
                                         thisB.addTrack('SimpleSomaticMutations', undefined, combinedFacetObject, 'CanvasVariants');
-                                        alert("Adding Simple Somatic Mutations track for all mutations.");
+                                        alert("Adding Simple Somatic Mutations track for all mutations with filters.");
                                     }
                                 }, "addMutations").placeAt(thisB.mutationResultsTab.containerNode);
+                                thisB.addTooltipToButton(addMutationsButton, "Add track with all SSMs, filter with current facets");
+
+                                var addMutationsNoFiltersButton = new Button({
+                                    label: "All SSMs Without Facets",
+                                    iconClass: "dijitIconNewTask",
+                                    onClick: function() {
+                                        thisB.addTrack('SimpleSomaticMutations', undefined, undefined, 'CanvasVariants');
+                                        alert("Adding Simple Somatic Mutations track for all mutations without filters.");
+                                    }
+                                }, "addMutations").placeAt(thisB.mutationResultsTab.containerNode);
+                                thisB.addTooltipToButton(addMutationsNoFiltersButton, "Add track with all SSMs, do not filter with current facets");
 
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
                                 var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.mutationResultsTab.containerNode);
@@ -342,14 +360,25 @@ function (
                     dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
-                                var helpMessage = dom.create('div', { innerHTML: "Note: Gene and SSM tracks added through this browser will have all the current filters applied.", style: { 'font-style': 'italic' } }, thisB.geneResultsTab.containerNode);
                                 var addGenesButton = new Button({
-                                    label: "Add All Genes",
+                                    label: "All Genes With Facets",
+                                    iconClass: "dijitIconNewTask",
                                     onClick: function() {
                                         thisB.addTrack('Genes', undefined, combinedFacetObject, 'CanvasVariants');
-                                        alert("Adding Genes track for all genes.");
+                                        alert("Adding Genes track for all genes with filters.");
                                     }
                                 }, "addGenes").placeAt(thisB.geneResultsTab.containerNode);
+                                thisB.addTooltipToButton(addGenesButton, "Add track with all genes, filter with current facets");
+
+                                var addGenesNoFiltersButton = new Button({
+                                    label: "All Genes With Facets",
+                                    iconClass: "dijitIconNewTask",
+                                    onClick: function() {
+                                        thisB.addTrack('Genes', undefined, undefined, 'CanvasVariants');
+                                        alert("Adding Genes track for all genes without filters.");
+                                    }
+                                }, "addGenes").placeAt(thisB.geneResultsTab.containerNode);
+                                thisB.addTooltipToButton(addGenesNoFiltersButton, "Add track with all genes, do not filter with current facets");
 
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
                                 var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.geneResultsTab.containerNode);
@@ -460,7 +489,7 @@ function (
             thisB.facetTabs.startup();
 
             // Create results tabs
-            thisB.prettyFacetHolder = dom.create('div', { style: { 'flex': '3 0 0', 'margin': '5px' } }, thisB.searchResultsVerticalHolder);
+            thisB.prettyFacetHolder = dom.create('div', { style: { 'flex': '3 0 0', 'margin': '5px', 'display': 'flex', 'flex-wrap': 'wrap', 'align-content': 'stretch', 'align-items': 'center' } }, thisB.searchResultsVerticalHolder);
 
             thisB.searchResultsTabHolder = dom.create('div', { style: { width: '100%', height: '100%'  } }, thisB.searchResultsVerticalHolder);
             thisB.resultsTabs = new TabContainer({ style: {width: '100%', height: '100%'  } }, thisB.searchResultsTabHolder);
@@ -565,16 +594,40 @@ function (
                 `
                 var donorRowContentNode = dom.toDom(donorRowContent);
 
-                var geneButton = `<td></td>`;
-                var geneButtonNode = dom.toDom(geneButton);
-                thisB.createDonorGeneButton(hit.id, geneButtonNode, combinedFacetObject);
+                // Create element to hold buttons
+                var geneButtonNode = dom.toDom(`<td></td>`);
 
+                // Create button and place in parent
+                var donorGeneButtonWithFilters = dom.toDom(`<span></span>`);
+                thisB.createDonorGeneButton(hit.id, donorGeneButtonWithFilters, combinedFacetObject, false, "Filtered");
+                thisB.addTooltipToButton(donorGeneButtonWithFilters, "Add all genes for the given donor, filter with current facets");
+                dom.place(donorGeneButtonWithFilters, geneButtonNode);
+
+                // Create button and place in parent
+                var donorGeneButtonWithoutFilters = dom.toDom(`<span></span>`);
+                thisB.createDonorGeneButton(hit.id, donorGeneButtonWithoutFilters, combinedFacetObject, true, "All");
+                thisB.addTooltipToButton(donorGeneButtonWithoutFilters, "Add all genes for the given donor, do not filter with current facets");
+                dom.place(donorGeneButtonWithoutFilters, geneButtonNode);
+
+                // Place buttons in table
                 dom.place(geneButtonNode, donorRowContentNode);
 
-                var ssmButton = `<td></td>`;
-                var ssmButtonNode = dom.toDom(ssmButton);
-                thisB.createDonorButtons(hit.id, hit.availableDataTypes, ssmButtonNode, combinedFacetObject);
+                // Create element to hold buttons
+                var ssmButtonNode = dom.toDom(`<td></td>`);
 
+                // Create button and place in parent
+                var donorSSMButtonWithFilters = dom.toDom(`<span></span>`);
+                thisB.createDonorButtons(hit.id, hit.availableDataTypes, donorSSMButtonWithFilters, combinedFacetObject, false, "Filtered");
+                thisB.addTooltipToButton(donorSSMButtonWithFilters, "Add all SSMs for the given donor, filter with current facets");
+                dom.place(donorSSMButtonWithFilters, ssmButtonNode);
+
+                // Create button and place in parent
+                var donorSSMButtonWithoutFilters = dom.toDom(`<span></span>`);
+                thisB.createDonorButtons(hit.id, hit.availableDataTypes, donorSSMButtonWithoutFilters, combinedFacetObject, true, "All");
+                thisB.addTooltipToButton(donorSSMButtonWithoutFilters, "Add all SSMs for the given donor, do not filter with current facets");
+                dom.place(donorSSMButtonWithoutFilters, ssmButtonNode);
+
+                // Place buttons in table
                 dom.place(ssmButtonNode, donorRowContentNode);
 
                 var row = `<tr></tr>`;
@@ -735,12 +788,18 @@ function (
          * @param {List<String>} availableDataTypes Array of available data types
          * @param {object} holder HTML element to place the buttons in
          * @param {object} combinedFacetObject combined object of facets
+         * @param {boolean} noFilters Whether or not to apply filters
+         * @param {string} text button label
          */
-        createDonorButtons: function(donorId, availableDataTypes, holder, combinedFacetObject) {
+        createDonorButtons: function(donorId, availableDataTypes, holder, combinedFacetObject, noFilters, text) {
             var thisB = this;
+            if (noFilters) {
+                combinedFacetObject = undefined;
+            }
             if (availableDataTypes.includes("ssm")) {
                 var ssmButton = new Button({
-                    label: "Add",
+                    iconClass: "dijitIconNewTask",
+                    label: text,
                     onClick: function() {
                         thisB.addTrack('SimpleSomaticMutations', donorId, combinedFacetObject, 'CanvasVariants');
                         alert("Adding Simple Somatic Mutations track for the donor " + donorId);
@@ -755,11 +814,17 @@ function (
          * @param {string} donorId Id of donor
          * @param {object} holder Div to place the button in
          * @param {object} combinedFacetObject combined object of facets
+         * @param {boolean} noFilters Whether or not to apply filters
+         * @param {string} text button label
          */
-        createDonorGeneButton: function(donorId, holder, combinedFacetObject) {
+        createDonorGeneButton: function(donorId, holder, combinedFacetObject, noFilters, text) {
             var thisB = this;
+            if (noFilters) {
+                combinedFacetObject = undefined;
+            }
             var geneButton = new Button({
-                label: "Add",
+                iconClass: "dijitIconNewTask",
+                label: text,
                 onClick: function() {
                     thisB.addTrack('Genes', donorId, combinedFacetObject, 'CanvasVariants');
                     alert("Adding Genes track for the donor " + donorId);
