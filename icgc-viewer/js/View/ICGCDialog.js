@@ -186,7 +186,6 @@ function (
             var thisB = this;
 
             var url = thisB.createFacetUrl(type);
-            console.log(url);
             fetch(url).then(function (facetsResponse) {
                 dom.empty(loadingIcon);
                 facetsResponse.json().then(function (facetsJsonResponse) {
