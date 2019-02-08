@@ -143,18 +143,8 @@ function (
          */
         createFacetUrl: function(type) {
             var thisB = this;
-            var filters = {};
-            if (type === 'donor') {
-                filters = thisB.donorFilters;
-            } else if (type === 'mutation') {
-                filters = thisB.mutationFilters;
-            } else if (type === 'gene') {
-                filters = thisB.geneFilters;
-            }
-
-            var facetURl = 'https://dcc.icgc.org/api/v1/' + type + 's?include=facets&filters=' + thisB.convertFiltersObjectToString(type, filters);
-
-            return facetURl;
+            var facetUrl = 'https://dcc.icgc.org/api/v1/' + type + 's?include=facets&filters=' + thisB.createCombinedFacets();
+            return facetUrl;
         },
 
         /**
@@ -196,6 +186,7 @@ function (
             var thisB = this;
 
             var url = thisB.createFacetUrl(type);
+            console.log(url);
             fetch(url).then(function (facetsResponse) {
                 dom.empty(loadingIcon);
                 facetsResponse.json().then(function (facetsJsonResponse) {
@@ -237,7 +228,9 @@ function (
                                                         thisB.geneFilters = thisB.removeFromFilters(this.value, thisB.geneFilters);
                                                     }
                                                 }
-                                                thisB.updateAccordion(type);
+                                                thisB.updateAccordion('donor');
+                                                thisB.updateAccordion('mutation');
+                                                thisB.updateAccordion('gene');
                                                 thisB.updateSearchResults('donor');
                                                 thisB.updateSearchResults('mutation');
                                                 thisB.updateSearchResults('gene');
