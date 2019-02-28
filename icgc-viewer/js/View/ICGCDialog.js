@@ -222,23 +222,23 @@ function (
                                     var checkBox = new CheckBox({
                                         name: checkboxName,
                                         id: checkboxId,
-                                        value: { "facet": facet, "term" : term.term },
+                                        value: { "facet": facet, "term" : term.term, "type": type },
                                         checked: thisB.isChecked(facet, term.term, thisB.getFiltersForType(type)),
                                         onChange: function(isChecked) {
                                             if (isChecked) {
-                                                if (type === 'donor') {
+                                                if (this.value.type === 'donor') {
                                                     thisB.donorFilters = thisB.addToFilters(this.value, thisB.donorFilters);
-                                                } else if (type === 'mutation') {
+                                                } else if (this.value.type === 'mutation') {
                                                     thisB.mutationFilters = thisB.addToFilters(this.value, thisB.mutationFilters);
-                                                } else if (type === 'gene') {
+                                                } else if (this.value.type === 'gene') {
                                                     thisB.geneFilters = thisB.addToFilters(this.value, thisB.geneFilters);
                                                 }
                                             } else {
-                                                if (type === 'donor') {
+                                                if (this.value.type === 'donor') {
                                                     thisB.donorFilters = thisB.removeFromFilters(this.value, thisB.donorFilters);
-                                                } else if (type === 'mutation') {
+                                                } else if (this.value.type === 'mutation') {
                                                     thisB.mutationFilters = thisB.removeFromFilters(this.value, thisB.mutationFilters);
-                                                } else if (type === 'gene') {
+                                                } else if (this.value.type === 'gene') {
                                                     thisB.geneFilters = thisB.removeFromFilters(this.value, thisB.geneFilters);
                                                 }
                                             }
