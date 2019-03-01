@@ -636,10 +636,12 @@ function (
                 var menuItemGeneFiltered = new MenuItem({
                     label: "Filtered Genes for Donor",
                     iconClass: "dijitIconNewTask",
-                    onClick: function() {
-                        thisB.addTrack('Genes', hit.id, combinedFacetObject, 'CanvasVariants');
-                        alert("Adding Gene track for case " + hit.id);
-                    }
+                    onClick: (function(hit, combinedFacetObject) {
+                        return function() {
+                            thisB.addTrack('Genes', hit.id, combinedFacetObject, 'CanvasVariants');
+                            alert("Adding Gene track for case " + hit.id);
+                        }
+                    })(hit, combinedFacetObject)
                 });
                 geneMenu.addChild(menuItemGeneFiltered);
                 geneMenu.startup();
@@ -648,10 +650,12 @@ function (
                     label: "All Genes for Donor",
                     iconClass: "dijitIconNewTask",
                     dropDown: geneMenu,
-                    onClick: function() {
-                        thisB.addTrack('Genes', hit.id, undefined, 'CanvasVariants');
-                        alert("Adding Gene track for case " + hit.id);
-                    }
+                    onClick: (function(hit) {
+                        return function() {
+                            thisB.addTrack('Genes', hit.id, undefined, 'CanvasVariants');
+                            alert("Adding Gene track for case " + hit.id);
+                        }
+                    })(hit)
                 });
                 buttonAllGenes.placeAt(geneButtonNode);
                 buttonAllGenes.startup();
@@ -668,10 +672,12 @@ function (
                 var menuItemSsmFiltered = new MenuItem({
                     label: "Filtered SSMs for Donor",
                     iconClass: "dijitIconNewTask",
-                    onClick: function() {
-                        thisB.addTrack('SimpleSomaticMutations',  hit.id, combinedFacetObject, 'CanvasVariants');
-                        alert("Adding Simple Somatic Mutation track for case " +  hit.id);
-                    }
+                    onClick: (function(hit, combinedFacetObject) {
+                        return function() {
+                            thisB.addTrack('SimpleSomaticMutations',  hit.id, combinedFacetObject, 'CanvasVariants');
+                            alert("Adding Simple Somatic Mutation track for case " +  hit.id);
+                        }
+                    })(hit, combinedFacetObject)
                 });
                 ssmMenu.addChild(menuItemSsmFiltered);
                 ssmMenu.startup();
@@ -680,10 +686,12 @@ function (
                     label: "All SSMs for Donor",
                     iconClass: "dijitIconNewTask",
                     dropDown: ssmMenu,
-                    onClick: function() {
-                        thisB.addTrack('SimpleSomaticMutations',  hit.id, undefined, 'CanvasVariants');
-                        alert("Adding Simple Somatic Mutation track for case " +  hit.id);
-                    }
+                    onClick: (function(hit) {
+                        return function() {
+                            thisB.addTrack('SimpleSomaticMutations',  hit.id, undefined, 'CanvasVariants');
+                            alert("Adding Simple Somatic Mutation track for case " +  hit.id);
+                        }
+                    })(hit)
                 });
                 buttonAllSsms.placeAt(ssmButtonNode);
                 buttonAllSsms.startup();
