@@ -141,7 +141,6 @@ Donors Tab:
 * For each donor
     * Add track for affected genes
     * Add track for SSMs
-    * More tracks to come...
 
 Genes Tab:
 * View genes that match the selected facets
@@ -150,6 +149,8 @@ Genes Tab:
 Mutations Tab:
 * View mutations that match the selected facets
 * Create a track of all matching SSMs
+
+There is also an options to search ICGC by projects. This allows you to see all of the associated SSMs and Genes per project in one track.
 
 # Miscellaneous
 ## Advanced Usage of Tracks
