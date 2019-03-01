@@ -4,7 +4,7 @@ define([
         'JBrowse/Plugin',
         'dijit/MenuItem',
         './View/ICGCDialog',
-        'require'
+        './View/ICGCProjectDialog'
        ],
        function(
             declare,
@@ -12,16 +12,22 @@ define([
             JBrowsePlugin,
             MenuItem,
             ICGCDialog,
-            require
+            ICGCProjectDialog
        ) {
 return declare(JBrowsePlugin, {
         constructor: function () {
             this.browser.afterMilestone('initView', function () {
                 this.browser.addGlobalMenuItem('icgc', new MenuItem(
                     {
-                        label: 'Search ICGC',
+                        label: 'Explore ICGC',
                         iconClass: "dijitIconSearch",
                         onClick: lang.hitch(this, 'createICGCTrack')
+                    }));
+                this.browser.addGlobalMenuItem('icgc', new MenuItem(
+                    {
+                        label: 'ICGC Projects',
+                        iconClass: "dijitIconSearch",
+                        onClick: lang.hitch(this, 'createICGCProjectTrack')
                     }));
                     this.browser.renderGlobalMenu('icgc', {text: 'ICGC'}, this.browser.menuBar);
             }, this);            
@@ -29,6 +35,20 @@ return declare(JBrowsePlugin, {
 
         createICGCTrack: function () {
             var searchDialog = new ICGCDialog(
+                {
+                    onHide: function() {
+                        this.destroy();
+                }
+            }
+            );
+            searchDialog.show(this.browser,
+                function () {
+
+                });
+        },
+
+        createICGCProjectTrack: function () {
+            var searchDialog = new ICGCProjectDialog(
                 {
                     onHide: function() {
                         this.destroy();
