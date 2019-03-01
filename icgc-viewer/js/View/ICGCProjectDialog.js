@@ -45,6 +45,9 @@ function (
             return thisB.dialogContainer;
         },
 
+        /**
+         * Uses ICGC API to retrieve project information
+         */
         getProjectInformation: function() {
             var thisB = this;
             var url = thisB.baseGraphQLUrl;
@@ -59,7 +62,6 @@ function (
                 return(response.json());
             }).then(function(response) {
                 dom.empty(thisB.dialogContainer);
-                console.log(response);
                 thisB.createProjectsTable(response);
             }).catch(function(err) {
                 console.log(err);
