@@ -253,7 +253,7 @@ function (
                                     
                                     // Add text label to checkbox
                                     var labelName = facet + '-' + term.term + '-' + type + '-' + thisB.accordionId;
-                                    var labelContent = term.term + ' (' + term.count + ')';
+                                    var labelContent = term.term + ' (' + (term.count).toLocaleString() + ')';
                                     dom.create("label", { "for" : labelName, innerHTML: labelContent }, facetCheckbox);
                                 });
                             }
@@ -321,7 +321,7 @@ function (
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
-                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.donorResultsTab.containerNode);
+                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.donorResultsTab.containerNode);
                                 thisB.createDonorsTable(facetsJsonResponse.hits, thisB.donorResultsTab.containerNode, combinedFacetObject);
                                 thisB.createPaginationButtons(thisB.donorResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.donorPage);
                             }
@@ -367,7 +367,7 @@ function (
                                 thisB.addTooltipToButton(buttonAllSSMs, "Add track with all SSMs from the ICGC");
 
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
-                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.mutationResultsTab.containerNode);
+                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.mutationResultsTab.containerNode);
                            
                                 thisB.createMutationsTable(facetsJsonResponse.hits, thisB.mutationResultsTab.containerNode, combinedFacetObject);
                                 thisB.createPaginationButtons(thisB.mutationResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.mutationPage);
@@ -415,7 +415,7 @@ function (
                                 thisB.addTooltipToButton(buttonAllGenes, "Add track with all genes from the ICGC");
 
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
-                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.geneResultsTab.containerNode);
+                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.geneResultsTab.containerNode);
                                 
                                 thisB.createGenesTable(facetsJsonResponse.hits, thisB.geneResultsTab.containerNode, combinedFacetObject);
                                 thisB.createPaginationButtons(thisB.geneResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.genePage);

@@ -6,6 +6,7 @@ define([
     'dijit/Menu',
     'dijit/MenuItem',
     'dijit/form/ComboButton',
+    'dijit/form/Button',
     'dojo/aspect',
     'JBrowse/View/Dialog/WithActionBar'
 ],
@@ -17,14 +18,16 @@ function (
     Menu,
     MenuItem,
     ComboButton,
+    Button,
     aspect,
     ActionBarDialog
 ) {
     return declare(ActionBarDialog, {
         
-        projectTableHolder: undefined,
         dialogContainer: undefined,
-
+        page: 1,
+        size: 20,
+        
         constructor: function () {
             var thisB = this;
 
@@ -50,19 +53,32 @@ function (
          */
         getProjectInformation: function() {
             var thisB = this;
-            var url = thisB.baseGraphQLUrl;
 
             // Clear current results
             dom.empty(thisB.dialogContainer);
             thisB.createLoadingIcon(thisB.dialogContainer);
 
-            var url = 'https://dcc.icgc.org/api/v1/projects?from=0&size=100';
+            var url = 'https://dcc.icgc.org/api/v1/projects?from=' + (thisB.page - 1) * thisB.size + '&size=' + thisB.size;
 
             fetch(url).then(function(response) {
                 return(response.json());
             }).then(function(response) {
                 dom.empty(thisB.dialogContainer);
-                thisB.createProjectsTable(response);
+                if (!response.code) {
+                    var aboutMessage = dom.create('h1', { innerHTML: "View Gene and SSM tracks filtered by Project" }, thisB.dialogContainer);
+                    var resultsInfo = dom.create('div', { innerHTML: "Showing " + response.pagination.from + " to " + (response.pagination.from + response.pagination.count - 1) + " of " + response.pagination.total }, thisB.dialogContainer);
+                    thisB.createProjectsTable(response);
+                    thisB.createPaginationButtons(thisB.dialogContainer, response.pagination);
+                } else {
+                    var errorMessageHolder = dom.create('div', { style: 'display: flex; flex-direction: column; align-items: center;' }, thisB.dialogContainer);
+                    var errorMessage = dom.create('div', { innerHTML: 'There was an error contacting ICGC.' }, errorMessageHolder);
+                    var hardRefreshButton = new Button({
+                        label: 'Refresh Results',
+                        onClick: function() {
+                            thisB.getProjectInformation();
+                        }
+                    }).placeAt(errorMessageHolder);
+                }
             }).catch(function(err) {
                 console.log(err);
             });
@@ -97,7 +113,7 @@ function (
                             <td>${hit.id}</td>
                             <td>${hit.name}</td>
                             <td>${hit.primarySite}</td>
-                            <td>${hit.tumourType} / ${hit.tumourSubtype}</td>
+                            <td>${hit.tumourType} ${hit.tumourSubtype ? '/ ' + hit.tumourSubtype : '' }</td>
                             <td>${(hit.totalLiveDonorCount).toLocaleString()}</td>
                     `
                     var projectRowContentNode = dom.toDom(projectRowContent);
@@ -224,6 +240,38 @@ function (
             var loadingIcon = dom.create('div', { className: 'loading-icgc' }, location);
             var spinner = dom.create('div', {}, loadingIcon);
             return loadingIcon;
+        },
+
+        /**
+         * Creates pagination buttons for search results in the given 'holder' using the 'pagination' object from the ICGC response
+         * @param {object} holder
+         * @param {integer} pagination
+         */
+        createPaginationButtons: function(holder, pagination) {
+            var thisB = this;
+
+            var paginationHolder = dom.create('div', { style:"display: flex;justify-content: center;"}, holder);
+            
+            if (thisB.page > 1) {
+                var previousButton = new Button({
+                    label: "Previous",
+                    onClick: function() {
+                        thisB.page -= 1;
+                        thisB.getProjectInformation();
+                    }
+                }, "previousButton").placeAt(paginationHolder);
+
+            }
+
+            if (thisB.page < pagination.pages) {
+                var nextButton = new Button({
+                    label: "Next",
+                    onClick: function() {
+                        thisB.page += 1;
+                        thisB.getProjectInformation();
+                    }
+                }, "nextButton").placeAt(paginationHolder);
+            }
         },
 
         /**
