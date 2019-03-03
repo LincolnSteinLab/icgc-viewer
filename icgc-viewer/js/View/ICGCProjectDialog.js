@@ -6,6 +6,7 @@ define([
     'dijit/Menu',
     'dijit/MenuItem',
     'dijit/form/ComboButton',
+    'dijit/form/Button',
     'dojo/aspect',
     'JBrowse/View/Dialog/WithActionBar'
 ],
@@ -17,6 +18,7 @@ function (
     Menu,
     MenuItem,
     ComboButton,
+    Button,
     aspect,
     ActionBarDialog
 ) {
@@ -50,7 +52,6 @@ function (
          */
         getProjectInformation: function() {
             var thisB = this;
-            var url = thisB.baseGraphQLUrl;
 
             // Clear current results
             dom.empty(thisB.dialogContainer);
@@ -62,7 +63,18 @@ function (
                 return(response.json());
             }).then(function(response) {
                 dom.empty(thisB.dialogContainer);
-                thisB.createProjectsTable(response);
+                if (!response.code) {
+                    thisB.createProjectsTable(response);
+                } else {
+                    var errorMessageHolder = dom.create('div', { style: 'display: flex; flex-direction: column; align-items: center;' }, thisB.dialogContainer);
+                    var errorMessage = dom.create('div', { innerHTML: 'There was an error contacting ICGC.' }, errorMessageHolder);
+                    var hardRefreshButton = new Button({
+                        label: 'Refresh Results',
+                        onClick: function() {
+                            thisB.getProjectInformation();
+                        }
+                    }).placeAt(errorMessageHolder);
+                }
             }).catch(function(err) {
                 console.log(err);
             });
@@ -97,7 +109,7 @@ function (
                             <td>${hit.id}</td>
                             <td>${hit.name}</td>
                             <td>${hit.primarySite}</td>
-                            <td>${hit.tumourType} / ${hit.tumourSubtype}</td>
+                            <td>${hit.tumourType} ${hit.tumourSubtype ? '/ ' + hit.tumourSubtype : '' }</td>
                             <td>${(hit.totalLiveDonorCount).toLocaleString()}</td>
                     `
                     var projectRowContentNode = dom.toDom(projectRowContent);
