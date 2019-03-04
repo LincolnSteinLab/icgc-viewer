@@ -70,6 +70,9 @@ function (
         // Available types
         types: ['donor', 'mutation', 'gene'],
 
+        /**
+         * Constructor
+         */
         constructor: function() {
             var thisB = this;
 
@@ -79,6 +82,10 @@ function (
             });
         },
         
+        /**
+         * Create a DOM object containing GDC primary site interface
+         * @return {object} DOM object
+         */
         _dialogContent: function () {
             var thisB = this;
             var container = dom.create('div', { className: 'dialog-container', style: { width: '1200px', height: '700px' } });
@@ -146,6 +153,7 @@ function (
         /**
          * Creates a facet URL based on some type
          * @param {string} type The type of accordion
+         * @return {string} URL for facets
          */
         createFacetUrl: function(type) {
             var thisB = this;
@@ -156,6 +164,7 @@ function (
         /**
          * Retrieves the filters of some type
          * @param {string} type The type of accordion
+         * @return {object} filters of the given type
          */
         getFiltersForType: function(type) {
             var thisB = this;
@@ -187,7 +196,7 @@ function (
          * Creates a facet accordion of some type and places them in the given accordion
          * @param {string} type The type of accordion
          * @param {AccordionContainer} accordion The accordion to put the facets in
-         * @param loadingIcon The loading element
+         * @param {object} loadingIcon The loading element
          */
         createFacet: function(type, accordion, loadingIcon) {
             var thisB = this;
@@ -279,11 +288,11 @@ function (
         /**
          * Adds a tooltip with some text to a location
          * @param {*} button Location to attach tooltip
-         * @param {*} tooltipText Text to display in tooltip
+         * @param {*} text Text to display in tooltip
          */
-        addTooltipToButton: function(button, tooltipText) {
+        addTooltipToButton: function(button, text) {
             var tooltip = new Tooltip({
-                label: tooltipText
+                label: text
             });
 
             tooltip.addTarget(button);
@@ -432,6 +441,7 @@ function (
         /**
          * Creates a loading icon in the given location and returns
          * @param {object} location Place to put the loading icon
+         * @return {object} loading icon DOM element
          */
         createLoadingIcon: function(location) {
             var loadingIcon = dom.create('div', { className: 'loading-icgc' }, location);
@@ -442,6 +452,7 @@ function (
         /**
          * Creates the donor URL for grabbing mutations
          * @param {object} combinedFacetObject Object containing facet information
+         * @return {string} donor URL
          */
         createDonorUrl: function(combinedFacetObject) {
             var thisB = this;
@@ -451,6 +462,7 @@ function (
         /**
          * Creates the gene URL for grabbing mutations
          * @param {object} combinedFacetObject Object containing facet information
+         * @return {string} gene URL
          */
         createGeneUrl: function(combinedFacetObject) {
             var thisB = this;
@@ -460,6 +472,7 @@ function (
         /**
          * Creates the mutation URL for grabbing mutations
          * @param {object} combinedFacetObject Object containing facet information
+         * @return {string} mutation URL
          */
         createMutationUrl: function(combinedFacetObject) {
             var thisB = this;
@@ -468,7 +481,8 @@ function (
 
         /**
          * Calculate the 'from' parameter for the URL call
-         * @param {integer} page current page
+         * @param {number} page current page
+         * @return {number} start index
          */
         getStartIndex: function(page) {
             var thisB = this;
@@ -478,6 +492,7 @@ function (
         /**
          * Combines all of the facets into one object and converts to a string
          * The result can be used with the ICGC query param 'filter='
+         * @return {string} stringified version of combined filters
          */
         createCombinedFacets: function() {
             var thisB = this;
@@ -714,7 +729,7 @@ function (
         /**
          * Creates the genes table for the given hits in some location
          * @param {List<object>} hits array of gene hits
-         * @param {object} location dom element to place the table
+         * @param {object} location DOM element to place the table
          */
         createGenesTable: function(hits, location) {
             var thisB = this;
@@ -755,7 +770,7 @@ function (
         /**
          * Creates the mutations table for the given hits in some location
          * @param {List<object>} hits array of mutation hits
-         * @param {object} location dom element to place the table
+         * @param {object} location DOM element to place the table
          */
         createMutationsTable: function(hits, location) {
             var thisB = this;
@@ -793,8 +808,10 @@ function (
 
         /**
          * Creates pagination buttons for search results in the given 'holder' using the 'pagination' object from the ICGC response
-         * @param {object} holder
-         * @param {integer} pagination
+         * @param {object} holder DOM location to place buttons
+         * @param {object} pagination pagination object returned from ICGC
+         * @param {string} type page type
+         * @param {number} pageNum current page number
          */
         createPaginationButtons: function(holder, pagination, type, pageNum) {
             var thisB = this;
@@ -905,10 +922,10 @@ function (
 
         /**
          * Generic function for adding a track of some type
-         * @param {*} storeClass 
-         * @param {*} donorId 
-         * @param {*} combinedFacetObject 
-         * @param {*} trackType 
+         * @param {*} storeClass the JBrowse store class
+         * @param {*} donorId unique ICGC ID of donor
+         * @param {*} combinedFacetObject Facet object containing facets from all types
+         * @param {*} trackType the JBrowse track type
          */
         addTrack: function (storeClass, donorId, combinedFacetObject, trackType) {
             var storeConf = {
@@ -947,6 +964,7 @@ function (
         /**
          * Makes a string pretty (N/A if does not exist)
          * @param {string}  value String to pretty
+         * @return {string} pretty value
          */
         prettyString: function(value) {
             return value ? value : "N/A";
@@ -956,6 +974,7 @@ function (
          * Adds the facet and term to the filters object and returns
          * @param {string} value object holding facet and term to add
          * @param {object} filters filters object to add to
+         * @return {object} filters with object added
          */
         addToFilters: function(value, filters) {
             facet = value.facet;
@@ -973,6 +992,7 @@ function (
          *  Removes the term from the facet in the filters object and returns
          * @param {string} value object holding facet and term to remove
          * @param {object} filters filters object to remove from
+         * @return {object} filters with object removed
          */
         removeFromFilters: function(value, filters) {
             facet = value.facet;
@@ -1031,6 +1051,7 @@ function (
          * Converts the filters object to an ICGC compatable string
          * @param {string} type Type of filter group
          * @param {object} filters List of filters
+         * @return {string} stringified version of filter object
          */
         convertFiltersObjectToString: function(type, filters) {
             if (Object.keys(filters).length === 0) {
@@ -1049,6 +1070,7 @@ function (
         /**
          * Converts a camelCase word to Title Case
          * @param {string} word A word in camelCase 
+         * @return {string} word in title case
          */
         camelCaseToTitleCase: function(word) {
             var titleCase = '';
@@ -1068,6 +1090,7 @@ function (
 
         /**
          * Generate a GUID
+         * @return {string} GUID
          */
         guid: function() {
             function s4() {
@@ -1078,6 +1101,11 @@ function (
             return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
         },
 
+        /**
+         * Show callback for displaying dialog
+         * @param {*} browser 
+         * @param {*} callback 
+         */
         show: function (browser, callback) {
             this.browser = browser;
             this.callback = callback || function () {};

@@ -23,11 +23,16 @@ function (
     ActionBarDialog
 ) {
     return declare(ActionBarDialog, {
-        
+        // Parent DOM to hold results
         dialogContainer: undefined,
+
+        // Pagination variables
         page: 1,
         size: 20,
         
+        /**
+         * Constructor
+         */
         constructor: function () {
             var thisB = this;
 
@@ -37,6 +42,10 @@ function (
             });
         },
         
+        /**
+         * Create a DOM object containing GDC primary site interface
+         * @return {object} DOM object
+         */
         _dialogContent: function () {
             var thisB = this;
             // Container holds all results in the dialog
@@ -64,6 +73,7 @@ function (
                 return(response.json());
             }).then(function(response) {
                 dom.empty(thisB.dialogContainer);
+                // Code field only present on error
                 if (!response.code) {
                     var aboutMessage = dom.create('h1', { innerHTML: "View Gene and SSM tracks filtered by Project" }, thisB.dialogContainer);
                     var resultsInfo = dom.create('div', { innerHTML: "Showing " + response.pagination.from + " to " + (response.pagination.from + response.pagination.count - 1) + " of " + response.pagination.total }, thisB.dialogContainer);
@@ -86,7 +96,7 @@ function (
 
         /**
          * Creates a table with projects
-         * @param {*} response 
+         * @param {*} response object returned by ICGC endpoint call
          */
         createProjectsTable: function(response) {
             var thisB = this;
@@ -178,11 +188,11 @@ function (
         /**
          * Adds a tooltip with some text to a location
          * @param {*} button Location to attach tooltip
-         * @param {*} tooltipText Text to display in tooltip
+         * @param {*} text Text to display in tooltip
          */
-        addTooltipToButton: function(button, tooltipText) {
+        addTooltipToButton: function(button, text) {
             var tooltip = new Tooltip({
-                label: tooltipText
+                label: text
             });
 
             tooltip.addTarget(button);
@@ -190,12 +200,11 @@ function (
 
         /**
          * Generic function for adding a track of some type
-         * @param {*} storeClass 
-         * @param {*} projectId 
-         * @param {*} trackType 
+         * @param {*} storeClass the JBrowse store class
+         * @param {*} projectId Unique ID of the project on ICGC
+         * @param {*} trackType the JBrowse track type
          */
         addTrack: function (storeClass, projectId, trackType) {
-
             var projectFilters = {"donor":{"projectId":{"is":[ projectId ]}}}
             
             var storeConf = {
@@ -235,6 +244,7 @@ function (
         /**
          * Creates a loading icon in the given location and returns
          * @param {object} location Place to put the loading icon
+         * @return {object} loading icon
          */
         createLoadingIcon: function (location) {
             var loadingIcon = dom.create('div', { className: 'loading-icgc' }, location);
@@ -276,6 +286,7 @@ function (
 
         /**
          * Generate a GUID
+         * @return {string} GUID
          */
         guid: function() {
             function s4() {
@@ -286,6 +297,11 @@ function (
             return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
         },
 
+        /**
+         * Show callback for displaying dialog
+         * @param {*} browser 
+         * @param {*} callback 
+         */
         show: function (browser, callback) {
             this.browser = browser;
             this.callback = callback || function () {};
