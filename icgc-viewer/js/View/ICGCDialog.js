@@ -534,7 +534,7 @@ function (
             thisB.searchResultsVerticalHolder = dom.create('div', { style: { 'flex': '3 0 0' } }, thisB.facetAndResultsHolder);
 
             // Create facet tabs
-            thisB.facetTabs = new TabContainer({style: "flex: 1 0 0; "}, thisB.facetTabHolder);
+            thisB.facetTabs = new TabContainer({style: "flex: 1 0 0; padding-right: 3px; padding-top: 5px; "}, thisB.facetTabHolder);
 
             thisB.donorFacetTab = new ContentPane({
                 title: "Donor"

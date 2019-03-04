@@ -31,7 +31,13 @@ bin/prepare-refseqs.pl --fasta Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
 Note that you can specify multiple fast in one command by doing `--fasta fasta1.fa.gz --fasta fasta2.fa.gz ...`
 
 ## 4. Adding new tracks
-We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse.
+We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse.These are present in the menu under `ICGC`.
+
+### A. Explore ICGC
+This dialog is similar to the Exploration section of the ICGC data portal. As you apply facets on the left-hand side, updated results will be shown on the right side. You can create donor specific SSM and Gene tracks, along with ICGC-wide SSM and Gene tracks.
+
+### B. View ICGC Projects
+This dialog shows the projects present on the ICGC Data Portal. You can add SSM and Gene tracks for each project.
 
 ## 5. Run JBrowse
 You'll have to run the following commands:
@@ -54,6 +60,7 @@ displayColumns =
   + key
   + datatype
   + donor
+  + project
 ```
 
 # Available Store SeqFeature
