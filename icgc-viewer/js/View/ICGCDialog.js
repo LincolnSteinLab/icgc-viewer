@@ -94,10 +94,7 @@ function (
             thisB.accordionId = thisB.guid();
 
             // Create header section
-            dom.create('img', {
-                src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
-                width: '100'
-            }, container);
+            thisB.createHeaderSection(container);
 
             // Create the scaffolding to hold everything
             thisB.createScaffolding(container);
@@ -110,6 +107,24 @@ function (
 
             thisB.resize();
             return container;
+        },
+
+        /**
+         * Add a header section with a logo and title
+         * @param {object} container DOM object to place header
+         */
+        createHeaderSection: function(container) {
+            var headerSection = dom.create('div', { style: "display: flex; flex-direction: row; justify-content: flex-start; align-items: center;" }, container);
+            var logoSection = dom.create('div', { style: "flex-grow: 2" }, headerSection);
+
+            dom.create('img', {
+                src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
+                width: '154px',
+                height: '59px'
+            }, logoSection);
+
+            var titleSection = dom.create('div', { style: "flex-grow: 7" }, headerSection);
+            var aboutMessage = dom.create('h1', { innerHTML: "Explore data available on the ICGC Data Portal" }, titleSection);
         },
 
         /**
@@ -640,7 +655,7 @@ function (
                         <td>${thisB.prettyString(hit.gender)}</td>
                         <td>${thisB.prettyString(hit.ageAtDiagnosis)}</td>
                         <td>${thisB.prettyString(hit.state)}</td>
-                        <td>${thisB.prettyString(hit.survivalTime)}</td>
+                        <td>${(thisB.prettyString(hit.survivalTime)).toLocaleString()}</td>
                 `
                 var donorRowContentNode = dom.toDom(donorRowContent);
 

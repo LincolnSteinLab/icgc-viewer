@@ -25,6 +25,7 @@ function (
     return declare(ActionBarDialog, {
         // Parent DOM to hold results
         dialogContainer: undefined,
+        resultsContainer: undefined,
 
         // Pagination variables
         page: 1,
@@ -51,10 +52,33 @@ function (
             // Container holds all results in the dialog
             thisB.dialogContainer = dom.create('div', { className: 'dialog-container', style: { width: '1200px', height: '700px' } });
 
+            // Create header section
+            thisB.createHeaderSection();
+
+            // Update with project information
+            thisB.resultsContainer = dom.create('div', { style: { width: '100%', height: '100%' } }, thisB.dialogContainer);
             thisB.getProjectInformation();
 
             thisB.resize();
             return thisB.dialogContainer;
+        },
+
+        /**
+         * Add a header section with a logo and title
+         */
+        createHeaderSection: function() {
+            var thisB = this;
+            var headerSection = dom.create('div', { style: "display: flex; flex-direction: row; justify-content: flex-start; align-items: center;" }, thisB.dialogContainer);
+            var logoSection = dom.create('div', { style: "flex-grow: 1" }, headerSection);
+
+            dom.create('img', {
+                src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
+                width: '154px',
+                height: '59px'
+            }, logoSection);
+
+            var titleSection = dom.create('div', { style: "flex-grow: 12" }, headerSection);
+            var aboutMessage = dom.create('h1', { innerHTML: "View projects available on the ICGC Data Portal" }, titleSection);
         },
 
         /**
@@ -64,23 +88,22 @@ function (
             var thisB = this;
 
             // Clear current results
-            dom.empty(thisB.dialogContainer);
-            thisB.createLoadingIcon(thisB.dialogContainer);
+            dom.empty(thisB.resultsContainer);
+            thisB.createLoadingIcon(thisB.resultsContainer);
 
             var url = 'https://dcc.icgc.org/api/v1/projects?from=' + (thisB.page - 1) * thisB.size + '&size=' + thisB.size;
 
             fetch(url).then(function(response) {
                 return(response.json());
             }).then(function(response) {
-                dom.empty(thisB.dialogContainer);
+                dom.empty(thisB.resultsContainer);
                 // Code field only present on error
                 if (!response.code) {
-                    var aboutMessage = dom.create('h1', { innerHTML: "View Gene and SSM tracks filtered by Project" }, thisB.dialogContainer);
-                    var resultsInfo = dom.create('div', { innerHTML: "Showing " + response.pagination.from + " to " + (response.pagination.from + response.pagination.count - 1) + " of " + response.pagination.total }, thisB.dialogContainer);
+                    var resultsInfo = dom.create('div', { innerHTML: "Showing " + response.pagination.from + " to " + (response.pagination.from + response.pagination.count - 1) + " of " + response.pagination.total }, thisB.resultsContainer);
                     thisB.createProjectsTable(response);
-                    thisB.createPaginationButtons(thisB.dialogContainer, response.pagination);
+                    thisB.createPaginationButtons(thisB.resultsContainer, response.pagination);
                 } else {
-                    var errorMessageHolder = dom.create('div', { style: 'display: flex; flex-direction: column; align-items: center;' }, thisB.dialogContainer);
+                    var errorMessageHolder = dom.create('div', { style: 'display: flex; flex-direction: column; align-items: center;' }, thisB.resultsContainer);
                     var errorMessage = dom.create('div', { innerHTML: 'There was an error contacting ICGC.' }, errorMessageHolder);
                     var hardRefreshButton = new Button({
                         label: 'Refresh Results',
@@ -182,7 +205,7 @@ function (
                 }
             }
             dom.place(rowsHolderNode, tableNode);
-            dom.place(tableNode, thisB.dialogContainer);
+            dom.place(tableNode, thisB.resultsContainer);
         },
 
         /**
