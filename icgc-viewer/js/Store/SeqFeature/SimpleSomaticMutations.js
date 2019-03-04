@@ -297,18 +297,18 @@ function(
                                             start: variant.start - 1,
                                             end: variant.end - 1,
                                             mutation: variant.mutation,
-                                            'Allele in the reference assembly': variant.referenceGenomeAllele,
-                                            'Reference Genome Assembly': variant.assemblyVersion,
-                                            'CIViC': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
-                                            'ClinVar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
-                                            'ICGC': thisB.createLinkWithId(ICGC_LINK, variant.id),
-                                            'Affected projects': variant.affectedProjectCount,
-                                            'Affected donors': thisB.getDonorFraction(variant),
-                                            'Type': variant.type,
-                                            'Study': thisB.prettyValue(variant.study.join()),
-                                            'Variant Description': variant.description,
-                                            'Consequences': thisB.createConsequencesTable(variant.consequences),
-                                            'Projects': thisB.createProjectIncidenceTable(projects, projectsResponse, variant.id)
+                                            'allele in the reference assembly': variant.referenceGenomeAllele,
+                                            'reference genome assembly': variant.assemblyVersion,
+                                            'civic': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
+                                            'clinvar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
+                                            'icgc': thisB.createLinkWithId(ICGC_LINK, variant.id),
+                                            'affected projects': variant.affectedProjectCount,
+                                            'affected donors': thisB.getDonorFraction(variant),
+                                            'type': variant.type,
+                                            'study': thisB.prettyValue(variant.study.join()),
+                                            'variant description': variant.description,
+                                            'consequences': thisB.createConsequencesTable(variant.consequences),
+                                            'projects': thisB.createProjectIncidenceTable(projects, projectsResponse, variant.id)
                                         }
                                     }
                                     featureCallback(new SimpleFeature(variantFeature));
