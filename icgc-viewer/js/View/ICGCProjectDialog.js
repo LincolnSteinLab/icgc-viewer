@@ -254,7 +254,8 @@ function (
                 metadata: {
                     datatype: storeClass,
                     project: projectId
-                }
+                },
+                unsafePopup: true
             };
 
             console.log("Adding track of type " + trackType + " and store class " + storeClass + ": " + key + " (" + label + ")");

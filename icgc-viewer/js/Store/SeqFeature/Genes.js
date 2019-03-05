@@ -110,6 +110,22 @@ function(
             return JSON.stringify(thisB.filters);
         },
 
+        /**
+         * Stub for getParser
+         */
+        getParser: function() {
+            return new Promise(function(resolve, reject) {
+                resolve({'getMetadata': function() {}});
+            });
+        },
+
+        /**
+         * 
+         * @param {*} query 
+         * @param {*} featureCallback 
+         * @param {*} finishCallback 
+         * @param {*} errorCallback 
+         */
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
             var thisB = this;
 

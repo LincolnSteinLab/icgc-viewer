@@ -969,7 +969,8 @@ function (
                 metadata: {
                     datatype: storeClass,
                     donor: donorId
-                }
+                },
+                unsafePopup: true
             };
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);

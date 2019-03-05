@@ -216,6 +216,15 @@ function(
         },
 
         /**
+         * Stub for getParser
+         */
+        getParser: function() {
+            return new Promise(function(resolve, reject) {
+                resolve({'getMetadata': function() {}});
+            });
+        },
+
+        /**
          * Creates the filter string based on the input to the track
          * @param {string} ref Chromosome number (ex. 1)
          * @param {integer} start Start location of JBrowse view
@@ -233,6 +242,13 @@ function(
             return JSON.stringify(thisB.filters);
         },
 
+        /**
+         * 
+         * @param {*} query 
+         * @param {*} featureCallback 
+         * @param {*} finishCallback 
+         * @param {*} errorCallback 
+         */
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
             var thisB = this;
 
