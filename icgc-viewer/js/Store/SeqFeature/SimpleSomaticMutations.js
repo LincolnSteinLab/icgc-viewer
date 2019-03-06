@@ -75,11 +75,19 @@ function(
         },
 
         /**
-         * If a value is undefined, returns empty string, else return value
+         * If a value is undefined, returns n/a, else return value
          * @param {string} value Value to make pretty
          */
         prettyValue: function(value) {
-            return value ? value : '';
+            return value ? value : 'n/a';
+        },
+
+        /**
+         * If a list is undefined or empty, returns n/a, else return list
+         * @param {string} list Value to make pretty
+         */
+        prettyList: function(list) {
+            return list && list.length > 0 ? list : 'n/a';
         },
 
         convertIntToStrand: function(strand) {
@@ -310,20 +318,24 @@ function(
                                     variantFeature = {
                                         id: variant.id,
                                         data: {
-                                            start: variant.start - 1,
-                                            end: variant.end - 1,
-                                            mutation: variant.mutation,
-                                            'allele in the reference assembly': variant.referenceGenomeAllele,
-                                            'reference genome assembly': variant.assemblyVersion,
-                                            'civic': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
-                                            'clinvar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
-                                            'icgc': thisB.createLinkWithId(ICGC_LINK, variant.id),
-                                            'affected projects': variant.affectedProjectCount,
-                                            'affected donors': thisB.getDonorFraction(variant),
-                                            'type': variant.type,
-                                            'study': thisB.prettyValue(variant.study.join()),
+                                            'start': variant.start - 1,
+                                            'end': variant.end - 1,
+                                            'about': {
+                                                'mutation': thisB.prettyValue(variant.mutation),
+                                                'allele in the reference assembly': thisB.prettyValue(variant.referenceGenomeAllele),
+                                                'reference genome assembly': thisB.prettyValue(variant.assemblyVersion),
+                                                'affected projects': thisB.prettyValue(variant.affectedProjectCount),
+                                                'affected donors': thisB.getDonorFraction(variant),
+                                                'type': thisB.prettyValue(variant.type),
+                                                'study': thisB.prettyList(variant.study),
+                                            },
                                             'variant description': variant.description,
-                                            'consequences': thisB.createConsequencesTable(variant.consequences),
+                                            'external references': {
+                                                'civic': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
+                                                'clinvar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
+                                                'icgc': thisB.createLinkWithId(ICGC_LINK, variant.id),
+                                            },
+                                            'mutation consequences': thisB.createConsequencesTable(variant.consequences),
                                             'projects': thisB.createProjectIncidenceTable(projects, projectsResponse, variant.id)
                                         }
                                     }

@@ -37,17 +37,17 @@ function(
         /**
          * Given an array of IDs and a link, creates a comma-separated list of links to the ids
          * @param {string} link Base URL for link
-         * @param {array} ids IDs to apped to base URL
+         * @param {array} ids IDs to append to base URL
          */
         createLinksWithId: function(link, ids) {
-            var linkList = "";
-            if (ids) {
+            if (ids && ids.length > 0) {
+                var linkList = [];
                 ids.forEach((id) => {
-                    linkList += this.createLinkWithId(link, id);
+                    linkList.push(this.createLinkWithId(link, id));
                 });
-                return linkList;
+                return linkList.join(', ');
             } else {
-                return "n/a";
+                return 'n/a';
             }
         },
 
@@ -163,25 +163,30 @@ function(
                 handleAs: 'json'
             }).then(function(res) {
                 array.forEach(res.hits, function(gene) {
-                    featureCallback(new SimpleFeature({
+                    var geneFeature = {
                         id: gene.id,
                         data: {
                             'start': gene.start - 1,
                             'end': gene.end - 1,
                             'strand': gene.strand,
-                            'gene name': gene.name,
-                            'symbol': gene.symbol,
-                            'icgc': thisB.createLinkWithId(ICGC_LINK, gene.id),
-                            'ensembl (release 75)': thisB.createLinkWithId(ENSEMBL_LINK, gene.id),
-                            'entrez gene': thisB.createLinksWithId(ENTREZ_LINK, gene.externalDbIds.entrez_gene),
-                            'hgnc gene': thisB.createLinksWithId(HGNC_LINK, gene.externalDbIds.hgnc),
-                            'omim': thisB.createLinksWithId(OMIM_LINK, gene.externalDbIds.omim_gene),
-                            'uniprotkb/swiss-prot': thisB.createLinksWithId(UNIPROTKB_SWISSPROT_LINK, gene.externalDbIds.uniprotkb_swissprot),
-                            'cosmic': thisB.createLinkWithId(COSMIC_LINK, gene.symbol),
                             'gene description': gene.description,
-                            'type': (gene.type).replace(/_/g, ' ')
+                            'about': {
+                                'gene name': gene.name,
+                                'symbol': gene.symbol,
+                                'type': gene.type
+                            },
+                            'external references': {
+                                'icgc': thisB.createLinkWithId(ICGC_LINK, gene.id),
+                                'ensembl (release 75)': thisB.createLinkWithId(ENSEMBL_LINK, gene.id),
+                                'entrez gene': thisB.createLinksWithId(ENTREZ_LINK, gene.externalDbIds.entrez_gene),
+                                'hgnc gene': thisB.createLinksWithId(HGNC_LINK, gene.externalDbIds.hgnc),
+                                'omim': thisB.createLinksWithId(OMIM_LINK, gene.externalDbIds.omim_gene),
+                                'uniprotkb/swiss-prot': thisB.createLinksWithId(UNIPROTKB_SWISSPROT_LINK, gene.externalDbIds.uniprotkb_swissprot),
+                                'cosmic': thisB.createLinkWithId(COSMIC_LINK, gene.symbol),
+                            },                            
                         }
-                    }));
+                    }
+                    featureCallback(new SimpleFeature(geneFeature));
                 });
 
                 finishCallback();
