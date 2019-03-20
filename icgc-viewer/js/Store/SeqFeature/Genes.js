@@ -111,6 +111,14 @@ function(
         },
 
         /**
+         * If a value is undefined, returns n/a, else return value
+         * @param {string} value Value to make pretty
+         */
+        prettyValue: function(value) {
+            return value ? value : 'n/a';
+        },
+
+        /**
          * Stub for getParser
          */
         getParser: function() {
@@ -169,11 +177,11 @@ function(
                             'start': gene.start - 1,
                             'end': gene.end - 1,
                             'strand': gene.strand,
-                            'gene description': gene.description,
+                            'gene description': thisB.prettyValue(gene.description),
                             'about': {
-                                'gene name': gene.name,
-                                'symbol': gene.symbol,
-                                'type': gene.type
+                                'gene name': thisB.prettyValue(gene.name),
+                                'symbol': thisB.prettyValue(gene.symbol),
+                                'type': thisB.prettyValue(gene.type)
                             },
                             'external references': {
                                 'icgc': thisB.createLinkWithId(ICGC_LINK, gene.id),
