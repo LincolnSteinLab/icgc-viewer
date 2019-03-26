@@ -1,28 +1,27 @@
+/**
+ * A Dialog for adding ICGC tracks by project
+ */
 define([
     'dojo/_base/declare',
     'dojo/dom-construct',
     'dijit/focus',
-    'dijit/Tooltip',
     'dijit/Menu',
     'dijit/MenuItem',
     'dijit/form/ComboButton',
     'dijit/form/Button',
-    'dojo/aspect',
-    'JBrowse/View/Dialog/WithActionBar'
+    './BaseICGCDialog'
 ],
 function (
     declare,
     dom,
     focus,
-    Tooltip,
     Menu,
     MenuItem,
     ComboButton,
     Button,
-    aspect,
-    ActionBarDialog
+    BaseICGCDialog
 ) {
-    return declare(ActionBarDialog, {
+    return declare(BaseICGCDialog, {
         // Parent DOM to hold results
         dialogContainer: undefined,
         resultsContainer: undefined,
@@ -30,18 +29,6 @@ function (
         // Pagination variables
         page: 1,
         size: 20,
-        
-        /**
-         * Constructor
-         */
-        constructor: function () {
-            var thisB = this;
-
-            aspect.after(this, 'hide', function () {
-                focus.curNode && focus.curNode.blur();
-                setTimeout(function () { thisB.destroyRecursive(); }, 500);
-            });
-        },
         
         /**
          * Create a DOM object containing GDC primary site interface
@@ -209,19 +196,6 @@ function (
         },
 
         /**
-         * Adds a tooltip with some text to a location
-         * @param {*} button Location to attach tooltip
-         * @param {*} text Text to display in tooltip
-         */
-        addTooltipToButton: function(button, text) {
-            var tooltip = new Tooltip({
-                label: text
-            });
-
-            tooltip.addTarget(button);
-        },
-
-        /**
          * Generic function for adding a track of some type
          * @param {*} storeClass the JBrowse store class
          * @param {*} projectId Unique ID of the project on ICGC
@@ -255,25 +229,45 @@ function (
                     datatype: storeClass,
                     project: projectId
                 },
-                unsafePopup: true
+                unsafePopup: true,
+                menuTemplate : [ 
+                    {   
+                     label : "View details",
+                   }
+               ]
             };
+
+            if (storeClass === 'Genes') {
+                trackConf.menuTemplate.push(
+                    {   
+                        label : "Highlight this Gene",
+                    },
+                    {
+                        label : "View Gene on ICGC",
+                        iconClass : "dijitIconSearch",
+                        action: "newWindow",
+                        url : function(track, feature) { return "https://dcc.icgc.org/genes/" + feature.get('about')['id'] }
+                    }
+                );
+            } else if (storeClass === 'SimpleSomaticMutations') {
+                trackConf.menuTemplate.push(
+                    {   
+                        label : "Highlight this Simple Somatic Mutation",
+                    },
+                    {
+                        label : "View SSM on ICGC",
+                        iconClass : "dijitIconSearch",
+                        action: "newWindow",
+                        url : function(track, feature) { return "https://dcc.icgc.org/mutations/" + feature.get('about')['id'] }
+                    }
+                );
+            }
 
             console.log("Adding track of type " + trackType + " and store class " + storeClass + ": " + key + " (" + label + ")");
 
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
-        },
-
-        /**
-         * Creates a loading icon in the given location and returns
-         * @param {object} location Place to put the loading icon
-         * @return {object} loading icon
-         */
-        createLoadingIcon: function (location) {
-            var loadingIcon = dom.create('div', { className: 'loading-icgc' }, location);
-            var spinner = dom.create('div', {}, loadingIcon);
-            return loadingIcon;
         },
 
         /**
@@ -307,20 +301,7 @@ function (
                 }, "nextButton").placeAt(paginationHolder);
             }
         },
-
-        /**
-         * Generate a GUID
-         * @return {string} GUID
-         */
-        guid: function() {
-            function s4() {
-              return Math.floor((1 + Math.random()) * 0x10000)
-                .toString(16)
-                .substring(1);
-            }
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-        },
-
+        
         /**
          * Show callback for displaying dialog
          * @param {*} browser 

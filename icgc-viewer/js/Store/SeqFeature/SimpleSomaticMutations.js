@@ -1,18 +1,21 @@
+/**
+ * Store SeqFeature for ICGC Simple Somatic Mutations
+ */
 define([
     'dojo/_base/declare',
     'dojo/_base/array',
     'dojo/request',
-    'JBrowse/Store/SeqFeature',
+    './BaseSeqFeature',
     'JBrowse/Model/SimpleFeature'
 ],
 function(
     declare,
     array,
     request,
-    SeqFeatureStore,
+    BaseSeqFeature,
     SimpleFeature
 ) {
-    return declare(SeqFeatureStore, {
+    return declare(BaseSeqFeature, {
 
         constructor: function (args) {
             // ID of the donor
@@ -23,15 +26,6 @@ function(
 
             // Maximum mutation count to retrieve from ICGC
             this.size = args.size !== undefined ? parseInt(args.size) : 500;
-        },
-
-        /**
-         * Creates a link to a given ID
-         * @param {string} link Base URL for link
-         * @param {string} id ID to apped to base URL
-         */
-        createLinkWithId: function(link, id) {
-            return id !== null ? "<a href='" + link + id + "' target='_blank'>" + id + "</a>" : "n/a";
         },
 
         /**
@@ -75,11 +69,11 @@ function(
         },
 
         /**
-         * If a value is undefined, returns empty string, else return value
-         * @param {string} value Value to make pretty
+         * If a list is undefined or empty, returns n/a, else return list
+         * @param {string} list Value to make pretty
          */
-        prettyValue: function(value) {
-            return value ? value : '';
+        prettyList: function(list) {
+            return list && list.length > 0 ? list : 'n/a';
         },
 
         convertIntToStrand: function(strand) {
@@ -176,55 +170,6 @@ function(
         },
 
         /**
-         * Returns the end value to be used for querying ICGC
-         * @param {string} chr Chromosome number (ex. 1)
-         * @param {integer} end End location of JBrowse view
-         */
-        getChromosomeEnd: function(chr, end) {
-            var chromosomeSizes = {
-                '1': 249250621,
-                '2': 243199373,
-                '3': 198022430,
-                '4': 191154276,
-                '5': 180915260,
-                '6': 171115067,
-                '7': 159138663,
-                '8': 146364022,
-                '9': 141213431,
-                '10': 135534747,
-                '11': 135006516,
-                '12': 133851895,
-                '13': 115169878,
-                '14': 107349540,
-                '15': 102531392,
-                '16': 90354753,
-                '17': 81195210,
-                '18': 78077248,
-                '19': 59128983,
-                '20': 63025520,
-                '21': 48129895,
-                '22': 51304566,
-                'x': 155270560,
-                'y': 59373566
-            };
-
-            if (end > chromosomeSizes[chr]) {
-                return chromosomeSizes[chr];
-            } else {
-                return end;
-            }
-        },
-
-        /**
-         * Stub for getParser
-         */
-        getParser: function() {
-            return new Promise(function(resolve, reject) {
-                resolve({'getMetadata': function() {}});
-            });
-        },
-
-        /**
          * Creates the filter string based on the input to the track
          * @param {string} ref Chromosome number (ex. 1)
          * @param {integer} start Start location of JBrowse view
@@ -310,20 +255,25 @@ function(
                                     variantFeature = {
                                         id: variant.id,
                                         data: {
-                                            start: variant.start - 1,
-                                            end: variant.end - 1,
-                                            mutation: variant.mutation,
-                                            'allele in the reference assembly': variant.referenceGenomeAllele,
-                                            'reference genome assembly': variant.assemblyVersion,
-                                            'civic': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
-                                            'clinvar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
-                                            'icgc': thisB.createLinkWithId(ICGC_LINK, variant.id),
-                                            'affected projects': variant.affectedProjectCount,
-                                            'affected donors': thisB.getDonorFraction(variant),
-                                            'type': variant.type,
-                                            'study': thisB.prettyValue(variant.study.join()),
+                                            'start': variant.start - 1,
+                                            'end': variant.end - 1,
+                                            'about': {
+                                                'mutation': thisB.prettyValue(variant.mutation),
+                                                'allele in the reference assembly': thisB.prettyValue(variant.referenceGenomeAllele),
+                                                'reference genome assembly': thisB.prettyValue(variant.assemblyVersion),
+                                                'affected projects': thisB.prettyValue(variant.affectedProjectCount),
+                                                'affected donors': thisB.getDonorFraction(variant),
+                                                'type': thisB.prettyValue(variant.type),
+                                                'study': thisB.prettyList(variant.study),
+                                                'id': thisB.prettyValue(variant.id)
+                                            },
                                             'variant description': variant.description,
-                                            'consequences': thisB.createConsequencesTable(variant.consequences),
+                                            'external references': {
+                                                'civic': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
+                                                'clinvar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
+                                                'icgc': thisB.createLinkWithId(ICGC_LINK, variant.id),
+                                            },
+                                            'mutation consequences': thisB.createConsequencesTable(variant.consequences),
                                             'projects': thisB.createProjectIncidenceTable(projects, projectsResponse, variant.id)
                                         }
                                     }
