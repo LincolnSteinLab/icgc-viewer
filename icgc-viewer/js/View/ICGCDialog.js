@@ -10,12 +10,10 @@ define([
     'dijit/layout/TabContainer',
     'dijit/layout/AccordionContainer',
     'dijit/layout/ContentPane',
-    'dijit/Tooltip',
     'dijit/Menu',
     'dijit/MenuItem',
     'dijit/form/ComboButton',
-    'dojo/aspect',
-    'JBrowse/View/Dialog/WithActionBar'
+    './BaseICGCDialog'
 ],
 function (
     declare,
@@ -26,14 +24,12 @@ function (
     TabContainer,
     AccordionContainer,
     ContentPane,
-    Tooltip,
     Menu,
     MenuItem,
     ComboButton,
-    aspect,
-    ActionBarDialog
+    BaseICGCDialog
 ) {
-    return declare(ActionBarDialog, {
+    return declare(BaseICGCDialog, {
         // Backbone of the Dialog structure
         facetAndResultsHolder: undefined,
         facetTabHolder: undefined,
@@ -72,18 +68,6 @@ function (
 
         // Available types
         types: ['donor', 'mutation', 'gene'],
-
-        /**
-         * Constructor
-         */
-        constructor: function() {
-            var thisB = this;
-
-            aspect.after(this, 'hide', function () {
-                focus.curNode && focus.curNode.blur();
-                setTimeout(function () { thisB.destroyRecursive(); }, 500);
-            });
-        },
         
         /**
          * Create a DOM object containing GDC primary site interface
@@ -304,19 +288,6 @@ function (
         },
 
         /**
-         * Adds a tooltip with some text to a location
-         * @param {*} button Location to attach tooltip
-         * @param {*} text Text to display in tooltip
-         */
-        addTooltipToButton: function(button, text) {
-            var tooltip = new Tooltip({
-                label: text
-            });
-
-            tooltip.addTarget(button);
-        },
-
-        /**
          * Updates the search results of some type based on the facets
          * @param {string} type The type of accordion
          */
@@ -454,17 +425,6 @@ function (
                         console.error('error', err);
                     });
             }
-        },
-
-        /**
-         * Creates a loading icon in the given location and returns
-         * @param {object} location Place to put the loading icon
-         * @return {object} loading icon DOM element
-         */
-        createLoadingIcon: function(location) {
-            var loadingIcon = dom.create('div', { className: 'loading-icgc' }, location);
-            var spinner = dom.create('div', {}, loadingIcon);
-            return loadingIcon;
         },
 
         /**
@@ -1105,19 +1065,6 @@ function (
                 }
               }
               return titleCase;
-        },
-
-        /**
-         * Generate a GUID
-         * @return {string} GUID
-         */
-        guid: function() {
-            function s4() {
-              return Math.floor((1 + Math.random()) * 0x10000)
-                .toString(16)
-                .substring(1);
-            }
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
         },
 
         /**

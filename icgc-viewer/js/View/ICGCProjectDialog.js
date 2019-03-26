@@ -5,27 +5,23 @@ define([
     'dojo/_base/declare',
     'dojo/dom-construct',
     'dijit/focus',
-    'dijit/Tooltip',
     'dijit/Menu',
     'dijit/MenuItem',
     'dijit/form/ComboButton',
     'dijit/form/Button',
-    'dojo/aspect',
-    'JBrowse/View/Dialog/WithActionBar'
+    './BaseICGCDialog'
 ],
 function (
     declare,
     dom,
     focus,
-    Tooltip,
     Menu,
     MenuItem,
     ComboButton,
     Button,
-    aspect,
-    ActionBarDialog
+    BaseICGCDialog
 ) {
-    return declare(ActionBarDialog, {
+    return declare(BaseICGCDialog, {
         // Parent DOM to hold results
         dialogContainer: undefined,
         resultsContainer: undefined,
@@ -33,18 +29,6 @@ function (
         // Pagination variables
         page: 1,
         size: 20,
-        
-        /**
-         * Constructor
-         */
-        constructor: function () {
-            var thisB = this;
-
-            aspect.after(this, 'hide', function () {
-                focus.curNode && focus.curNode.blur();
-                setTimeout(function () { thisB.destroyRecursive(); }, 500);
-            });
-        },
         
         /**
          * Create a DOM object containing GDC primary site interface
@@ -212,19 +196,6 @@ function (
         },
 
         /**
-         * Adds a tooltip with some text to a location
-         * @param {*} button Location to attach tooltip
-         * @param {*} text Text to display in tooltip
-         */
-        addTooltipToButton: function(button, text) {
-            var tooltip = new Tooltip({
-                label: text
-            });
-
-            tooltip.addTarget(button);
-        },
-
-        /**
          * Generic function for adding a track of some type
          * @param {*} storeClass the JBrowse store class
          * @param {*} projectId Unique ID of the project on ICGC
@@ -269,17 +240,6 @@ function (
         },
 
         /**
-         * Creates a loading icon in the given location and returns
-         * @param {object} location Place to put the loading icon
-         * @return {object} loading icon
-         */
-        createLoadingIcon: function (location) {
-            var loadingIcon = dom.create('div', { className: 'loading-icgc' }, location);
-            var spinner = dom.create('div', {}, loadingIcon);
-            return loadingIcon;
-        },
-
-        /**
          * Creates pagination buttons for search results in the given 'holder' using the 'pagination' object from the ICGC response
          * @param {object} holder
          * @param {integer} pagination
@@ -310,20 +270,7 @@ function (
                 }, "nextButton").placeAt(paginationHolder);
             }
         },
-
-        /**
-         * Generate a GUID
-         * @return {string} GUID
-         */
-        guid: function() {
-            function s4() {
-              return Math.floor((1 + Math.random()) * 0x10000)
-                .toString(16)
-                .substring(1);
-            }
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-        },
-
+        
         /**
          * Show callback for displaying dialog
          * @param {*} browser 
