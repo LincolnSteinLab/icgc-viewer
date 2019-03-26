@@ -933,8 +933,42 @@ function (
                     datatype: storeClass,
                     donor: donorId
                 },
-                unsafePopup: true
+                unsafePopup: true,
+                menuTemplate : [ 
+                    {   
+                     label : "View details",
+                   }
+               ]
             };
+
+            if (storeClass === 'Genes') {
+                trackConf.menuTemplate.push(
+                    {   
+                        label : "Highlight this Gene",
+                    },
+                    {
+                        label : "View Gene on ICGC",
+                        iconClass : "dijitIconSearch",
+                        action: "newWindow",
+                        url : function(track, feature) { return "https://dcc.icgc.org/genes/" + feature.get('about')['id'] }
+                    }
+                );
+            } else if (storeClass === 'SimpleSomaticMutations') {
+                trackConf.menuTemplate.push(
+                    {   
+                        label : "Highlight this Simple Somatic Mutation",
+                    },
+                    {
+                        label : "View SSM on ICGC",
+                        iconClass : "dijitIconSearch",
+                        action: "newWindow",
+                        url : function(track, feature) { return "https://dcc.icgc.org/mutations/" + feature.get('about')['id'] }
+                    }
+                );
+            }
+
+            console.log("Adding track of type " + trackType + " and store class " + storeClass + ": " + key + " (" + label + ")");
+
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);

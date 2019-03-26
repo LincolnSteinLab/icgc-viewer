@@ -117,7 +117,8 @@ function(
                             'about': {
                                 'gene name': thisB.prettyValue(gene.name),
                                 'symbol': thisB.prettyValue(gene.symbol),
-                                'type': thisB.prettyValue(gene.type)
+                                'type': thisB.prettyValue(gene.type),
+                                'id': thisB.prettyValue(gene.id)
                             },
                             'external references': {
                                 'icgc': thisB.createLinkWithId(ICGC_LINK, gene.id),

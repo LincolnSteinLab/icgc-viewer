@@ -265,6 +265,7 @@ function(
                                                 'affected donors': thisB.getDonorFraction(variant),
                                                 'type': thisB.prettyValue(variant.type),
                                                 'study': thisB.prettyList(variant.study),
+                                                'id': thisB.prettyValue(variant.id)
                                             },
                                             'variant description': variant.description,
                                             'external references': {
