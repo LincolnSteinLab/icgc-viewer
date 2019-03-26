@@ -1,3 +1,6 @@
+/**
+ * A Dialog for complex searches on the ICGC using faceted search
+ */
 define([
     'dojo/_base/declare',
     'dojo/dom-construct',
