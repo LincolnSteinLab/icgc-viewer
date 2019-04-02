@@ -257,6 +257,7 @@ function(
                                         data: {
                                             'start': variant.start - 1,
                                             'end': variant.end - 1,
+                                            'type': thisB.prettyValue(variant.type),
                                             'about': {
                                                 'mutation': thisB.prettyValue(variant.mutation),
                                                 'allele in the reference assembly': thisB.prettyValue(variant.referenceGenomeAllele),
@@ -264,7 +265,6 @@ function(
                                                 'affected projects': thisB.prettyValue(variant.affectedProjectCount),
                                                 'affected donors': thisB.getDonorFraction(variant),
                                                 'type': thisB.prettyValue(variant.type),
-                                                'study': thisB.prettyList(variant.study),
                                                 'id': thisB.prettyValue(variant.id)
                                             },
                                             'variant description': variant.description,
