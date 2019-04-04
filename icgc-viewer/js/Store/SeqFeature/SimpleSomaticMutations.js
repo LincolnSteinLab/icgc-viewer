@@ -1,18 +1,21 @@
+/**
+ * Store SeqFeature for ICGC Simple Somatic Mutations
+ */
 define([
     'dojo/_base/declare',
     'dojo/_base/array',
     'dojo/request',
-    'JBrowse/Store/SeqFeature',
-    'JBrowse/Model/SimpleFeature'
+    './BaseSeqFeature',
+    '../../Model/SSMFeature'
 ],
 function(
     declare,
     array,
     request,
-    SeqFeatureStore,
-    SimpleFeature
+    BaseSeqFeature,
+    SSMFeature
 ) {
-    return declare(SeqFeatureStore, {
+    return declare(BaseSeqFeature, {
 
         constructor: function (args) {
             // ID of the donor
@@ -23,15 +26,6 @@ function(
 
             // Maximum mutation count to retrieve from ICGC
             this.size = args.size !== undefined ? parseInt(args.size) : 500;
-        },
-
-        /**
-         * Creates a link to a given ID
-         * @param {string} link Base URL for link
-         * @param {string} id ID to apped to base URL
-         */
-        createLinkWithId: function(link, id) {
-            return id !== null ? "<a href='" + link + id + "' target='_blank'>" + id + "</a>" : "n/a";
         },
 
         /**
@@ -75,59 +69,15 @@ function(
         },
 
         /**
-         * If a value is undefined, returns empty string, else return value
-         * @param {string} value Value to make pretty
+         * If a list is undefined or empty, returns n/a, else return list
+         * @param {string} list Value to make pretty
          */
-        prettyValue: function(value) {
-            return value ? value : '';
+        prettyList: function(list) {
+            return list && list.length > 0 ? list : 'n/a';
         },
 
         convertIntToStrand: function(strand) {
             return strand == 1 ? '+' : '-'
-        },
-
-        /**
-         * Creates a table of projects and their associated tumour type and incidence rate for the given mutation
-         * @param {object} projects Object of the form projectId -> projectObject
-         * @param {object} projectCounts Occurrence count for each project given the mutationId
-         * @param {string} mutationId ICGC ID for the mutation
-         */
-        createProjectIncidenceTable: function(projects, projectCounts, mutationId) {
-            var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
-            var headerRow = `
-                <tr style=\"background-color: #f2f2f2\">
-                    <th style="${thStyle}">Project</th>
-                    <th style="${thStyle}">Site</th>
-                    <th style="${thStyle}">Tumour Type</th>
-                    <th style="${thStyle}">Tumour Subtype</th>
-                    <th style="${thStyle}"># Donors Affected</th> 
-                </tr>
-            `;
-
-            var projectTable = '<table style="width: 560px; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
-
-            var count = 0;
-            Object.keys(projects).forEach(project => {
-                var trStyle = '';
-                if (count % 2 != 0) {
-                    trStyle = 'style=\"background-color: #f2f2f2\"';
-                }
-                var projectRow = `<tr ${trStyle}>
-                    <td style="${thStyle}">${this.createLinkWithId('https://dcc.icgc.org/projects/', project)}</td>
-                    <td style="${thStyle}">${this.prettyValue(projects[project].primarySite)}</td>
-                    <td style="${thStyle}">${this.prettyValue(projects[project].tumourType)}</td>
-                    <td style="${thStyle}">${this.prettyValue(projects[project].tumourSubtype)}</td>
-                    <td style="${thStyle}">${this.prettyValue(projectCounts[project][mutationId]) + ' / ' + projects[project].ssmTestedDonorCount} (${((projectCounts[project][mutationId] / projects[project].ssmTestedDonorCount) * 100).toFixed(2)}%)</td>
-                    </tr>
-                `;
-
-                projectTable += projectRow;
-                count++;
-            });
-
-            projectTable += '</table>';
-            return projectTable;
-
         },
 
         /**
@@ -176,46 +126,6 @@ function(
         },
 
         /**
-         * Returns the end value to be used for querying ICGC
-         * @param {string} chr Chromosome number (ex. 1)
-         * @param {integer} end End location of JBrowse view
-         */
-        getChromosomeEnd: function(chr, end) {
-            var chromosomeSizes = {
-                '1': 249250621,
-                '2': 243199373,
-                '3': 198022430,
-                '4': 191154276,
-                '5': 180915260,
-                '6': 171115067,
-                '7': 159138663,
-                '8': 146364022,
-                '9': 141213431,
-                '10': 135534747,
-                '11': 135006516,
-                '12': 133851895,
-                '13': 115169878,
-                '14': 107349540,
-                '15': 102531392,
-                '16': 90354753,
-                '17': 81195210,
-                '18': 78077248,
-                '19': 59128983,
-                '20': 63025520,
-                '21': 48129895,
-                '22': 51304566,
-                'x': 155270560,
-                'y': 59373566
-            };
-
-            if (end > chromosomeSizes[chr]) {
-                return chromosomeSizes[chr];
-            } else {
-                return end;
-            }
-        },
-
-        /**
          * Creates the filter string based on the input to the track
          * @param {string} ref Chromosome number (ex. 1)
          * @param {integer} start Start location of JBrowse view
@@ -233,6 +143,13 @@ function(
             return JSON.stringify(thisB.filters);
         },
 
+        /**
+         * 
+         * @param {*} query 
+         * @param {*} featureCallback 
+         * @param {*} finishCallback 
+         * @param {*} errorCallback 
+         */
         getFeatures: function(query, featureCallback, finishCallback, errorCallback) {
             var thisB = this;
 
@@ -265,68 +182,36 @@ function(
                 headers: { 'X-Requested-With': null },
                 handleAs: 'json'
             }).then(function(mutationsResponse) {
-                featurePromiseArray = []
-
                 array.forEach(mutationsResponse.hits, function(variant) {
-                    featurePromiseArray.push(new Promise(function(resolve, reject) {
-                        // Find projects related to the current mutation
-                        var url = encodeURI('https://dcc.icgc.org/api/v1/mutations/' + variant.id + '?field=occurences}&from=1&size=0');
-                        return request(url, {
-                            method: 'get',
-                            headers: { 'X-Requested-With': null },
-                            handleAs: 'json'
-                        }).then(function(mutationResponse) {
-                            if (mutationResponse) {
-                                // Create an object holding all project information
-                                var projects = {}
-                                for (project of mutationResponse.occurrences) {
-                                    projects[project.projectId] = project.project;
-                                }
-
-                                // Find counts of affected donors for each project
-                                var projectArray = Object.keys(projects);
-                                var url = encodeURI('https://dcc.icgc.org/api/v1/projects/' + projectArray + '/mutations/' + variant.id + '/donors/counts');
-                                return request(url, {
-                                    method: 'get',
-                                    headers: { 'X-Requested-With': null },
-                                    handleAs: 'json'
-                                }).then(function(projectsResponse) {
-                                    variantFeature = {
-                                        id: variant.id,
-                                        data: {
-                                            start: variant.start - 1,
-                                            end: variant.end - 1,
-                                            mutation: variant.mutation,
-                                            'Allele in the reference assembly': variant.referenceGenomeAllele,
-                                            'Reference Genome Assembly': variant.assemblyVersion,
-                                            'CIViC': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
-                                            'ClinVar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
-                                            'ICGC': thisB.createLinkWithId(ICGC_LINK, variant.id),
-                                            'Affected projects': variant.affectedProjectCount,
-                                            'Affected donors': thisB.getDonorFraction(variant),
-                                            'Type': variant.type,
-                                            'Study': thisB.prettyValue(variant.study.join()),
-                                            'Variant Description': variant.description,
-                                            'Consequences': thisB.createConsequencesTable(variant.consequences),
-                                            'Projects': thisB.createProjectIncidenceTable(projects, projectsResponse, variant.id)
-                                        }
-                                    }
-                                    featureCallback(new SimpleFeature(variantFeature));
-                                    resolve("Success");
-                                })
-                            } else {
-                                reject(Error("Failure"));
-                            }
-                        }, function(err) {
-                            console.log(err);
-                            errorCallback('Error contacting ICGC Portal');
-                        });
-                      }));
+                    variantFeature = {
+                        id: variant.id,
+                        data: {
+                            'start': variant.start - 1,
+                            'end': variant.end - 1,
+                            'type': thisB.prettyValue(variant.type),
+                            'about': {
+                                'mutation': thisB.prettyValue(variant.mutation),
+                                'allele in the reference assembly': thisB.prettyValue(variant.referenceGenomeAllele),
+                                'reference genome assembly': thisB.prettyValue(variant.assemblyVersion),
+                                'affected projects': thisB.prettyValue(variant.affectedProjectCount),
+                                'affected donors': thisB.getDonorFraction(variant),
+                                'type': thisB.prettyValue(variant.type),
+                                'id': thisB.prettyValue(variant.id)
+                            },
+                            'variant description': variant.description,
+                            'external references': {
+                                'civic': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
+                                'clinvar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
+                                'icgc': thisB.createLinkWithId(ICGC_LINK, variant.id),
+                            },
+                            'mutation consequences': thisB.createConsequencesTable(variant.consequences),
+                            'projects': variant.id
+                        }
+                    }
+                    featureCallback(new SSMFeature(variantFeature));
+                });
+                finishCallback();
                       
-                });
-                Promise.all(featurePromiseArray).then(function(values) {
-                    finishCallback();
-                });
             }, function(err) {
                 console.log(err);
                 errorCallback('Error contacting ICGC Portal');

@@ -1,3 +1,6 @@
+/**
+ * A Dialog for complex searches on the ICGC using faceted search
+ */
 define([
     'dojo/_base/declare',
     'dojo/dom-construct',
@@ -7,9 +10,10 @@ define([
     'dijit/layout/TabContainer',
     'dijit/layout/AccordionContainer',
     'dijit/layout/ContentPane',
-    'dijit/Tooltip',
-    'dojo/aspect',
-    'JBrowse/View/Dialog/WithActionBar'
+    'dijit/Menu',
+    'dijit/MenuItem',
+    'dijit/form/ComboButton',
+    './BaseICGCDialog'
 ],
 function (
     declare,
@@ -20,11 +24,12 @@ function (
     TabContainer,
     AccordionContainer,
     ContentPane,
-    Tooltip,
-    aspect,
-    ActionBarDialog
+    Menu,
+    MenuItem,
+    ComboButton,
+    BaseICGCDialog
 ) {
-    return declare(ActionBarDialog, {
+    return declare(BaseICGCDialog, {
         // Backbone of the Dialog structure
         facetAndResultsHolder: undefined,
         facetTabHolder: undefined,
@@ -63,28 +68,20 @@ function (
 
         // Available types
         types: ['donor', 'mutation', 'gene'],
-
-        constructor: function() {
-            var thisB = this;
-
-            aspect.after(this, 'hide', function () {
-                focus.curNode && focus.curNode.blur();
-                setTimeout(function () { thisB.destroyRecursive(); }, 500);
-            });
-        },
         
+        /**
+         * Create a DOM object containing GDC primary site interface
+         * @return {object} DOM object
+         */
         _dialogContent: function () {
             var thisB = this;
-            var container = dom.create('div', { className: 'dialog-container', style: { width: '1000px', height: '700px' } });
+            var container = dom.create('div', { className: 'dialog-container', style: { width: '1200px', height: '700px' } });
 
             // Unique ID for accordion
             thisB.accordionId = thisB.guid();
 
             // Create header section
-            dom.create('img', {
-                src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
-                width: '100'
-            }, container);
+            thisB.createHeaderSection(container);
 
             // Create the scaffolding to hold everything
             thisB.createScaffolding(container);
@@ -97,6 +94,24 @@ function (
 
             thisB.resize();
             return container;
+        },
+
+        /**
+         * Add a header section with a logo and title
+         * @param {object} container DOM object to place header
+         */
+        createHeaderSection: function(container) {
+            var headerSection = dom.create('div', { style: "display: flex; flex-direction: row; justify-content: flex-start; align-items: center;" }, container);
+            var logoSection = dom.create('div', { style: "flex-grow: 2" }, headerSection);
+
+            dom.create('img', {
+                src: 'https://icgc.org/files/ICGC_Logo_int_small.jpg',
+                width: '154px',
+                height: '59px'
+            }, logoSection);
+
+            var titleSection = dom.create('div', { style: "flex-grow: 7" }, headerSection);
+            var aboutMessage = dom.create('h1', { innerHTML: "Explore data available on the ICGC Data Portal" }, titleSection);
         },
 
         /**
@@ -140,6 +155,7 @@ function (
         /**
          * Creates a facet URL based on some type
          * @param {string} type The type of accordion
+         * @return {string} URL for facets
          */
         createFacetUrl: function(type) {
             var thisB = this;
@@ -150,6 +166,7 @@ function (
         /**
          * Retrieves the filters of some type
          * @param {string} type The type of accordion
+         * @return {object} filters of the given type
          */
         getFiltersForType: function(type) {
             var thisB = this;
@@ -181,91 +198,93 @@ function (
          * Creates a facet accordion of some type and places them in the given accordion
          * @param {string} type The type of accordion
          * @param {AccordionContainer} accordion The accordion to put the facets in
+         * @param {object} loadingIcon The loading element
          */
         createFacet: function(type, accordion, loadingIcon) {
             var thisB = this;
 
+            // Create a facet URL will all currently selected filters applied
             var url = thisB.createFacetUrl(type);
+
+            // Fetch facets and display in accordion
             fetch(url).then(function (facetsResponse) {
+                // Clear loading indicator
                 dom.empty(loadingIcon);
+
                 facetsResponse.json().then(function (facetsJsonResponse) {
-                        if (!facetsJsonResponse.code) {
-                            // Create accordion of the facets available
-                            for (var facet in facetsJsonResponse.facets) {
-                                var contentPane = new ContentPane({
-                                    title: thisB.camelCaseToTitleCase(facet),
-                                    style: "height: auto",
-                                    id: facet + '-' + type + '-' + thisB.accordionId
-                                });
+                    // Respone will have a code if errored
+                    if (!facetsJsonResponse.code) {
+                        // Create accordion of the facets available
+                        for (var facet in facetsJsonResponse.facets) {
+                            var paneId = facet + '-' + type + '-' + thisB.accordionId;
+                            var contentPane = new ContentPane({
+                                title: thisB.camelCaseToTitleCase(facet),
+                                style: "height: auto",
+                                id: paneId
+                            });
 
-                                var facetHolder = dom.create('span', { className: "flex-column", style: "width: 100%" });
-                                if (facetsJsonResponse.facets[facet].terms) {
-                                    facetsJsonResponse.facets[facet].terms.sort(thisB.compareTermElements);
-                                    facetsJsonResponse.facets[facet].terms.forEach((term) => {
-                                        var facetCheckbox = dom.create('span', { className: "flex-row" }, facetHolder)
-
-                                        var checkBox = new CheckBox({
-                                            name: facet + '-' + term.term,
-                                            id: facet + '-' + term.term + '-' + type + '-' + thisB.accordionId,
-                                            value: { "facet": facet, "term" : term.term },
-                                            checked: thisB.isChecked(facet, term.term, thisB.getFiltersForType(type)),
-                                            onChange: function(isChecked) {
-                                                if (isChecked) {
-                                                    if (type === 'donor') {
-                                                        thisB.donorFilters = thisB.addToFilters(this.value, thisB.donorFilters);
-                                                    } else if (type === 'mutation') {
-                                                        thisB.mutationFilters = thisB.addToFilters(this.value, thisB.mutationFilters);
-                                                    } else if (type === 'gene') {
-                                                        thisB.geneFilters = thisB.addToFilters(this.value, thisB.geneFilters);
-                                                    }
-                                                } else {
-                                                    if (type === 'donor') {
-                                                        thisB.donorFilters = thisB.removeFromFilters(this.value, thisB.donorFilters);
-                                                    } else if (type === 'mutation') {
-                                                        thisB.mutationFilters = thisB.removeFromFilters(this.value, thisB.mutationFilters);
-                                                    } else if (type === 'gene') {
-                                                        thisB.geneFilters = thisB.removeFromFilters(this.value, thisB.geneFilters);
-                                                    }
+                            var facetHolder = dom.create('span', { className: "flex-column", style: "width: 100%" });
+                            if (facetsJsonResponse.facets[facet].terms) {
+                                facetsJsonResponse.facets[facet].terms.sort(thisB.compareTermElements);
+                                facetsJsonResponse.facets[facet].terms.forEach((term) => {
+                                    var facetCheckbox = dom.create('span', { className: "flex-row" }, facetHolder)
+                                    var checkboxName = facet + '-' + term.term;
+                                    var checkboxId = facet + '-' + term.term + '-' + type + '-' + thisB.accordionId;
+                                    var checkBox = new CheckBox({
+                                        name: checkboxName,
+                                        id: checkboxId,
+                                        value: { "facet": facet, "term" : term.term, "type": type },
+                                        checked: thisB.isChecked(facet, term.term, thisB.getFiltersForType(type)),
+                                        onChange: function(isChecked) {
+                                            if (isChecked) {
+                                                if (this.value.type === 'donor') {
+                                                    thisB.donorFilters = thisB.addToFilters(this.value, thisB.donorFilters);
+                                                } else if (this.value.type === 'mutation') {
+                                                    thisB.mutationFilters = thisB.addToFilters(this.value, thisB.mutationFilters);
+                                                } else if (this.value.type === 'gene') {
+                                                    thisB.geneFilters = thisB.addToFilters(this.value, thisB.geneFilters);
                                                 }
-                                                thisB.updateAccordion('donor');
-                                                thisB.updateAccordion('mutation');
-                                                thisB.updateAccordion('gene');
-                                                thisB.updateSearchResults('donor');
-                                                thisB.updateSearchResults('mutation');
-                                                thisB.updateSearchResults('gene');
+                                            } else {
+                                                if (this.value.type === 'donor') {
+                                                    thisB.donorFilters = thisB.removeFromFilters(this.value, thisB.donorFilters);
+                                                } else if (this.value.type === 'mutation') {
+                                                    thisB.mutationFilters = thisB.removeFromFilters(this.value, thisB.mutationFilters);
+                                                } else if (this.value.type === 'gene') {
+                                                    thisB.geneFilters = thisB.removeFromFilters(this.value, thisB.geneFilters);
+                                                }
                                             }
-                                        }, 'checkbox').placeAt(facetCheckbox);
-                                        var label = dom.create("label", { "for" : facet + '-' + term.term + '-' + type + '-' + thisB.accordionId, innerHTML: term.term + ' (' + term.count + ')' }, facetCheckbox);
-                                    });
-                                }
-
-                                dojo.place(facetHolder, contentPane.containerNode);
-                                accordion.addChild(contentPane);
+                                            
+                                            // Update with newly applied filter
+                                            for (var type of thisB.types) {
+                                                thisB.updateAccordion(type);
+                                                thisB.updateSearchResults(type);
+                                            }
+                                        }
+                                    }, 'checkbox').placeAt(facetCheckbox);
+                                    
+                                    // Add text label to checkbox
+                                    var labelName = facet + '-' + term.term + '-' + type + '-' + thisB.accordionId;
+                                    var labelContent = term.term + ' (' + (term.count).toLocaleString() + ')';
+                                    dom.create("label", { "for" : labelName, innerHTML: labelContent }, facetCheckbox);
+                                });
                             }
 
-                            accordion.startup();
-                            accordion.resize();
-                            thisB.resize();
+                            // Place facet group into holder and add to accordion
+                            dojo.place(facetHolder, contentPane.containerNode);
+                            accordion.addChild(contentPane);
                         }
-                    }, function (res3) {
-                        console.error('error', res3);
-                    });
-                }, function (err) {
-                    console.error('error', err);
+
+                        // Update accordion with new content
+                        accordion.startup();
+                        accordion.resize();
+                        thisB.resize();
+                    }
+                }, function (res3) {
+                    console.error('error', res3);
                 });
-        },
-
-        /**
-         * Adds a tooltip with some text to a location
-         * @param {*} button Location to attach tooltip
-         * @param {*} tooltipText Text to display in tooltip
-         */
-        addTooltipToButton: function(button, tooltipText) {
-            var tooltip = new Tooltip({
-                label: tooltipText
+            }, function (err) {
+                console.error('error', err);
             });
-
-            tooltip.addTarget(button);
         },
 
         /**
@@ -300,7 +319,7 @@ function (
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
-                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.donorResultsTab.containerNode);
+                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.donorResultsTab.containerNode);
                                 thisB.createDonorsTable(facetsJsonResponse.hits, thisB.donorResultsTab.containerNode, combinedFacetObject);
                                 thisB.createPaginationButtons(thisB.donorResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.donorPage);
                             }
@@ -319,28 +338,34 @@ function (
                     dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
-                                var addMutationsButton = new Button({
-                                    label: "All SSMs With Facets",
+                                var ssmMenu = new Menu({ style: "display: none;"});
+                                var menuItemSSMFiltered = new MenuItem({
+                                    label: "Filtered SSMs form ICGC",
                                     iconClass: "dijitIconNewTask",
                                     onClick: function() {
                                         thisB.addTrack('SimpleSomaticMutations', undefined, combinedFacetObject, 'CanvasVariants');
-                                        alert("Adding Simple Somatic Mutations track for all mutations with filters.");
+                                        alert("Adding track with all SSMs from the ICGC, with current filters applied");
                                     }
-                                }, "addMutations").placeAt(thisB.mutationResultsTab.containerNode);
-                                thisB.addTooltipToButton(addMutationsButton, "Add track with all SSMs, filter with current facets");
+                                });
+                                ssmMenu.addChild(menuItemSSMFiltered);
+                                ssmMenu.startup();
 
-                                var addMutationsNoFiltersButton = new Button({
-                                    label: "All SSMs Without Facets",
+                                var buttonAllSSMs = new ComboButton({
+                                    label: "All SSMs from ICGC",
                                     iconClass: "dijitIconNewTask",
+                                    dropDown: ssmMenu,
                                     onClick: function() {
                                         thisB.addTrack('SimpleSomaticMutations', undefined, undefined, 'CanvasVariants');
-                                        alert("Adding Simple Somatic Mutations track for all mutations without filters.");
+                                        alert("Add track with all SSMs from the ICGC");
                                     }
-                                }, "addMutations").placeAt(thisB.mutationResultsTab.containerNode);
-                                thisB.addTooltipToButton(addMutationsNoFiltersButton, "Add track with all SSMs, do not filter with current facets");
+                                });
+                                buttonAllSSMs.placeAt(thisB.mutationResultsTab.containerNode);
+                                buttonAllSSMs.startup();
+                                thisB.addTooltipToButton(menuItemSSMFiltered, "Add track with all SSMs from the ICGC, with current filters applied");
+                                thisB.addTooltipToButton(buttonAllSSMs, "Add track with all SSMs from the ICGC");
 
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
-                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.mutationResultsTab.containerNode);
+                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.mutationResultsTab.containerNode);
                            
                                 thisB.createMutationsTable(facetsJsonResponse.hits, thisB.mutationResultsTab.containerNode, combinedFacetObject);
                                 thisB.createPaginationButtons(thisB.mutationResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.mutationPage);
@@ -360,28 +385,35 @@ function (
                     dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
-                                var addGenesButton = new Button({
-                                    label: "All Genes With Facets",
+                                var geneMenu = new Menu({ style: "display: none;"});
+                                var menuItemGeneFiltered = new MenuItem({
+                                    label: "Filtered Genes from ICGC",
                                     iconClass: "dijitIconNewTask",
                                     onClick: function() {
                                         thisB.addTrack('Genes', undefined, combinedFacetObject, 'CanvasVariants');
-                                        alert("Adding Genes track for all genes with filters.");
+                                        alert("Adding track with all genes from the ICGC, with current filters applied");
                                     }
-                                }, "addGenes").placeAt(thisB.geneResultsTab.containerNode);
-                                thisB.addTooltipToButton(addGenesButton, "Add track with all genes, filter with current facets");
+                                });
+                                geneMenu.addChild(menuItemGeneFiltered);
+                                geneMenu.startup();
 
-                                var addGenesNoFiltersButton = new Button({
-                                    label: "All Genes With Facets",
+                                var buttonAllGenes = new ComboButton({
+                                    label: "All Genes from ICGC",
                                     iconClass: "dijitIconNewTask",
+                                    dropDown: geneMenu,
+                                    style: "padding-right: 8px;",
                                     onClick: function() {
                                         thisB.addTrack('Genes', undefined, undefined, 'CanvasVariants');
-                                        alert("Adding Genes track for all genes without filters.");
+                                        alert("Adding track with all genes from the ICGC");
                                     }
-                                }, "addGenes").placeAt(thisB.geneResultsTab.containerNode);
-                                thisB.addTooltipToButton(addGenesNoFiltersButton, "Add track with all genes, do not filter with current facets");
+                                });
+                                buttonAllGenes.placeAt(thisB.geneResultsTab.containerNode);
+                                buttonAllGenes.startup();
+                                thisB.addTooltipToButton(menuItemGeneFiltered, "Add track with all genes from the ICGC, with current filters applied");
+                                thisB.addTooltipToButton(buttonAllGenes, "Add track with all genes from the ICGC");
 
                                 var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
-                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + facetsJsonResponse.pagination.from + " to " + endResult + " of " + facetsJsonResponse.pagination.total }, thisB.geneResultsTab.containerNode);
+                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.geneResultsTab.containerNode);
                                 
                                 thisB.createGenesTable(facetsJsonResponse.hits, thisB.geneResultsTab.containerNode, combinedFacetObject);
                                 thisB.createPaginationButtons(thisB.geneResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.genePage);
@@ -396,18 +428,9 @@ function (
         },
 
         /**
-         * Creates a loading icon in the given location and returns
-         * @param {object} location Place to put the loading icon
-         */
-        createLoadingIcon: function(location) {
-            var loadingIcon = dom.create('div', { className: 'loading-icgc' }, location);
-            var spinner = dom.create('div', {}, loadingIcon);
-            return loadingIcon;
-        },
-
-        /**
          * Creates the donor URL for grabbing mutations
          * @param {object} combinedFacetObject Object containing facet information
+         * @return {string} donor URL
          */
         createDonorUrl: function(combinedFacetObject) {
             var thisB = this;
@@ -417,6 +440,7 @@ function (
         /**
          * Creates the gene URL for grabbing mutations
          * @param {object} combinedFacetObject Object containing facet information
+         * @return {string} gene URL
          */
         createGeneUrl: function(combinedFacetObject) {
             var thisB = this;
@@ -426,6 +450,7 @@ function (
         /**
          * Creates the mutation URL for grabbing mutations
          * @param {object} combinedFacetObject Object containing facet information
+         * @return {string} mutation URL
          */
         createMutationUrl: function(combinedFacetObject) {
             var thisB = this;
@@ -434,7 +459,8 @@ function (
 
         /**
          * Calculate the 'from' parameter for the URL call
-         * @param {integer} page current page
+         * @param {number} page current page
+         * @return {number} start index
          */
         getStartIndex: function(page) {
             var thisB = this;
@@ -443,6 +469,8 @@ function (
 
         /**
          * Combines all of the facets into one object and converts to a string
+         * The result can be used with the ICGC query param 'filter='
+         * @return {string} stringified version of combined filters
          */
         createCombinedFacets: function() {
             var thisB = this;
@@ -469,7 +497,7 @@ function (
             thisB.searchResultsVerticalHolder = dom.create('div', { style: { 'flex': '3 0 0' } }, thisB.facetAndResultsHolder);
 
             // Create facet tabs
-            thisB.facetTabs = new TabContainer({style: "flex: 1 0 0; "}, thisB.facetTabHolder);
+            thisB.facetTabs = new TabContainer({style: "flex: 1 0 0; padding-right: 3px; padding-top: 5px; "}, thisB.facetTabHolder);
 
             thisB.donorFacetTab = new ContentPane({
                 title: "Donor"
@@ -513,7 +541,7 @@ function (
         },
 
         /**
-         * Pretty prints the current filters
+         * Pretty prints the current filters, roughly matching the style on the ICGC site.
          * @param {object} location  place to display the filters
          * @param {object} filters filters to display
          */
@@ -590,24 +618,42 @@ function (
                         <td>${thisB.prettyString(hit.gender)}</td>
                         <td>${thisB.prettyString(hit.ageAtDiagnosis)}</td>
                         <td>${thisB.prettyString(hit.state)}</td>
-                        <td>${thisB.prettyString(hit.survivalTime)}</td>
+                        <td>${(thisB.prettyString(hit.survivalTime)).toLocaleString()}</td>
                 `
                 var donorRowContentNode = dom.toDom(donorRowContent);
 
                 // Create element to hold buttons
                 var geneButtonNode = dom.toDom(`<td></td>`);
 
-                // Create button and place in parent
-                var donorGeneButtonWithFilters = dom.toDom(`<span></span>`);
-                thisB.createDonorGeneButton(hit.id, donorGeneButtonWithFilters, combinedFacetObject, false, "Filtered");
-                thisB.addTooltipToButton(donorGeneButtonWithFilters, "Add all genes for the given donor, filter with current facets");
-                dom.place(donorGeneButtonWithFilters, geneButtonNode);
+                var geneMenu = new Menu({ style: "display: none;"});
+                var menuItemGeneFiltered = new MenuItem({
+                    label: "Filtered Genes for Donor",
+                    iconClass: "dijitIconNewTask",
+                    onClick: (function(hit, combinedFacetObject) {
+                        return function() {
+                            thisB.addTrack('Genes', hit.id, combinedFacetObject, 'CanvasVariants');
+                            alert("Adding Gene track for case " + hit.id);
+                        }
+                    })(hit, combinedFacetObject)
+                });
+                geneMenu.addChild(menuItemGeneFiltered);
+                geneMenu.startup();
 
-                // Create button and place in parent
-                var donorGeneButtonWithoutFilters = dom.toDom(`<span></span>`);
-                thisB.createDonorGeneButton(hit.id, donorGeneButtonWithoutFilters, combinedFacetObject, true, "All");
-                thisB.addTooltipToButton(donorGeneButtonWithoutFilters, "Add all genes for the given donor, do not filter with current facets");
-                dom.place(donorGeneButtonWithoutFilters, geneButtonNode);
+                var buttonAllGenes = new ComboButton({
+                    label: "All Genes for Donor",
+                    iconClass: "dijitIconNewTask",
+                    dropDown: geneMenu,
+                    onClick: (function(hit) {
+                        return function() {
+                            thisB.addTrack('Genes', hit.id, undefined, 'CanvasVariants');
+                            alert("Adding Gene track for case " + hit.id);
+                        }
+                    })(hit)
+                });
+                buttonAllGenes.placeAt(geneButtonNode);
+                buttonAllGenes.startup();
+                thisB.addTooltipToButton(menuItemGeneFiltered, "Add track with all genes for the given donor, with current filters applied");
+                thisB.addTooltipToButton(buttonAllGenes, "Add track with all genes for the given donor");
 
                 // Place buttons in table
                 dom.place(geneButtonNode, donorRowContentNode);
@@ -615,17 +661,35 @@ function (
                 // Create element to hold buttons
                 var ssmButtonNode = dom.toDom(`<td></td>`);
 
-                // Create button and place in parent
-                var donorSSMButtonWithFilters = dom.toDom(`<span></span>`);
-                thisB.createDonorButtons(hit.id, hit.availableDataTypes, donorSSMButtonWithFilters, combinedFacetObject, false, "Filtered");
-                thisB.addTooltipToButton(donorSSMButtonWithFilters, "Add all SSMs for the given donor, filter with current facets");
-                dom.place(donorSSMButtonWithFilters, ssmButtonNode);
+                var ssmMenu = new Menu({ style: "display: none;"});
+                var menuItemSsmFiltered = new MenuItem({
+                    label: "Filtered SSMs for Donor",
+                    iconClass: "dijitIconNewTask",
+                    onClick: (function(hit, combinedFacetObject) {
+                        return function() {
+                            thisB.addTrack('SimpleSomaticMutations',  hit.id, combinedFacetObject, 'CanvasVariants');
+                            alert("Adding Simple Somatic Mutation track for case " +  hit.id);
+                        }
+                    })(hit, combinedFacetObject)
+                });
+                ssmMenu.addChild(menuItemSsmFiltered);
+                ssmMenu.startup();
 
-                // Create button and place in parent
-                var donorSSMButtonWithoutFilters = dom.toDom(`<span></span>`);
-                thisB.createDonorButtons(hit.id, hit.availableDataTypes, donorSSMButtonWithoutFilters, combinedFacetObject, true, "All");
-                thisB.addTooltipToButton(donorSSMButtonWithoutFilters, "Add all SSMs for the given donor, do not filter with current facets");
-                dom.place(donorSSMButtonWithoutFilters, ssmButtonNode);
+                var buttonAllSsms = new ComboButton({
+                    label: "All SSMs for Donor",
+                    iconClass: "dijitIconNewTask",
+                    dropDown: ssmMenu,
+                    onClick: (function(hit) {
+                        return function() {
+                            thisB.addTrack('SimpleSomaticMutations',  hit.id, undefined, 'CanvasVariants');
+                            alert("Adding Simple Somatic Mutation track for case " +  hit.id);
+                        }
+                    })(hit)
+                });
+                buttonAllSsms.placeAt(ssmButtonNode);
+                buttonAllSsms.startup();
+                thisB.addTooltipToButton(menuItemSsmFiltered, "Add track with all SSMs for the given donor, with current filters applied");
+                thisB.addTooltipToButton(buttonAllSsms, "Add track with all SSMS for the given donor");
 
                 // Place buttons in table
                 dom.place(ssmButtonNode, donorRowContentNode);
@@ -643,7 +707,7 @@ function (
         /**
          * Creates the genes table for the given hits in some location
          * @param {List<object>} hits array of gene hits
-         * @param {object} location dom element to place the table
+         * @param {object} location DOM element to place the table
          */
         createGenesTable: function(hits, location) {
             var thisB = this;
@@ -684,7 +748,7 @@ function (
         /**
          * Creates the mutations table for the given hits in some location
          * @param {List<object>} hits array of mutation hits
-         * @param {object} location dom element to place the table
+         * @param {object} location DOM element to place the table
          */
         createMutationsTable: function(hits, location) {
             var thisB = this;
@@ -722,8 +786,10 @@ function (
 
         /**
          * Creates pagination buttons for search results in the given 'holder' using the 'pagination' object from the ICGC response
-         * @param {object} holder
-         * @param {integer} pagination
+         * @param {object} holder DOM location to place buttons
+         * @param {object} pagination pagination object returned from ICGC
+         * @param {string} type page type
+         * @param {number} pageNum current page number
          */
         createPaginationButtons: function(holder, pagination, type, pageNum) {
             var thisB = this;
@@ -834,10 +900,10 @@ function (
 
         /**
          * Generic function for adding a track of some type
-         * @param {*} storeClass 
-         * @param {*} donorId 
-         * @param {*} combinedFacetObject 
-         * @param {*} trackType 
+         * @param {*} storeClass the JBrowse store class
+         * @param {*} donorId unique ICGC ID of donor
+         * @param {*} combinedFacetObject Facet object containing facets from all types
+         * @param {*} trackType the JBrowse track type
          */
         addTrack: function (storeClass, donorId, combinedFacetObject, trackType) {
             var storeConf = {
@@ -866,8 +932,44 @@ function (
                 metadata: {
                     datatype: storeClass,
                     donor: donorId
-                }
+                },
+                unsafePopup: true,
+                menuTemplate : [ 
+                    {   
+                     label : "View details",
+                   }
+               ]
             };
+
+            if (storeClass === 'Genes') {
+                trackConf.menuTemplate.push(
+                    {   
+                        label : "Highlight this Gene",
+                    },
+                    {
+                        label : "View Gene on ICGC",
+                        iconClass : "dijitIconSearch",
+                        action: "newWindow",
+                        url : function(track, feature) { return "https://dcc.icgc.org/genes/" + feature.get('about')['id'] }
+                    }
+                );
+            } else if (storeClass === 'SimpleSomaticMutations') {
+                trackConf.fmtDetailValue_projects = function(value) { return "<div id='projects-icgc-" + value +  "'>Loading...</div" };
+                trackConf.menuTemplate.push(
+                    {   
+                        label : "Highlight this Simple Somatic Mutation",
+                    },
+                    {
+                        label : "View SSM on ICGC",
+                        iconClass : "dijitIconSearch",
+                        action: "newWindow",
+                        url : function(track, feature) { return "https://dcc.icgc.org/mutations/" + feature.get('about')['id'] }
+                    }
+                );
+            }
+
+            console.log("Adding track of type " + trackType + " and store class " + storeClass + ": " + key + " (" + label + ")");
+
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
             this.browser.publish('/jbrowse/v1/v/tracks/show', [trackConf]);
@@ -876,6 +978,7 @@ function (
         /**
          * Makes a string pretty (N/A if does not exist)
          * @param {string}  value String to pretty
+         * @return {string} pretty value
          */
         prettyString: function(value) {
             return value ? value : "N/A";
@@ -885,6 +988,7 @@ function (
          * Adds the facet and term to the filters object and returns
          * @param {string} value object holding facet and term to add
          * @param {object} filters filters object to add to
+         * @return {object} filters with object added
          */
         addToFilters: function(value, filters) {
             facet = value.facet;
@@ -902,6 +1006,7 @@ function (
          *  Removes the term from the facet in the filters object and returns
          * @param {string} value object holding facet and term to remove
          * @param {object} filters filters object to remove from
+         * @return {object} filters with object removed
          */
         removeFromFilters: function(value, filters) {
             facet = value.facet;
@@ -960,6 +1065,7 @@ function (
          * Converts the filters object to an ICGC compatable string
          * @param {string} type Type of filter group
          * @param {object} filters List of filters
+         * @return {string} stringified version of filter object
          */
         convertFiltersObjectToString: function(type, filters) {
             if (Object.keys(filters).length === 0) {
@@ -978,6 +1084,7 @@ function (
         /**
          * Converts a camelCase word to Title Case
          * @param {string} word A word in camelCase 
+         * @return {string} word in title case
          */
         camelCaseToTitleCase: function(word) {
             var titleCase = '';
@@ -996,17 +1103,10 @@ function (
         },
 
         /**
-         * Generate a GUID
+         * Show callback for displaying dialog
+         * @param {*} browser 
+         * @param {*} callback 
          */
-        guid: function() {
-            function s4() {
-              return Math.floor((1 + Math.random()) * 0x10000)
-                .toString(16)
-                .substring(1);
-            }
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-        },
-
         show: function (browser, callback) {
             this.browser = browser;
             this.callback = callback || function () {};

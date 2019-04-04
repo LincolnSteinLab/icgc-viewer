@@ -31,7 +31,13 @@ bin/prepare-refseqs.pl --fasta Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
 Note that you can specify multiple fast in one command by doing `--fasta fasta1.fa.gz --fasta fasta2.fa.gz ...`
 
 ## 4. Adding new tracks
-We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse.
+We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse.These are present in the menu under `ICGC`.
+
+### A. Explore ICGC
+This dialog is similar to the Exploration section of the ICGC data portal. As you apply facets on the left-hand side, updated results will be shown on the right side. You can create donor specific SSM and Gene tracks, along with ICGC-wide SSM and Gene tracks.
+
+### B. View ICGC Projects
+This dialog shows the projects present on the ICGC Data Portal. You can add SSM and Gene tracks for each project.
 
 ## 5. Run JBrowse
 You'll have to run the following commands:
@@ -54,6 +60,7 @@ displayColumns =
   + key
   + datatype
   + donor
+  + project
 ```
 
 # Available Store SeqFeature
@@ -90,6 +97,7 @@ Example Track:
 storeClass=icgc-viewer/Store/SeqFeature/Genes
 type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Genes
+unsafePopup=true
 ```
 
 ### Extra notes
@@ -128,6 +136,8 @@ Example Track:
 storeClass=icgc-viewer/Store/SeqFeature/SimpleSomaticMutations
 type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Mutations
+unsafePopup=true
+fmtDetailValue_projects=function(value) { return "<div id='projects-icgc-" + value +  "'>Loading...</div>";}
 ```
 
 ### Extra notes
@@ -141,7 +151,6 @@ Donors Tab:
 * For each donor
     * Add track for affected genes
     * Add track for SSMs
-    * More tracks to come...
 
 Genes Tab:
 * View genes that match the selected facets
@@ -150,6 +159,8 @@ Genes Tab:
 Mutations Tab:
 * View mutations that match the selected facets
 * Create a track of all matching SSMs
+
+There is also an options to search ICGC by projects. This allows you to see all of the associated SSMs and Genes per project in one track.
 
 # Miscellaneous
 ## Advanced Usage of Tracks
