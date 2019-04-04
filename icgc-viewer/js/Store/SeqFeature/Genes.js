@@ -114,6 +114,7 @@ function(
                             'end': gene.end - 1,
                             'strand': gene.strand,
                             'gene description': thisB.prettyValue(gene.description),
+                            'type': thisB.prettyValue(gene.type),
                             'about': {
                                 'gene name': thisB.prettyValue(gene.name),
                                 'symbol': thisB.prettyValue(gene.symbol),

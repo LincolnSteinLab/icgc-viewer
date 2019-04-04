@@ -97,6 +97,7 @@ Example Track:
 storeClass=icgc-viewer/Store/SeqFeature/Genes
 type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Genes
+unsafePopup=true
 ```
 
 ### Extra notes
@@ -135,6 +136,8 @@ Example Track:
 storeClass=icgc-viewer/Store/SeqFeature/SimpleSomaticMutations
 type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Mutations
+unsafePopup=true
+fmtDetailValue_projects=function(value) { return "<div id='projects-icgc-" + value +  "'>Loading...</div>";}
 ```
 
 ### Extra notes
