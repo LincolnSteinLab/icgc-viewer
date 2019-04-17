@@ -6,14 +6,14 @@ define([
     'dojo/_base/array',
     'dojo/request',
     './BaseSeqFeature',
-    'JBrowse/Model/SimpleFeature'
+    '../../Model/GeneFeature'
 ],
 function(
     declare,
     array,
     request,
     BaseSeqFeature,
-    SimpleFeature
+    GeneFeature
 ) {
     return declare(BaseSeqFeature, {
 
@@ -115,6 +115,7 @@ function(
                             'strand': gene.strand,
                             'gene description': thisB.prettyValue(gene.description),
                             'type': thisB.prettyValue(gene.type),
+                            'annotations': gene.id,
                             'about': {
                                 'gene name': thisB.prettyValue(gene.name),
                                 'symbol': thisB.prettyValue(gene.symbol),
@@ -132,7 +133,7 @@ function(
                             },                            
                         }
                     }
-                    featureCallback(new SimpleFeature(geneFeature));
+                    featureCallback(new GeneFeature(geneFeature));
                 });
 
                 finishCallback();

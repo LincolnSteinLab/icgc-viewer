@@ -84,6 +84,7 @@ get: function(name) {
         return this.data[ name.toLowerCase() ];
     }
 },
+
 /**
  * Creates a table of projects and their associated tumour type and incidence rate for the given mutation
  * @param {object} projects Object of the form projectId -> projectObject

@@ -942,6 +942,7 @@ function (
             };
 
             if (storeClass === 'Genes') {
+                trackConf.fmtDetailValue_annotations = function(value) { return "<div id='annotations-icgc-" + value +  "'>Loading...</div" };
                 trackConf.menuTemplate.push(
                     {   
                         label : "Highlight this Gene",
