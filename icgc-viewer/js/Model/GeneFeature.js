@@ -85,7 +85,6 @@ createProjectIncidenceTable: function(sets) {
     var hasSet = false;
     var hasPathway = false;
 
-    var count = 0;
     Object.keys(sets).forEach(set => {
         var listItem = '<li>' + thisB.createLinkWithIdAndName('https://dcc.icgc.org/genesets/', sets[set].id, sets[set].name) + '</li>';
         if (sets[set].type == 'go_term' && sets[set].annotation == 'direct') {
