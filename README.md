@@ -98,6 +98,7 @@ storeClass=icgc-viewer/Store/SeqFeature/Genes
 type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Genes
 unsafePopup=true
+fmtDetailValue_annotations=function(value) { return "<div id='annotations-icgc-" + value +  "'>Loading...</div>";}
 ```
 
 ### Extra notes
