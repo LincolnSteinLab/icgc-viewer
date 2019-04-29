@@ -942,7 +942,7 @@ function (
             };
 
             if (storeClass === 'Genes') {
-                trackConf.fmtDetailValue_annotations = function(value) { return "<div id='annotations-icgc-" + value +  "'>Loading...</div" };
+                trackConf.fmtDetailValue_annotations = function(value) { return "<div id='annotations-icgc-" + value +  "'>Loading content...</div" };
                 trackConf.menuTemplate.push(
                     {   
                         label : "Highlight this Gene",
@@ -955,7 +955,7 @@ function (
                     }
                 );
             } else if (storeClass === 'SimpleSomaticMutations') {
-                trackConf.fmtDetailValue_projects = function(value) { return "<div id='projects-icgc-" + value +  "'>Loading...</div" };
+                trackConf.fmtDetailValue_projects = function(value) { return "<div id='projects-icgc-" + value +  "'>Loading content...</div" };
                 trackConf.menuTemplate.push(
                     {   
                         label : "Highlight this Simple Somatic Mutation",
