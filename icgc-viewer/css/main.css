@@ -79,7 +79,3 @@ table.results-table tr:nth-child(odd) {
 .dijitContentPane.dijitAccordionContainer-child.dijitAccordionContainer-dijitContentPane {
     width: 100% !important;
 }
-
-.popup-dialog {
-    width: 900px !important;
-}
