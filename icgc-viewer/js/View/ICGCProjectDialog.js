@@ -31,7 +31,7 @@ function (
         size: 20,
         
         /**
-         * Create a DOM object containing GDC primary site interface
+         * Create a DOM object containing ICGC primary site interface
          * @return {object} DOM object
          */
         _dialogContent: function () {

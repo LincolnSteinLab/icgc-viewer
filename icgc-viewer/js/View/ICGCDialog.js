@@ -70,7 +70,7 @@ function (
         types: ['donor', 'mutation', 'gene'],
         
         /**
-         * Create a DOM object containing GDC primary site interface
+         * Create a DOM object containing ICGC primary site interface
          * @return {object} DOM object
          */
         _dialogContent: function () {
@@ -212,7 +212,7 @@ function (
                 dom.empty(loadingIcon);
 
                 facetsResponse.json().then(function (facetsJsonResponse) {
-                    // Respone will have a code if errored
+                    // Response will have a code if errored
                     if (!facetsJsonResponse.code) {
                         // Create accordion of the facets available
                         for (var facet in facetsJsonResponse.facets) {

@@ -76,7 +76,7 @@ createProjectIncidenceTable: function(sets) {
     var thisB = this;
 
     var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
-    var setTable = '<table style="width: 560px; border-collapse: \'collapse\'; border-spacing: 0;">';
+    var setTable = '<table class="popup-table" style="border-collapse: \'collapse\'; border-spacing: 0;">';
     var goTermRow = '<tr style=\"background-color: #f2f2f2\"><td style="' + thStyle + '">GO Term</td><td style="' + thStyle + '"><ul>'
     var curatedSetRow = '<tr><td style="' + thStyle + '">Curated Gene Set</td><td style="' + thStyle + '"><ul>'
     var pathwayRow = '<tr style=\"background-color: #f2f2f2\"><td style="' + thStyle + '">Reactome Pathways</td><td style="' + thStyle + '"><ul>'
@@ -100,19 +100,19 @@ createProjectIncidenceTable: function(sets) {
     });
 
     if (!hasPathway) {
-        pathwayRow += '-';
+        pathwayRow += 'n/a';
     }
     pathwayRow += '</ul></td></tr>'
     setTable += pathwayRow;
 
     if (!hasSet) {
-        curatedSetRow += '-';
+        curatedSetRow += 'n/a';
     }
     curatedSetRow += '</ul></td></tr>'
     setTable += curatedSetRow;
 
     if (!hasGo) {
-        goTermRow += '-';
+        goTermRow += 'n/a';
     }
     goTermRow += '</ul></td></tr>'
     setTable += goTermRow;

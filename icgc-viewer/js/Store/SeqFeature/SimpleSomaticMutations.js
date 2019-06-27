@@ -98,7 +98,7 @@ function(
                 </tr>
             `;
 
-            var consequenceTable = '<table style="width: 560px; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
+            var consequenceTable = '<table class="popup-table" style="border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
 
             var count = 0;
             for (consequence of consequences) {
@@ -196,10 +196,10 @@ function(
                                 'affected projects': thisB.prettyValue(variant.affectedProjectCount),
                                 'affected donors': thisB.getDonorFraction(variant),
                                 'type': thisB.prettyValue(variant.type),
-                                'id': thisB.prettyValue(variant.id)
+                                'id': thisB.prettyValue(variant.id),
+                                'description': thisB.prettyValue(variant.description),
                             },
-                            'variant description': variant.description,
-                            'external references': {
+                            'references': {
                                 'civic': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
                                 'clinvar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
                                 'icgc': thisB.createLinkWithId(ICGC_LINK, variant.id),

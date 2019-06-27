@@ -103,7 +103,7 @@ createProjectIncidenceTable: function(projects, projectCounts, mutationId) {
         </tr>
     `;
 
-    var projectTable = '<table style="width: 560px; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
+    var projectTable = '<table class="popup-table" style="border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
 
     var count = 0;
     Object.keys(projects).forEach(project => {

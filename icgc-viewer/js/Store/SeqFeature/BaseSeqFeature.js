@@ -66,7 +66,11 @@ function(
          * @param {string} value Value to make pretty
          */
         prettyValue: function(value) {
-            return value ? value : 'n/a';
+            if (value && value !== null && value !== undefined && typeof value !== 'undefined') {
+                return value;
+            } else {
+                return 'n/a';
+            }
         },
 
         /**
