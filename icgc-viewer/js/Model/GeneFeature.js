@@ -77,9 +77,9 @@ createProjectIncidenceTable: function(sets) {
 
     var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
     var setTable = '<table class="popup-table" style="border-collapse: \'collapse\'; border-spacing: 0;">';
-    var goTermRow = '<tr style=\"background-color: #f2f2f2\"><td style="' + thStyle + '">GO Term</td><td style="' + thStyle + '"><ul>'
-    var curatedSetRow = '<tr><td style="' + thStyle + '">Curated Gene Set</td><td style="' + thStyle + '"><ul>'
-    var pathwayRow = '<tr style=\"background-color: #f2f2f2\"><td style="' + thStyle + '">Reactome Pathways</td><td style="' + thStyle + '"><ul>'
+    var goTermRow = '<tr style=\"background-color: #f2f2f2\"><td style="' + thStyle + '"><strong>GO Term</strong></td><td style="' + thStyle + '"><ul>'
+    var curatedSetRow = '<tr><td style="' + thStyle + '"><strong>Curated Gene Set</strong></td><td style="' + thStyle + '"><ul>'
+    var pathwayRow = '<tr style=\"background-color: #f2f2f2\"><td style="' + thStyle + '"><strong>Reactome Pathways</strong></td><td style="' + thStyle + '"><ul>'
 
     var hasGo = false;
     var hasSet = false;

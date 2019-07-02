@@ -193,11 +193,8 @@ function(
                                 'mutation': thisB.prettyValue(variant.mutation),
                                 'allele in the reference assembly': thisB.prettyValue(variant.referenceGenomeAllele),
                                 'reference genome assembly': thisB.prettyValue(variant.assemblyVersion),
-                                'affected projects': thisB.prettyValue(variant.affectedProjectCount),
-                                'affected donors': thisB.getDonorFraction(variant),
                                 'type': thisB.prettyValue(variant.type),
-                                'id': thisB.prettyValue(variant.id),
-                                'description': thisB.prettyValue(variant.description),
+                                'id': thisB.prettyValue(variant.id)
                             },
                             'references': {
                                 'civic': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),

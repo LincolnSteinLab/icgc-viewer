@@ -115,12 +115,12 @@ function(
                             'strand': gene.strand,
                             'type': thisB.prettyValue(gene.type),
                             'annotations': gene.id,
+                            'gene description': thisB.prettyValue(gene.description),
                             'about': {
                                 'gene name': thisB.prettyValue(gene.name),
                                 'symbol': thisB.prettyValue(gene.symbol),
                                 'type': thisB.prettyValue(gene.type),
-                                'id': thisB.prettyValue(gene.id),
-                                'description': thisB.prettyValue(gene.description),
+                                'id': thisB.prettyValue(gene.id)
                             },
                             'references': {
                                 'icgc': thisB.createLinkWithId(ICGC_LINK, gene.id),
