@@ -12,6 +12,15 @@ define(
        domConstruct) {
    return declare([ CanvasFeatures, ExportMixin ], {
 
+        _exportFormats: function() {
+            return [
+                {name: 'icgc-viewer/View/Export/GFF3', label: 'GFF3', fileExt: 'gff3'},
+                {name: 'icgc-viewer/View/Export/BED', label: 'BED', fileExt: 'bed'},
+                { name: 'icgc-viewer/View/Export/TrackConfig', label: 'Track Config', fileExt: 'conf' },
+                { name: 'icgc-viewer/View/Export/CSV', label: 'CSV', fileExt: 'csv' }
+            ];
+        },
+
         _renderAdditionalTagsDetail: function( track, f, featDiv, container ) {
             var atElement = domConstruct.create(
                 'div',

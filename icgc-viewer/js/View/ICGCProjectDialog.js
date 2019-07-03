@@ -149,7 +149,7 @@ function (
                         iconClass: "dijitIconNewTask",
                         onClick: (function(hit) {
                             return function() {
-                                thisB.addTrack('SimpleSomaticMutations', hit.id, 'CanvasVariants');
+                                thisB.addTrack('SimpleSomaticMutations', hit.id, 'icgc-viewer/View/Track/SSMTrack');
                                 alert("Adding SSM track for project " + hit.id);
                             }
                         })(hit)
@@ -161,7 +161,7 @@ function (
                         iconClass: "dijitIconNewTask",
                         onClick: (function(hit) {
                             return function() {
-                                thisB.addTrack('Genes', hit.id, 'CanvasVariants');
+                                thisB.addTrack('Genes', hit.id, 'icgc-viewer/View/Track/GeneTrack');
                                 alert("Adding Gene track for project " + hit.id);
                             }
                         })(hit)
@@ -207,7 +207,7 @@ function (
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/' + storeClass,
+                type: storeClass,
                 project: projectId,
                 filters: JSON.stringify(projectFilters)
             };

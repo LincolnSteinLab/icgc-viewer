@@ -343,7 +343,7 @@ function (
                                     label: "Filtered SSMs form ICGC",
                                     iconClass: "dijitIconNewTask",
                                     onClick: function() {
-                                        thisB.addTrack('SimpleSomaticMutations', undefined, combinedFacetObject, 'CanvasVariants');
+                                        thisB.addTrack('SimpleSomaticMutations', undefined, combinedFacetObject, 'icgc-viewer/View/Track/SSMTrack');
                                         alert("Adding track with all SSMs from the ICGC, with current filters applied");
                                     }
                                 });
@@ -355,7 +355,7 @@ function (
                                     iconClass: "dijitIconNewTask",
                                     dropDown: ssmMenu,
                                     onClick: function() {
-                                        thisB.addTrack('SimpleSomaticMutations', undefined, undefined, 'CanvasVariants');
+                                        thisB.addTrack('SimpleSomaticMutations', undefined, undefined, 'icgc-viewer/View/Track/SSMTrack');
                                         alert("Add track with all SSMs from the ICGC");
                                     }
                                 });
@@ -390,7 +390,7 @@ function (
                                     label: "Filtered Genes from ICGC",
                                     iconClass: "dijitIconNewTask",
                                     onClick: function() {
-                                        thisB.addTrack('Genes', undefined, combinedFacetObject, 'CanvasVariants');
+                                        thisB.addTrack('Genes', undefined, combinedFacetObject, 'icgc-viewer/View/Track/GeneTrack');
                                         alert("Adding track with all genes from the ICGC, with current filters applied");
                                     }
                                 });
@@ -403,7 +403,7 @@ function (
                                     dropDown: geneMenu,
                                     style: "padding-right: 8px;",
                                     onClick: function() {
-                                        thisB.addTrack('Genes', undefined, undefined, 'CanvasVariants');
+                                        thisB.addTrack('Genes', undefined, undefined, 'icgc-viewer/View/Track/GeneTrack');
                                         alert("Adding track with all genes from the ICGC");
                                     }
                                 });
@@ -631,7 +631,7 @@ function (
                     iconClass: "dijitIconNewTask",
                     onClick: (function(hit, combinedFacetObject) {
                         return function() {
-                            thisB.addTrack('Genes', hit.id, combinedFacetObject, 'CanvasVariants');
+                            thisB.addTrack('Genes', hit.id, combinedFacetObject, 'icgc-viewer/View/Track/GeneTrack');
                             alert("Adding Gene track for case " + hit.id);
                         }
                     })(hit, combinedFacetObject)
@@ -645,7 +645,7 @@ function (
                     dropDown: geneMenu,
                     onClick: (function(hit) {
                         return function() {
-                            thisB.addTrack('Genes', hit.id, undefined, 'CanvasVariants');
+                            thisB.addTrack('Genes', hit.id, undefined, 'icgc-viewer/View/Track/GeneTrack');
                             alert("Adding Gene track for case " + hit.id);
                         }
                     })(hit)
@@ -667,7 +667,7 @@ function (
                     iconClass: "dijitIconNewTask",
                     onClick: (function(hit, combinedFacetObject) {
                         return function() {
-                            thisB.addTrack('SimpleSomaticMutations',  hit.id, combinedFacetObject, 'CanvasVariants');
+                            thisB.addTrack('SimpleSomaticMutations',  hit.id, combinedFacetObject, 'icgc-viewer/View/Track/SSMTrack');
                             alert("Adding Simple Somatic Mutation track for case " +  hit.id);
                         }
                     })(hit, combinedFacetObject)
@@ -681,7 +681,7 @@ function (
                     dropDown: ssmMenu,
                     onClick: (function(hit) {
                         return function() {
-                            thisB.addTrack('SimpleSomaticMutations',  hit.id, undefined, 'CanvasVariants');
+                            thisB.addTrack('SimpleSomaticMutations',  hit.id, undefined, 'icgc-viewer/View/Track/SSMTrack');
                             alert("Adding Simple Somatic Mutation track for case " +  hit.id);
                         }
                     })(hit)
@@ -867,7 +867,7 @@ function (
                     iconClass: "dijitIconNewTask",
                     label: text,
                     onClick: function() {
-                        thisB.addTrack('SimpleSomaticMutations', donorId, combinedFacetObject, 'CanvasVariants');
+                        thisB.addTrack('SimpleSomaticMutations', donorId, combinedFacetObject, 'icgc-viewer/View/Track/SSMTrack');
                         alert("Adding Simple Somatic Mutations track for the donor " + donorId);
                     }
                 }, "ssmButton").placeAt(holder);
@@ -892,7 +892,7 @@ function (
                 iconClass: "dijitIconNewTask",
                 label: text,
                 onClick: function() {
-                    thisB.addTrack('Genes', donorId, combinedFacetObject, 'CanvasVariants');
+                    thisB.addTrack('Genes', donorId, combinedFacetObject, 'icgc-viewer/View/Track/GeneTrack');
                     alert("Adding Genes track for the donor " + donorId);
                 }
             }, "geneButton").placeAt(holder);
@@ -909,7 +909,7 @@ function (
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
-                type: 'icgc-viewer/Store/SeqFeature/' + storeClass,
+                type: storeClass,
                 donor: donorId,
                 filters: combinedFacetObject
             };

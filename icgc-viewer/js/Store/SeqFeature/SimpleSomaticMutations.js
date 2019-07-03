@@ -189,6 +189,7 @@ function(
                             'start': variant.start - 1,
                             'end': variant.end - 1,
                             'type': thisB.prettyValue(variant.type),
+                            'entity_name': variant.id,
                             'about': {
                                 'mutation': thisB.prettyValue(variant.mutation),
                                 'allele in the reference assembly': thisB.prettyValue(variant.referenceGenomeAllele),

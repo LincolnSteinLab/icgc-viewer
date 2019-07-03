@@ -116,6 +116,7 @@ function(
                             'type': thisB.prettyValue(gene.type),
                             'annotations': gene.id,
                             'gene description': thisB.prettyValue(gene.description),
+                            'entity_name': gene.id,
                             'about': {
                                 'gene name': thisB.prettyValue(gene.name),
                                 'symbol': thisB.prettyValue(gene.symbol),
