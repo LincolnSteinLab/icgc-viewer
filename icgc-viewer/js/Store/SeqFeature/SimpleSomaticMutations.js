@@ -98,7 +98,7 @@ function(
                 </tr>
             `;
 
-            var consequenceTable = '<table style="width: 560px; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
+            var consequenceTable = '<table class="popup-table" style="border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
 
             var count = 0;
             for (consequence of consequences) {
@@ -189,17 +189,15 @@ function(
                             'start': variant.start - 1,
                             'end': variant.end - 1,
                             'type': thisB.prettyValue(variant.type),
+                            'entity_name': variant.id,
                             'about': {
                                 'mutation': thisB.prettyValue(variant.mutation),
                                 'allele in the reference assembly': thisB.prettyValue(variant.referenceGenomeAllele),
                                 'reference genome assembly': thisB.prettyValue(variant.assemblyVersion),
-                                'affected projects': thisB.prettyValue(variant.affectedProjectCount),
-                                'affected donors': thisB.getDonorFraction(variant),
                                 'type': thisB.prettyValue(variant.type),
                                 'id': thisB.prettyValue(variant.id)
                             },
-                            'variant description': variant.description,
-                            'external references': {
+                            'references': {
                                 'civic': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
                                 'clinvar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
                                 'icgc': thisB.createLinkWithId(ICGC_LINK, variant.id),

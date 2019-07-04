@@ -98,7 +98,7 @@ storeClass=icgc-viewer/Store/SeqFeature/Genes
 type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Genes
 unsafePopup=true
-fmtDetailValue_annotations=function(value) { return "<div id='annotations-icgc-" + value +  "'>Loading...</div>";}
+fmtDetailValue_annotations=function(value) { return "<div id='annotations-icgc-" + value +  "'>Loading content...</div>";}
 ```
 
 ### Extra notes
@@ -138,7 +138,7 @@ storeClass=icgc-viewer/Store/SeqFeature/SimpleSomaticMutations
 type=JBrowse/View/Track/CanvasVariants
 key=ICGC_Mutations
 unsafePopup=true
-fmtDetailValue_projects=function(value) { return "<div id='projects-icgc-" + value +  "'>Loading...</div>";}
+fmtDetailValue_projects=function(value) { return "<div id='projects-icgc-" + value +  "'>Loading content...</div>";}
 ```
 
 ### Extra notes
