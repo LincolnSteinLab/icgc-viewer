@@ -95,14 +95,14 @@ Example Track:
 ```
 [tracks.ICGC_Genes]
 storeClass=icgc-viewer/Store/SeqFeature/Genes
-type=JBrowse/View/Track/CanvasVariants
+type=icgc-viewer/View/Track/CanvasVariants
 key=ICGC_Genes
 unsafePopup=true
 fmtDetailValue_annotations=function(value) { return "<div id='annotations-icgc-" + value +  "'>Loading content...</div>";}
 ```
 
 ### Extra notes
-You can also set the 'size' attribute (defaults to 1000). This is the theoretical maximum number of genes displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
+You can also set the `size` attribute (defaults to 1000). This is the theoretical maximum number of genes displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
 
 ## SimpleSomaticMutations
 A simple view of all the simple somatic mutations across all donors in the ICGC portal. 
@@ -135,14 +135,14 @@ Example Track:
 ```
 [tracks.ICGC_Mutations]
 storeClass=icgc-viewer/Store/SeqFeature/SimpleSomaticMutations
-type=JBrowse/View/Track/CanvasVariants
+type=icgc-viewer/View/Track/CanvasVariants
 key=ICGC_Mutations
 unsafePopup=true
 fmtDetailValue_projects=function(value) { return "<div id='projects-icgc-" + value +  "'>Loading content...</div>";}
 ```
 
 ### Extra notes
-You can also set the 'size' attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
+You can also set the `size` attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
 
 # Menu option for searching ICGC
 In the tools menu there is an option to search ICGC. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. This will create a filtered list of matching donors, genes and mutations.
@@ -162,6 +162,14 @@ Mutations Tab:
 * Create a track of all matching SSMs
 
 There is also an options to search ICGC by projects. This allows you to see all of the associated SSMs and Genes per project in one track.
+
+# Export Types
+The following export types are supported by both ICGC Genes and SSMs. To export, select `Save track data` in the track dropdown. Note that not all track information is carried over to the exported file.
+* BED
+* GFF3
+* Sequin Table
+* CSV
+* Track Config
 
 # Miscellaneous
 ## Advanced Usage of Tracks
