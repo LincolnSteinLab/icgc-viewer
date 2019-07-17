@@ -909,7 +909,7 @@ function (
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
-                type: storeClass,
+                type: 'icgc-viewer/Store/SeqFeature/' + storeClass,
                 donor: donorId,
                 filters: combinedFacetObject
             };
@@ -925,7 +925,7 @@ function (
             }
 
             var trackConf = {
-                type: 'JBrowse/View/Track/' + trackType,
+                type: trackType,
                 store: storeName,
                 label: label,
                 key: key,
