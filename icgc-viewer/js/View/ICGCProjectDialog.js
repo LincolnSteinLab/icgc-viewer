@@ -207,7 +207,7 @@ function (
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
-                type: storeClass,
+                type: 'icgc-viewer/Store/SeqFeature/' + storeClass,
                 project: projectId,
                 filters: JSON.stringify(projectFilters)
             };
@@ -221,7 +221,7 @@ function (
             label += '_' + projectId
 
             var trackConf = {
-                type: 'JBrowse/View/Track/' + trackType,
+                type: trackType,
                 store: storeName,
                 label: label,
                 key: key,

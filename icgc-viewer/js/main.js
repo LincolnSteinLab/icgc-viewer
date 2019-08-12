@@ -19,13 +19,13 @@ return declare(JBrowsePlugin, {
             this.browser.afterMilestone('initView', function () {
                 this.browser.addGlobalMenuItem('icgc', new MenuItem(
                     {
-                        label: 'Explore ICGC',
+                        label: 'Explore donors, genes and mutations',
                         iconClass: "dijitIconSearch",
                         onClick: lang.hitch(this, 'createICGCTrack')
                     }));
                 this.browser.addGlobalMenuItem('icgc', new MenuItem(
                     {
-                        label: 'ICGC Projects',
+                        label: 'Projects',
                         iconClass: "dijitIconSearch",
                         onClick: lang.hitch(this, 'createICGCProjectTrack')
                     }));

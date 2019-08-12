@@ -125,15 +125,15 @@ function (
             if (type === 'donor') {
                 thisB.donorAccordion = new AccordionContainer({ id: newAccordionId, className: "accordionContainer" }, thisB.donorFacetTab.containerNode);
                 var loadingIcon = thisB.createLoadingIcon(thisB.donorFacetTab.containerNode);
-                thisB.createFacet('donor', thisB.donorAccordion, loadingIcon);
+                thisB.createFacet(type, thisB.donorAccordion, loadingIcon);
             } else if (type === 'mutation') {
                 thisB.mutationAccordion = new AccordionContainer({ id: newAccordionId, className: "accordionContainer" }, thisB.mutationFacetTab.containerNode);
                 var loadingIcon = thisB.createLoadingIcon(thisB.mutationFacetTab.containerNode);
-                thisB.createFacet('mutation', thisB.mutationAccordion, loadingIcon);
+                thisB.createFacet(type, thisB.mutationAccordion, loadingIcon);
             } else if (type === 'gene') {
                 thisB.geneAccordion = new AccordionContainer({ id: newAccordionId, className: "accordionContainer" }, thisB.geneFacetTab.containerNode);
                 var loadingIcon = thisB.createLoadingIcon(thisB.geneFacetTab.containerNode);
-                thisB.createFacet('gene', thisB.geneAccordion, loadingIcon);
+                thisB.createFacet(type, thisB.geneAccordion, loadingIcon);
             }
         },
 
@@ -170,28 +170,28 @@ function (
          */
         getFiltersForType: function(type) {
             var thisB = this;
-            var filters = {};
             if (type === 'donor') {
-                filters = thisB.donorFilters;
+                return thisB.donorFilters;
             } else if (type === 'mutation') {
-                filters = thisB.mutationFilters;
+                return thisB.mutationFilters;
             } else if (type === 'gene') {
-                filters = thisB.geneFilters;
+                return thisB.geneFilters;
             }
-            return filters;
         },
 
         /**
          * Compare function used for sorting facets
-         * @param {*} a 
-         * @param {*} b 
+         * @param {*} a Object with a string field called 'term'
+         * @param {*} b Object with a string field called 'term'
          */
         compareTermElements: function(a, b) {
-            if (a.term < b.term)
+            if (a.term < b.term) {
                 return -1;
-            if (a.term > b.term)
+            } else if (a.term > b.term) {
                 return 1;
-            return 0;
+            } else {
+                return 0;
+            }
         },
 
         /**

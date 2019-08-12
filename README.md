@@ -31,12 +31,12 @@ bin/prepare-refseqs.pl --fasta Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
 Note that you can specify multiple fast in one command by doing `--fasta fasta1.fa.gz --fasta fasta2.fa.gz ...`
 
 ## 4. Adding new tracks
-We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse.These are present in the menu under `ICGC`.
+We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse. These are present in the menu under `ICGC`.
 
-### A. Explore ICGC
+### A. Explore donors, genes and mutations
 This dialog is similar to the Exploration section of the ICGC data portal. As you apply facets on the left-hand side, updated results will be shown on the right side. You can create donor specific SSM and Gene tracks, along with ICGC-wide SSM and Gene tracks.
 
-### B. View ICGC Projects
+### B. View Projects
 This dialog shows the projects present on the ICGC Data Portal. You can add SSM and Gene tracks for each project.
 
 ## 5. Run JBrowse
@@ -144,27 +144,25 @@ fmtDetailValue_projects=function(value) { return "<div id='projects-icgc-" + val
 ### Extra notes
 You can also set the `size` attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
 
-# Menu option for searching ICGC
-In the tools menu there is an option to search ICGC. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. This will create a filtered list of matching donors, genes and mutations.
+# Dynamic track generation
+In the tools menu there is an option to explore ICGC. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. This will create a filtered list of matching donors, genes and mutations.
 
 Donors Tab:
 * View donors that match the selected facets
 * For each donor
-    * Add track for affected genes
+    * Add track for mutated genes
     * Add track for SSMs
 
 Genes Tab:
 * View genes that match the selected facets
-* Create a track of all matching genes
 
 Mutations Tab:
 * View mutations that match the selected facets
-* Create a track of all matching SSMs
 
 There is also an options to search ICGC by projects. This allows you to see all of the associated SSMs and Genes per project in one track.
 
 # Export Types
-The following export types are supported by both ICGC Genes and SSMs. To export, select `Save track data` in the track dropdown. Note that not all track information is carried over to the exported file.
+The following export types are supported by both Genes and SSMs. To export, select `Save track data` in the track dropdown. Note that not all track information is carried over to the exported file.
 * BED
 * GFF3
 * Sequin Table
