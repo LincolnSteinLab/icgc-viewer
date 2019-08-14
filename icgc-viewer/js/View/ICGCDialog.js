@@ -324,7 +324,7 @@ function (
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
                                 if (facetsJsonResponse.pagination.from && facetsJsonResponse.pagination.count && facetsJsonResponse.pagination.total) {
-                                    var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
+                                    var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count - 1;
                                     var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.donorResultsTab.containerNode);
                                     thisB.createDonorsTable(facetsJsonResponse.hits, thisB.donorResultsTab.containerNode, combinedFacetObject);
                                     thisB.createPaginationButtons(thisB.donorResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.donorPage);
@@ -374,7 +374,7 @@ function (
                                     thisB.addTooltipToButton(menuItemSSMFiltered, "Add track with all SSMs from the ICGC, with current filters applied");
                                     thisB.addTooltipToButton(buttonAllSSMs, "Add track with all SSMs from the ICGC");
 
-                                    var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
+                                    var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count - 1;
                                     var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.mutationResultsTab.containerNode);
                             
                                     thisB.createMutationsTable(facetsJsonResponse.hits, thisB.mutationResultsTab.containerNode, combinedFacetObject);
@@ -426,7 +426,7 @@ function (
                                     thisB.addTooltipToButton(menuItemGeneFiltered, "Add track with all genes from the ICGC, with current filters applied");
                                     thisB.addTooltipToButton(buttonAllGenes, "Add track with all genes from the ICGC");
 
-                                    var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
+                                    var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count - 1;
                                     var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.geneResultsTab.containerNode);
                                     
                                     thisB.createGenesTable(facetsJsonResponse.hits, thisB.geneResultsTab.containerNode, combinedFacetObject);
