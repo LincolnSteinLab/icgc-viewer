@@ -25,7 +25,7 @@ return declare(JBrowsePlugin, {
                     }));
                 this.browser.addGlobalMenuItem('icgc', new MenuItem(
                     {
-                        label: 'Projects',
+                        label: 'Explore Projects',
                         iconClass: "dijitIconSearch",
                         onClick: lang.hitch(this, 'createICGCProjectTrack')
                     }));

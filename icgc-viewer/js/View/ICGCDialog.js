@@ -208,7 +208,6 @@ function (
 
             // Fetch facets and display in accordion
             fetch(url).then(function (facetsResponse) {
-                // Clear loading indicator
                 dom.empty(loadingIcon);
 
                 facetsResponse.json().then(function (facetsJsonResponse) {
@@ -236,6 +235,7 @@ function (
                                         value: { "facet": facet, "term" : term.term, "type": type },
                                         checked: thisB.isChecked(facet, term.term, thisB.getFiltersForType(type)),
                                         onChange: function(isChecked) {
+                                            // Update the selected facets based on selection
                                             if (isChecked) {
                                                 if (this.value.type === 'donor') {
                                                     thisB.donorFilters = thisB.addToFilters(this.value, thisB.donorFilters);

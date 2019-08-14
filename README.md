@@ -1,5 +1,5 @@
-# ICGC JBrowse Plugin - Faceted Search and New Store Classes
-A plugin for [JBrowse](https://jbrowse.org/) for viewing ICGC data. For any bugs, issues, or feature recommendations please create an issue through GitHub.
+# ICGC JBrowse Plugin
+A plugin for [JBrowse](https://jbrowse.org/) for viewing [ICGC](https://icgc.org/) data. For any bugs, issues, or feature recommendations please create an issue through GitHub.
 
 # Installation and Setup
 ## 1. Install JBrowse
@@ -64,6 +64,9 @@ displayColumns =
 ```
 
 # Available Store SeqFeature
+## A note on filters
+All SeqFeatures support filters as they are used in the ICGC API Documentation.
+
 ## Genes
 A simple view of all genes returned by the ICGC portal for a given range of the chromosome you are looking at.
 
