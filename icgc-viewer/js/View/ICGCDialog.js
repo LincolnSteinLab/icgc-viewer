@@ -224,11 +224,17 @@ function (
                                 });
 
                                 var facetHolder = dom.create('span', { className: "flex-column", style: "width: 100%" });
+
+                                // If facet has no terms
                                 if (!facetsJsonResponse.facets[facet].terms || facetsJsonResponse.facets[facet].terms.length == 0) {
                                     dom.create('span', { className: "flex-row", innerHTML: "No terms for the selected facet." }, facetHolder)
                                 }
+                                // If facet has at least one term
                                 if (facetsJsonResponse.facets[facet].terms) {
+                                    // Sort in ascending alphabetical order
                                     facetsJsonResponse.facets[facet].terms.sort(thisB.compareTermElements);
+
+                                    // Create a checkbox for each term
                                     facetsJsonResponse.facets[facet].terms.forEach((term) => {
                                         var facetCheckbox = dom.create('span', { className: "flex-row" }, facetHolder)
                                         var checkboxName = facet + '-' + term.term;
@@ -285,10 +291,10 @@ function (
                         thisB.resize();
                     }
                 }, function (res3) {
-                    console.error('error', res3);
+                    console.error('There was an error parsing the JSON response from ICGC.', res3);
                 });
             }, function (err) {
-                console.error('error', err);
+                console.error('There was an error fetching facets from ICGC.', err);
             });
         },
 
@@ -301,6 +307,7 @@ function (
             var combinedFacetObject = thisB.createCombinedFacets();
             dom.empty(thisB.prettyFacetHolder);
 
+            // Add button for clearing selected facets
             if (Object.keys(thisB.donorFilters).length + Object.keys(thisB.mutationFilters).length + Object.keys(thisB.geneFilters).length > 0) {
                 var clearFacetButton = new Button({
                     iconClass: "dijitIconDelete",
@@ -311,6 +318,7 @@ function (
                 thisB.addTooltipToButton(clearFacetButton, "Clears all facets");
             }
 
+            // Pretty print filters
             var combinedFacets = Object.assign({}, thisB.donorFilters, thisB.mutationFilters, thisB.geneFilters);
             thisB.prettyPrintFilters(thisB.prettyFacetHolder, combinedFacets);
 
@@ -318,6 +326,7 @@ function (
                 dom.empty(thisB.donorResultsTab.containerNode);
                 var resultsInfo = thisB.createLoadingIcon(thisB.donorResultsTab.containerNode);
 
+                // Create donor tab content
                 var donorUrl = thisB.createDonorUrl(combinedFacetObject);
                 fetch(donorUrl).then(function (facetsResponse) {
                     dom.empty(resultsInfo);
@@ -333,15 +342,18 @@ function (
                                 }
                             }
                         }, function (res3) {
-                            console.error('error', res3);
+                            console.error('There was an error creating the donor results table.', res3);
+                            dom.create('div', { innerHTML: "There was an error creating the donor results table." }, thisB.donorResultsTab.containerNode);
                         });
                     }, function (err) {
-                        console.error('error', err);
+                        console.error('There was an error fetching donor data for current facets.', err);
+                        dom.create('div', { innerHTML: "There was an error creating the donor results table." }, thisB.donorResultsTab.containerNode);
                     });
             } else if (type === 'mutation') {
                 dom.empty(thisB.mutationResultsTab.containerNode);
                 var resultsInfo = thisB.createLoadingIcon(thisB.mutationResultsTab.containerNode);
 
+                // Create mutation tab content
                 var mutationUrl = thisB.createMutationUrl(combinedFacetObject);
                 fetch(mutationUrl).then(function (facetsResponse) {
                     dom.empty(resultsInfo);
@@ -384,15 +396,18 @@ function (
                                 }
                             }
                         }, function (res3) {
-                            console.error('error', res3);
+                            console.error('There was an error creating the mutation results table.', res3);
+                            dom.create('div', { innerHTML: "There was an error creating the mutation results table." }, thisB.mutationResultsTab.containerNode);
                         });
                     }, function (err) {
-                        console.error('error', err);
+                        console.error('There was an error fetching mutation data for current facets.', err);
+                        dom.create('div', { innerHTML: "There was an error creating the mutation results table." }, thisB.mutationResultsTab.containerNode);
                     });
             } else if (type === 'gene') {
                 dom.empty(thisB.geneResultsTab.containerNode);
                 var resultsInfo = thisB.createLoadingIcon(thisB.geneResultsTab.containerNode);
                 
+                // Create gene tab content
                 var geneUrl = thisB.createGeneUrl(combinedFacetObject);
                 fetch(geneUrl).then(function (facetsResponse) {
                     dom.empty(resultsInfo);
@@ -436,10 +451,12 @@ function (
                                 }
                             }
                         }, function (res3) {
-                            console.error('error', res3);
+                            console.error('There was an error creating the gene results table.', res3);
+                            dom.create('div', { innerHTML: "There was an error creating the gene results table." }, thisB.geneResultsTab.containerNode);
                         });
                     }, function (err) {
-                        console.error('error', err);
+                        console.error('There was an error fetching gene data for current facets.', err);
+                        dom.create('div', { innerHTML: "There was an error creating the gene results table." }, thisB.geneResultsTab.containerNode);
                     });
             }
         },
