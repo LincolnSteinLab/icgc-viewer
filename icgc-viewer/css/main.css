@@ -10,6 +10,11 @@ table.results-table td {
     padding: .2rem .4rem;
 }
 
+table.results-table th {
+    border: 1px solid #b3b3b3;
+    padding: .2rem .4rem;
+}
+
 table.results-table tr:nth-child(odd) {
     background-color: #f2f2f2;
 }
