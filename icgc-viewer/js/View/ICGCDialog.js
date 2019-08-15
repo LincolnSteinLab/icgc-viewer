@@ -227,7 +227,7 @@ function (
 
                                 // If facet has no terms
                                 if (!facetsJsonResponse.facets[facet].terms || facetsJsonResponse.facets[facet].terms.length == 0) {
-                                    dom.create('span', { className: "flex-row", innerHTML: "No terms for the selected facet." }, facetHolder)
+                                    dom.create('span', { className: "flex-row", innerHTML: "No terms available for the selected facet." }, facetHolder)
                                 }
                                 // If facet has at least one term
                                 if (facetsJsonResponse.facets[facet].terms) {
