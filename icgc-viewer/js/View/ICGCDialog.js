@@ -70,7 +70,7 @@ function (
         types: ['donor', 'mutation', 'gene'],
         
         /**
-         * Create a DOM object containing GDC primary site interface
+         * Create a DOM object containing ICGC primary site interface
          * @return {object} DOM object
          */
         _dialogContent: function () {
@@ -125,15 +125,15 @@ function (
             if (type === 'donor') {
                 thisB.donorAccordion = new AccordionContainer({ id: newAccordionId, className: "accordionContainer" }, thisB.donorFacetTab.containerNode);
                 var loadingIcon = thisB.createLoadingIcon(thisB.donorFacetTab.containerNode);
-                thisB.createFacet('donor', thisB.donorAccordion, loadingIcon);
+                thisB.createFacet(type, thisB.donorAccordion, loadingIcon);
             } else if (type === 'mutation') {
                 thisB.mutationAccordion = new AccordionContainer({ id: newAccordionId, className: "accordionContainer" }, thisB.mutationFacetTab.containerNode);
                 var loadingIcon = thisB.createLoadingIcon(thisB.mutationFacetTab.containerNode);
-                thisB.createFacet('mutation', thisB.mutationAccordion, loadingIcon);
+                thisB.createFacet(type, thisB.mutationAccordion, loadingIcon);
             } else if (type === 'gene') {
                 thisB.geneAccordion = new AccordionContainer({ id: newAccordionId, className: "accordionContainer" }, thisB.geneFacetTab.containerNode);
                 var loadingIcon = thisB.createLoadingIcon(thisB.geneFacetTab.containerNode);
-                thisB.createFacet('gene', thisB.geneAccordion, loadingIcon);
+                thisB.createFacet(type, thisB.geneAccordion, loadingIcon);
             }
         },
 
@@ -170,28 +170,28 @@ function (
          */
         getFiltersForType: function(type) {
             var thisB = this;
-            var filters = {};
             if (type === 'donor') {
-                filters = thisB.donorFilters;
+                return thisB.donorFilters;
             } else if (type === 'mutation') {
-                filters = thisB.mutationFilters;
+                return thisB.mutationFilters;
             } else if (type === 'gene') {
-                filters = thisB.geneFilters;
+                return thisB.geneFilters;
             }
-            return filters;
         },
 
         /**
          * Compare function used for sorting facets
-         * @param {*} a 
-         * @param {*} b 
+         * @param {*} a Object with a string field called 'term'
+         * @param {*} b Object with a string field called 'term'
          */
         compareTermElements: function(a, b) {
-            if (a.term < b.term)
+            if (a.term < b.term) {
                 return -1;
-            if (a.term > b.term)
+            } else if (a.term > b.term) {
                 return 1;
-            return 0;
+            } else {
+                return 0;
+            }
         },
 
         /**
@@ -208,70 +208,81 @@ function (
 
             // Fetch facets and display in accordion
             fetch(url).then(function (facetsResponse) {
-                // Clear loading indicator
                 dom.empty(loadingIcon);
 
                 facetsResponse.json().then(function (facetsJsonResponse) {
-                    // Respone will have a code if errored
+                    // Response will have a code if errored
                     if (!facetsJsonResponse.code) {
                         // Create accordion of the facets available
                         for (var facet in facetsJsonResponse.facets) {
-                            var paneId = facet + '-' + type + '-' + thisB.accordionId;
-                            var contentPane = new ContentPane({
-                                title: thisB.camelCaseToTitleCase(facet),
-                                style: "height: auto",
-                                id: paneId
-                            });
-
-                            var facetHolder = dom.create('span', { className: "flex-column", style: "width: 100%" });
-                            if (facetsJsonResponse.facets[facet].terms) {
-                                facetsJsonResponse.facets[facet].terms.sort(thisB.compareTermElements);
-                                facetsJsonResponse.facets[facet].terms.forEach((term) => {
-                                    var facetCheckbox = dom.create('span', { className: "flex-row" }, facetHolder)
-                                    var checkboxName = facet + '-' + term.term;
-                                    var checkboxId = facet + '-' + term.term + '-' + type + '-' + thisB.accordionId;
-                                    var checkBox = new CheckBox({
-                                        name: checkboxName,
-                                        id: checkboxId,
-                                        value: { "facet": facet, "term" : term.term, "type": type },
-                                        checked: thisB.isChecked(facet, term.term, thisB.getFiltersForType(type)),
-                                        onChange: function(isChecked) {
-                                            if (isChecked) {
-                                                if (this.value.type === 'donor') {
-                                                    thisB.donorFilters = thisB.addToFilters(this.value, thisB.donorFilters);
-                                                } else if (this.value.type === 'mutation') {
-                                                    thisB.mutationFilters = thisB.addToFilters(this.value, thisB.mutationFilters);
-                                                } else if (this.value.type === 'gene') {
-                                                    thisB.geneFilters = thisB.addToFilters(this.value, thisB.geneFilters);
-                                                }
-                                            } else {
-                                                if (this.value.type === 'donor') {
-                                                    thisB.donorFilters = thisB.removeFromFilters(this.value, thisB.donorFilters);
-                                                } else if (this.value.type === 'mutation') {
-                                                    thisB.mutationFilters = thisB.removeFromFilters(this.value, thisB.mutationFilters);
-                                                } else if (this.value.type === 'gene') {
-                                                    thisB.geneFilters = thisB.removeFromFilters(this.value, thisB.geneFilters);
-                                                }
-                                            }
-                                            
-                                            // Update with newly applied filter
-                                            for (var type of thisB.types) {
-                                                thisB.updateAccordion(type);
-                                                thisB.updateSearchResults(type);
-                                            }
-                                        }
-                                    }, 'checkbox').placeAt(facetCheckbox);
-                                    
-                                    // Add text label to checkbox
-                                    var labelName = facet + '-' + term.term + '-' + type + '-' + thisB.accordionId;
-                                    var labelContent = term.term + ' (' + (term.count).toLocaleString() + ')';
-                                    dom.create("label", { "for" : labelName, innerHTML: labelContent }, facetCheckbox);
+                            if (facet != 'projectName') {
+                                var paneId = facet + '-' + type + '-' + thisB.accordionId;
+                                var contentPane = new ContentPane({
+                                    title: thisB.camelCaseToTitleCase(facet),
+                                    style: "height: auto",
+                                    id: paneId
                                 });
-                            }
 
-                            // Place facet group into holder and add to accordion
-                            dojo.place(facetHolder, contentPane.containerNode);
-                            accordion.addChild(contentPane);
+                                var facetHolder = dom.create('span', { className: "flex-column", style: "width: 100%" });
+
+                                // If facet has no terms
+                                if (!facetsJsonResponse.facets[facet].terms || facetsJsonResponse.facets[facet].terms.length == 0) {
+                                    dom.create('span', { className: "flex-row", innerHTML: "No terms available for the selected facet." }, facetHolder)
+                                }
+                                // If facet has at least one term
+                                if (facetsJsonResponse.facets[facet].terms) {
+                                    // Sort in ascending alphabetical order
+                                    facetsJsonResponse.facets[facet].terms.sort(thisB.compareTermElements);
+
+                                    // Create a checkbox for each term
+                                    facetsJsonResponse.facets[facet].terms.forEach((term) => {
+                                        var facetCheckbox = dom.create('span', { className: "flex-row" }, facetHolder)
+                                        var checkboxName = facet + '-' + term.term;
+                                        var checkboxId = facet + '-' + term.term + '-' + type + '-' + thisB.accordionId;
+                                        var checkBox = new CheckBox({
+                                            name: checkboxName,
+                                            id: checkboxId,
+                                            value: { "facet": facet, "term" : term.term, "type": type },
+                                            checked: thisB.isChecked(facet, term.term, thisB.getFiltersForType(type)),
+                                            onChange: function(isChecked) {
+                                                // Update the selected facets based on selection
+                                                if (isChecked) {
+                                                    if (this.value.type === 'donor') {
+                                                        thisB.donorFilters = thisB.addToFilters(this.value, thisB.donorFilters);
+                                                    } else if (this.value.type === 'mutation') {
+                                                        thisB.mutationFilters = thisB.addToFilters(this.value, thisB.mutationFilters);
+                                                    } else if (this.value.type === 'gene') {
+                                                        thisB.geneFilters = thisB.addToFilters(this.value, thisB.geneFilters);
+                                                    }
+                                                } else {
+                                                    if (this.value.type === 'donor') {
+                                                        thisB.donorFilters = thisB.removeFromFilters(this.value, thisB.donorFilters);
+                                                    } else if (this.value.type === 'mutation') {
+                                                        thisB.mutationFilters = thisB.removeFromFilters(this.value, thisB.mutationFilters);
+                                                    } else if (this.value.type === 'gene') {
+                                                        thisB.geneFilters = thisB.removeFromFilters(this.value, thisB.geneFilters);
+                                                    }
+                                                }
+                                                
+                                                // Update with newly applied filter
+                                                for (var type of thisB.types) {
+                                                    thisB.updateAccordion(type);
+                                                    thisB.updateSearchResults(type);
+                                                }
+                                            }
+                                        }, 'checkbox').placeAt(facetCheckbox);
+                                        
+                                        // Add text label to checkbox
+                                        var labelName = facet + '-' + term.term + '-' + type + '-' + thisB.accordionId;
+                                        var labelContent = term.term + ' (' + (term.count).toLocaleString() + ')';
+                                        dom.create("label", { "for" : labelName, innerHTML: labelContent }, facetCheckbox);
+                                    });
+                                }
+
+                                // Place facet group into holder and add to accordion
+                                dojo.place(facetHolder, contentPane.containerNode);
+                                accordion.addChild(contentPane);
+                            }
                         }
 
                         // Update accordion with new content
@@ -280,10 +291,10 @@ function (
                         thisB.resize();
                     }
                 }, function (res3) {
-                    console.error('error', res3);
+                    console.error('There was an error parsing the JSON response from ICGC.', res3);
                 });
             }, function (err) {
-                console.error('error', err);
+                console.error('There was an error fetching facets from ICGC.', err);
             });
         },
 
@@ -296,6 +307,7 @@ function (
             var combinedFacetObject = thisB.createCombinedFacets();
             dom.empty(thisB.prettyFacetHolder);
 
+            // Add button for clearing selected facets
             if (Object.keys(thisB.donorFilters).length + Object.keys(thisB.mutationFilters).length + Object.keys(thisB.geneFilters).length > 0) {
                 var clearFacetButton = new Button({
                     iconClass: "dijitIconDelete",
@@ -306,6 +318,7 @@ function (
                 thisB.addTooltipToButton(clearFacetButton, "Clears all facets");
             }
 
+            // Pretty print filters
             var combinedFacets = Object.assign({}, thisB.donorFilters, thisB.mutationFilters, thisB.geneFilters);
             thisB.prettyPrintFilters(thisB.prettyFacetHolder, combinedFacets);
 
@@ -313,116 +326,137 @@ function (
                 dom.empty(thisB.donorResultsTab.containerNode);
                 var resultsInfo = thisB.createLoadingIcon(thisB.donorResultsTab.containerNode);
 
+                // Create donor tab content
                 var donorUrl = thisB.createDonorUrl(combinedFacetObject);
                 fetch(donorUrl).then(function (facetsResponse) {
                     dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
-                                var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
-                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.donorResultsTab.containerNode);
-                                thisB.createDonorsTable(facetsJsonResponse.hits, thisB.donorResultsTab.containerNode, combinedFacetObject);
-                                thisB.createPaginationButtons(thisB.donorResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.donorPage);
+                                if (facetsJsonResponse.pagination.from && facetsJsonResponse.pagination.count && facetsJsonResponse.pagination.total) {
+                                    var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count - 1;
+                                    var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.donorResultsTab.containerNode);
+                                    thisB.createDonorsTable(facetsJsonResponse.hits, thisB.donorResultsTab.containerNode, combinedFacetObject);
+                                    thisB.createPaginationButtons(thisB.donorResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.donorPage);
+                                } else {
+                                    var resultsInfo = dom.create('div', { innerHTML: "No results for the selected facets." }, thisB.donorResultsTab.containerNode);
+                                }
                             }
                         }, function (res3) {
-                            console.error('error', res3);
+                            console.error('There was an error creating the donor results table.', res3);
+                            dom.create('div', { innerHTML: "There was an error creating the donor results table." }, thisB.donorResultsTab.containerNode);
                         });
                     }, function (err) {
-                        console.error('error', err);
+                        console.error('There was an error fetching donor data for current facets.', err);
+                        dom.create('div', { innerHTML: "There was an error creating the donor results table." }, thisB.donorResultsTab.containerNode);
                     });
             } else if (type === 'mutation') {
                 dom.empty(thisB.mutationResultsTab.containerNode);
                 var resultsInfo = thisB.createLoadingIcon(thisB.mutationResultsTab.containerNode);
 
+                // Create mutation tab content
                 var mutationUrl = thisB.createMutationUrl(combinedFacetObject);
                 fetch(mutationUrl).then(function (facetsResponse) {
                     dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
-                                var ssmMenu = new Menu({ style: "display: none;"});
-                                var menuItemSSMFiltered = new MenuItem({
-                                    label: "Filtered SSMs form ICGC",
-                                    iconClass: "dijitIconNewTask",
-                                    onClick: function() {
-                                        thisB.addTrack('SimpleSomaticMutations', undefined, combinedFacetObject, 'CanvasVariants');
-                                        alert("Adding track with all SSMs from the ICGC, with current filters applied");
-                                    }
-                                });
-                                ssmMenu.addChild(menuItemSSMFiltered);
-                                ssmMenu.startup();
+                                if (facetsJsonResponse.pagination.from && facetsJsonResponse.pagination.count && facetsJsonResponse.pagination.total) {
+                                    var ssmMenu = new Menu({ style: "display: none;"});
+                                    var menuItemSSMFiltered = new MenuItem({
+                                        label: "Filtered SSMs form ICGC",
+                                        iconClass: "dijitIconNewTask",
+                                        onClick: function() {
+                                            thisB.addTrack('SimpleSomaticMutations', undefined, combinedFacetObject, 'icgc-viewer/View/Track/SSMTrack');
+                                            alert("Adding track with all SSMs from the ICGC, with current filters applied");
+                                        }
+                                    });
+                                    ssmMenu.addChild(menuItemSSMFiltered);
+                                    ssmMenu.startup();
 
-                                var buttonAllSSMs = new ComboButton({
-                                    label: "All SSMs from ICGC",
-                                    iconClass: "dijitIconNewTask",
-                                    dropDown: ssmMenu,
-                                    onClick: function() {
-                                        thisB.addTrack('SimpleSomaticMutations', undefined, undefined, 'CanvasVariants');
-                                        alert("Add track with all SSMs from the ICGC");
-                                    }
-                                });
-                                buttonAllSSMs.placeAt(thisB.mutationResultsTab.containerNode);
-                                buttonAllSSMs.startup();
-                                thisB.addTooltipToButton(menuItemSSMFiltered, "Add track with all SSMs from the ICGC, with current filters applied");
-                                thisB.addTooltipToButton(buttonAllSSMs, "Add track with all SSMs from the ICGC");
+                                    var buttonAllSSMs = new ComboButton({
+                                        label: "All SSMs from ICGC",
+                                        iconClass: "dijitIconNewTask",
+                                        dropDown: ssmMenu,
+                                        onClick: function() {
+                                            thisB.addTrack('SimpleSomaticMutations', undefined, undefined, 'icgc-viewer/View/Track/SSMTrack');
+                                            alert("Add track with all SSMs from the ICGC");
+                                        }
+                                    });
+                                    buttonAllSSMs.placeAt(thisB.mutationResultsTab.containerNode);
+                                    buttonAllSSMs.startup();
+                                    thisB.addTooltipToButton(menuItemSSMFiltered, "Add track with all SSMs from the ICGC, with current filters applied");
+                                    thisB.addTooltipToButton(buttonAllSSMs, "Add track with all SSMs from the ICGC");
 
-                                var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
-                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.mutationResultsTab.containerNode);
-                           
-                                thisB.createMutationsTable(facetsJsonResponse.hits, thisB.mutationResultsTab.containerNode, combinedFacetObject);
-                                thisB.createPaginationButtons(thisB.mutationResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.mutationPage);
+                                    var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count - 1;
+                                    var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.mutationResultsTab.containerNode);
+                            
+                                    thisB.createMutationsTable(facetsJsonResponse.hits, thisB.mutationResultsTab.containerNode, combinedFacetObject);
+                                    thisB.createPaginationButtons(thisB.mutationResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.mutationPage);
+                                } else {
+                                    var resultsInfo = dom.create('div', { innerHTML: "No results for the selected facets." }, thisB.mutationResultsTab.containerNode);
+                                }
                             }
                         }, function (res3) {
-                            console.error('error', res3);
+                            console.error('There was an error creating the mutation results table.', res3);
+                            dom.create('div', { innerHTML: "There was an error creating the mutation results table." }, thisB.mutationResultsTab.containerNode);
                         });
                     }, function (err) {
-                        console.error('error', err);
+                        console.error('There was an error fetching mutation data for current facets.', err);
+                        dom.create('div', { innerHTML: "There was an error creating the mutation results table." }, thisB.mutationResultsTab.containerNode);
                     });
             } else if (type === 'gene') {
                 dom.empty(thisB.geneResultsTab.containerNode);
                 var resultsInfo = thisB.createLoadingIcon(thisB.geneResultsTab.containerNode);
                 
+                // Create gene tab content
                 var geneUrl = thisB.createGeneUrl(combinedFacetObject);
                 fetch(geneUrl).then(function (facetsResponse) {
                     dom.empty(resultsInfo);
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
-                                var geneMenu = new Menu({ style: "display: none;"});
-                                var menuItemGeneFiltered = new MenuItem({
-                                    label: "Filtered Genes from ICGC",
-                                    iconClass: "dijitIconNewTask",
-                                    onClick: function() {
-                                        thisB.addTrack('Genes', undefined, combinedFacetObject, 'CanvasVariants');
-                                        alert("Adding track with all genes from the ICGC, with current filters applied");
-                                    }
-                                });
-                                geneMenu.addChild(menuItemGeneFiltered);
-                                geneMenu.startup();
+                                if (facetsJsonResponse.pagination.from && facetsJsonResponse.pagination.count && facetsJsonResponse.pagination.total) {
+                                    var geneMenu = new Menu({ style: "display: none;"});
+                                    var menuItemGeneFiltered = new MenuItem({
+                                        label: "Filtered Genes from ICGC",
+                                        iconClass: "dijitIconNewTask",
+                                        onClick: function() {
+                                            thisB.addTrack('Genes', undefined, combinedFacetObject, 'icgc-viewer/View/Track/GeneTrack');
+                                            alert("Adding track with all genes from the ICGC, with current filters applied");
+                                        }
+                                    });
+                                    geneMenu.addChild(menuItemGeneFiltered);
+                                    geneMenu.startup();
 
-                                var buttonAllGenes = new ComboButton({
-                                    label: "All Genes from ICGC",
-                                    iconClass: "dijitIconNewTask",
-                                    dropDown: geneMenu,
-                                    style: "padding-right: 8px;",
-                                    onClick: function() {
-                                        thisB.addTrack('Genes', undefined, undefined, 'CanvasVariants');
-                                        alert("Adding track with all genes from the ICGC");
-                                    }
-                                });
-                                buttonAllGenes.placeAt(thisB.geneResultsTab.containerNode);
-                                buttonAllGenes.startup();
-                                thisB.addTooltipToButton(menuItemGeneFiltered, "Add track with all genes from the ICGC, with current filters applied");
-                                thisB.addTooltipToButton(buttonAllGenes, "Add track with all genes from the ICGC");
+                                    var buttonAllGenes = new ComboButton({
+                                        label: "All Genes from ICGC",
+                                        iconClass: "dijitIconNewTask",
+                                        dropDown: geneMenu,
+                                        style: "padding-right: 8px;",
+                                        onClick: function() {
+                                            thisB.addTrack('Genes', undefined, undefined, 'icgc-viewer/View/Track/GeneTrack');
+                                            alert("Adding track with all genes from the ICGC");
+                                        }
+                                    });
+                                    buttonAllGenes.placeAt(thisB.geneResultsTab.containerNode);
+                                    buttonAllGenes.startup();
+                                    thisB.addTooltipToButton(menuItemGeneFiltered, "Add track with all genes from the ICGC, with current filters applied");
+                                    thisB.addTooltipToButton(buttonAllGenes, "Add track with all genes from the ICGC");
 
-                                var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count;
-                                var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.geneResultsTab.containerNode);
-                                
-                                thisB.createGenesTable(facetsJsonResponse.hits, thisB.geneResultsTab.containerNode, combinedFacetObject);
-                                thisB.createPaginationButtons(thisB.geneResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.genePage);
+                                    var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count - 1;
+                                    var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.geneResultsTab.containerNode);
+                                    
+                                    thisB.createGenesTable(facetsJsonResponse.hits, thisB.geneResultsTab.containerNode, combinedFacetObject);
+                                    thisB.createPaginationButtons(thisB.geneResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.genePage);
+                                } else {
+                                    var resultsInfo = dom.create('div', { innerHTML: "No results for the selected facets." }, thisB.geneResultsTab.containerNode);
+                                }
                             }
                         }, function (res3) {
-                            console.error('error', res3);
+                            console.error('There was an error creating the gene results table.', res3);
+                            dom.create('div', { innerHTML: "There was an error creating the gene results table." }, thisB.geneResultsTab.containerNode);
                         });
                     }, function (err) {
-                        console.error('error', err);
+                        console.error('There was an error fetching gene data for current facets.', err);
+                        dom.create('div', { innerHTML: "There was an error creating the gene results table." }, thisB.geneResultsTab.containerNode);
                     });
             }
         },
@@ -631,7 +665,7 @@ function (
                     iconClass: "dijitIconNewTask",
                     onClick: (function(hit, combinedFacetObject) {
                         return function() {
-                            thisB.addTrack('Genes', hit.id, combinedFacetObject, 'CanvasVariants');
+                            thisB.addTrack('Genes', hit.id, combinedFacetObject, 'icgc-viewer/View/Track/GeneTrack');
                             alert("Adding Gene track for case " + hit.id);
                         }
                     })(hit, combinedFacetObject)
@@ -645,7 +679,7 @@ function (
                     dropDown: geneMenu,
                     onClick: (function(hit) {
                         return function() {
-                            thisB.addTrack('Genes', hit.id, undefined, 'CanvasVariants');
+                            thisB.addTrack('Genes', hit.id, undefined, 'icgc-viewer/View/Track/GeneTrack');
                             alert("Adding Gene track for case " + hit.id);
                         }
                     })(hit)
@@ -667,7 +701,7 @@ function (
                     iconClass: "dijitIconNewTask",
                     onClick: (function(hit, combinedFacetObject) {
                         return function() {
-                            thisB.addTrack('SimpleSomaticMutations',  hit.id, combinedFacetObject, 'CanvasVariants');
+                            thisB.addTrack('SimpleSomaticMutations',  hit.id, combinedFacetObject, 'icgc-viewer/View/Track/SSMTrack');
                             alert("Adding Simple Somatic Mutation track for case " +  hit.id);
                         }
                     })(hit, combinedFacetObject)
@@ -681,7 +715,7 @@ function (
                     dropDown: ssmMenu,
                     onClick: (function(hit) {
                         return function() {
-                            thisB.addTrack('SimpleSomaticMutations',  hit.id, undefined, 'CanvasVariants');
+                            thisB.addTrack('SimpleSomaticMutations',  hit.id, undefined, 'icgc-viewer/View/Track/SSMTrack');
                             alert("Adding Simple Somatic Mutation track for case " +  hit.id);
                         }
                     })(hit)
@@ -867,7 +901,7 @@ function (
                     iconClass: "dijitIconNewTask",
                     label: text,
                     onClick: function() {
-                        thisB.addTrack('SimpleSomaticMutations', donorId, combinedFacetObject, 'CanvasVariants');
+                        thisB.addTrack('SimpleSomaticMutations', donorId, combinedFacetObject, 'icgc-viewer/View/Track/SSMTrack');
                         alert("Adding Simple Somatic Mutations track for the donor " + donorId);
                     }
                 }, "ssmButton").placeAt(holder);
@@ -892,7 +926,7 @@ function (
                 iconClass: "dijitIconNewTask",
                 label: text,
                 onClick: function() {
-                    thisB.addTrack('Genes', donorId, combinedFacetObject, 'CanvasVariants');
+                    thisB.addTrack('Genes', donorId, combinedFacetObject, 'icgc-viewer/View/Track/GeneTrack');
                     alert("Adding Genes track for the donor " + donorId);
                 }
             }, "geneButton").placeAt(holder);
@@ -925,7 +959,7 @@ function (
             }
 
             var trackConf = {
-                type: 'JBrowse/View/Track/' + trackType,
+                type: trackType,
                 store: storeName,
                 label: label,
                 key: key,
@@ -942,6 +976,7 @@ function (
             };
 
             if (storeClass === 'Genes') {
+                trackConf.fmtDetailValue_annotations = function(value) { return "<div id='annotations-icgc-" + value +  "'>Loading content...</div" };
                 trackConf.menuTemplate.push(
                     {   
                         label : "Highlight this Gene",
@@ -954,7 +989,7 @@ function (
                     }
                 );
             } else if (storeClass === 'SimpleSomaticMutations') {
-                trackConf.fmtDetailValue_projects = function(value) { return "<div id='projects-icgc-" + value +  "'>Loading...</div" };
+                trackConf.fmtDetailValue_projects = function(value) { return "<div id='projects-icgc-" + value +  "'>Loading content...</div" };
                 trackConf.menuTemplate.push(
                     {   
                         label : "Highlight this Simple Somatic Mutation",

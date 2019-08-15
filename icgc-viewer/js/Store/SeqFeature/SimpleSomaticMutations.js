@@ -85,7 +85,7 @@ function(
          * @param {List<Consequence>} consequences 
          */
         createConsequencesTable: function(consequences) {
-            var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
+            var thStyle = 'border: 1px solid #b3b3b3; padding: .2rem .2rem;';
             var headerRow = `
                 <tr style=\"background-color: #f2f2f2\">
                     <th style="${thStyle}">Gene</th>
@@ -98,8 +98,9 @@ function(
                 </tr>
             `;
 
-            var consequenceTable = '<table style="width: 560px; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
+            var consequenceTable = '<table class="popup-table" style="border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
 
+            var tdStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
             var count = 0;
             for (consequence of consequences) {
                 var trStyle = '';
@@ -107,13 +108,13 @@ function(
                     trStyle = 'style=\"background-color: #f2f2f2\"';
                 }
                 var consequenceRow = `<tr ${trStyle}>
-                    <td style="${thStyle}">${this.createLinkWithIdAndName('https://dcc.icgc.org/genes/', consequence.geneAffectedId ,consequence.geneAffectedSymbol)}</td>
-                    <td style="${thStyle}">${this.prettyValue(consequence.aaMutation)}</td>
-                    <td style="${thStyle}">${this.prettyValue((consequence.type).replace(/_/g, ' '))}</td>
-                    <td style="${thStyle}">${this.prettyValue(consequence.cdsMutation)}</td>
-                    <td style="${thStyle}">${this.prettyValue(consequence.functionalImpact)}</td>
-                    <td style="${thStyle}">${this.prettyValue(this.convertIntToStrand(consequence.geneStrand))}</td>
-                    <td style="${thStyle}">${this.getTranscripts(consequence.transcriptsAffected)}</td>
+                    <td style="${tdStyle}">${this.createLinkWithIdAndName('https://dcc.icgc.org/genes/', consequence.geneAffectedId ,consequence.geneAffectedSymbol)}</td>
+                    <td style="${tdStyle}">${this.prettyValue(consequence.aaMutation)}</td>
+                    <td style="${tdStyle}">${this.prettyValue((consequence.type).replace(/_/g, ' '))}</td>
+                    <td style="${tdStyle}">${this.prettyValue(consequence.cdsMutation)}</td>
+                    <td style="${tdStyle}">${this.prettyValue(consequence.functionalImpact)}</td>
+                    <td style="${tdStyle}">${this.prettyValue(this.convertIntToStrand(consequence.geneStrand))}</td>
+                    <td style="${tdStyle}">${this.getTranscripts(consequence.transcriptsAffected)}</td>
                     </tr>
                 `;
                 
@@ -189,17 +190,15 @@ function(
                             'start': variant.start - 1,
                             'end': variant.end - 1,
                             'type': thisB.prettyValue(variant.type),
+                            'entity_name': variant.id,
                             'about': {
                                 'mutation': thisB.prettyValue(variant.mutation),
                                 'allele in the reference assembly': thisB.prettyValue(variant.referenceGenomeAllele),
                                 'reference genome assembly': thisB.prettyValue(variant.assemblyVersion),
-                                'affected projects': thisB.prettyValue(variant.affectedProjectCount),
-                                'affected donors': thisB.getDonorFraction(variant),
                                 'type': thisB.prettyValue(variant.type),
                                 'id': thisB.prettyValue(variant.id)
                             },
-                            'variant description': variant.description,
-                            'external references': {
+                            'references': {
                                 'civic': thisB.createLinkWithId(CIVIC_LINK, variant.external_db_ids.civic),
                                 'clinvar': thisB.createLinkWithId(CLINVAR_LINK, variant.external_db_ids.clinvar),
                                 'icgc': thisB.createLinkWithId(ICGC_LINK, variant.id),

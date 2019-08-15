@@ -6,14 +6,14 @@ define([
     'dojo/_base/array',
     'dojo/request',
     './BaseSeqFeature',
-    'JBrowse/Model/SimpleFeature'
+    '../../Model/GeneFeature'
 ],
 function(
     declare,
     array,
     request,
     BaseSeqFeature,
-    SimpleFeature
+    GeneFeature
 ) {
     return declare(BaseSeqFeature, {
 
@@ -82,7 +82,7 @@ function(
             const ENSEMBL_LINK = "http://feb2014.archive.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=";
             const ICGC_LINK = "https://dcc.icgc.org/genes/";
             const ENTREZ_LINK = "http://www.ncbi.nlm.nih.gov/gene/";
-            const HGNC_LINK = "http://www.genenames.org/data/hgnc_data.php?hgnc_id=";
+            const HGNC_LINK = "https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/HGNC:";
             const OMIM_LINK = "http://omim.org/entry/";
             const UNIPROTKB_SWISSPROT_LINK = "http://www.uniprot.org/uniprot/";
             const COSMIC_LINK = "http://cancer.sanger.ac.uk/cosmic/gene/analysis?ln=";
@@ -113,15 +113,17 @@ function(
                             'start': gene.start - 1,
                             'end': gene.end - 1,
                             'strand': gene.strand,
-                            'gene description': thisB.prettyValue(gene.description),
                             'type': thisB.prettyValue(gene.type),
+                            'annotations': gene.id,
+                            'gene description': thisB.prettyValue(gene.description),
+                            'entity_name': gene.id,
                             'about': {
                                 'gene name': thisB.prettyValue(gene.name),
                                 'symbol': thisB.prettyValue(gene.symbol),
                                 'type': thisB.prettyValue(gene.type),
                                 'id': thisB.prettyValue(gene.id)
                             },
-                            'external references': {
+                            'references': {
                                 'icgc': thisB.createLinkWithId(ICGC_LINK, gene.id),
                                 'ensembl (release 75)': thisB.createLinkWithId(ENSEMBL_LINK, gene.id),
                                 'entrez gene': thisB.createLinksWithId(ENTREZ_LINK, gene.externalDbIds.entrez_gene),
@@ -132,7 +134,7 @@ function(
                             },                            
                         }
                     }
-                    featureCallback(new SimpleFeature(geneFeature));
+                    featureCallback(new GeneFeature(geneFeature));
                 });
 
                 finishCallback();

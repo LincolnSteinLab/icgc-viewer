@@ -31,7 +31,7 @@ function (
         size: 20,
         
         /**
-         * Create a DOM object containing GDC primary site interface
+         * Create a DOM object containing ICGC primary site interface
          * @return {object} DOM object
          */
         _dialogContent: function () {
@@ -149,7 +149,7 @@ function (
                         iconClass: "dijitIconNewTask",
                         onClick: (function(hit) {
                             return function() {
-                                thisB.addTrack('SimpleSomaticMutations', hit.id, 'CanvasVariants');
+                                thisB.addTrack('SimpleSomaticMutations', hit.id, 'icgc-viewer/View/Track/SSMTrack');
                                 alert("Adding SSM track for project " + hit.id);
                             }
                         })(hit)
@@ -161,7 +161,7 @@ function (
                         iconClass: "dijitIconNewTask",
                         onClick: (function(hit) {
                             return function() {
-                                thisB.addTrack('Genes', hit.id, 'CanvasVariants');
+                                thisB.addTrack('Genes', hit.id, 'icgc-viewer/View/Track/GeneTrack');
                                 alert("Adding Gene track for project " + hit.id);
                             }
                         })(hit)
@@ -221,7 +221,7 @@ function (
             label += '_' + projectId
 
             var trackConf = {
-                type: 'JBrowse/View/Track/' + trackType,
+                type: trackType,
                 store: storeName,
                 label: label,
                 key: key,
@@ -238,6 +238,7 @@ function (
             };
 
             if (storeClass === 'Genes') {
+                trackConf.fmtDetailValue_annotations = function(value) { return "<div id='annotations-icgc-" + value +  "'>Loading content...</div" };
                 trackConf.menuTemplate.push(
                     {   
                         label : "Highlight this Gene",
@@ -250,7 +251,7 @@ function (
                     }
                 );
             } else if (storeClass === 'SimpleSomaticMutations') {
-                trackConf.fmtDetailValue_projects = function(value) { return "<div id='projects-icgc-" + value +  "'>Loading...</div" };
+                trackConf.fmtDetailValue_projects = function(value) { return "<div id='projects-icgc-" + value +  "'>Loading content...</div" };
                 trackConf.menuTemplate.push(
                     {   
                         label : "Highlight this Simple Somatic Mutation",

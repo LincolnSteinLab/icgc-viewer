@@ -84,6 +84,7 @@ get: function(name) {
         return this.data[ name.toLowerCase() ];
     }
 },
+
 /**
  * Creates a table of projects and their associated tumour type and incidence rate for the given mutation
  * @param {object} projects Object of the form projectId -> projectObject
@@ -91,7 +92,7 @@ get: function(name) {
  * @param {string} mutationId ICGC ID for the mutation
  */
 createProjectIncidenceTable: function(projects, projectCounts, mutationId) {
-    var thStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
+    var thStyle = 'border: 1px solid #b3b3b3; padding: .2rem .2rem;';
     var headerRow = `
         <tr style=\"background-color: #f2f2f2\">
             <th style="${thStyle}">Project</th>
@@ -102,8 +103,9 @@ createProjectIncidenceTable: function(projects, projectCounts, mutationId) {
         </tr>
     `;
 
-    var projectTable = '<table style="width: 560px; border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
+    var projectTable = '<table class="popup-table" style="border-collapse: \'collapse\'; border-spacing: 0;">' + headerRow;
 
+    var tdStyle = 'border: 1px solid #e6e6e6; padding: .2rem .2rem;';
     var count = 0;
     Object.keys(projects).forEach(project => {
         var trStyle = '';
@@ -111,11 +113,11 @@ createProjectIncidenceTable: function(projects, projectCounts, mutationId) {
             trStyle = 'style=\"background-color: #f2f2f2\"';
         }
         var projectRow = `<tr ${trStyle}>
-            <td style="${thStyle}">${this.createLinkWithId('https://dcc.icgc.org/projects/', project)}</td>
-            <td style="${thStyle}">${this.prettyValue(projects[project].primarySite)}</td>
-            <td style="${thStyle}">${this.prettyValue(projects[project].tumourType)}</td>
-            <td style="${thStyle}">${this.prettyValue(projects[project].tumourSubtype)}</td>
-            <td style="${thStyle}">${this.prettyValue(projectCounts[project][mutationId]) + ' / ' + projects[project].ssmTestedDonorCount} (${((projectCounts[project][mutationId] / projects[project].ssmTestedDonorCount) * 100).toFixed(2)}%)</td>
+            <td style="${tdStyle}">${this.createLinkWithId('https://dcc.icgc.org/projects/', project)}</td>
+            <td style="${tdStyle}">${this.prettyValue(projects[project].primarySite)}</td>
+            <td style="${tdStyle}">${this.prettyValue(projects[project].tumourType)}</td>
+            <td style="${tdStyle}">${this.prettyValue(projects[project].tumourSubtype)}</td>
+            <td style="${tdStyle}">${this.prettyValue(projectCounts[project][mutationId]) + ' / ' + projects[project].ssmTestedDonorCount} (${((projectCounts[project][mutationId] / projects[project].ssmTestedDonorCount) * 100).toFixed(2)}%)</td>
             </tr>
         `;
 
