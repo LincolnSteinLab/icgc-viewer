@@ -33,16 +33,13 @@ Note: You can run in the background using the detach mode (-d)
 ## Load refseq and tracks
 If you already have your tracks.conf and seq/, etc., you can simply put these files into your `./data` directory.
 
-As an example, we will load Chr1 (GRCh37) as a reference sequence. Unfortunately you need JBrowse to prepare refseq, so you can either go into the docker container and run the following or clone JBrowse on your host system, run `./setup.sh` and then run the following on the host.
-
-Note that GRCh37 is used for ICGC.
+You will have to put the RefSeq data into the `./data` directory. Download the GRCH37 `.fa` and `.fa.fai` files from online (ex. http://bioinfo.hpc.cam.ac.uk/downloads/datasets/fasta/grch37/). Then put the following in `./data/tracks.conf` (note files may be named something else).
 
 ```
-# Download a FASTA file
-wget http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
-
-# Prepare refseqs
-jbrowse/bin/prepare-refseqs.pl --fasta ./data/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
+refSeqs=GRCh37.genome.fa.fai
+  
+[tracks.refseqs]
+urlTemplate=GRCh37.genome.fa
 ```
 
 Now go to `localhost:3000` and you should see JBrowse with your refdata and tracks!
