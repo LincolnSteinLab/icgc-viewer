@@ -27,11 +27,11 @@ return declare( ExportBase,
             'unsafePopup=true',
         ]
 
-        if (this.store.config.storeClass === 'icgc-viewer/Store/SeqFeature/Genes') {
+        if (this.store.config.storeClass === 'icgc-viewer/Store/SeqFeature/SimpleSomaticMutations') {
             trackArray.push('fmtDetailValue_projects=function(value) { return "<div id=\'projects-icgc-" + value +  "\'>Loading...</div>";}');
         }
 
-        if (this.store.config.storeClass === 'icgc-viewer/Store/SeqFeature/SimpleSomaticMutations') {
+        if (this.store.config.storeClass === 'icgc-viewer/Store/SeqFeature/Genes') {
             trackArray.push('fmtDetailValue_annotations=function(value) { return "<div id=\'annotations-icgc-" + value +  "\'>Loading...</div>";}');
         }
 
