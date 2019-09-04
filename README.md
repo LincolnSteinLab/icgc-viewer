@@ -13,22 +13,16 @@ For installing icgc-viewer plugin:
 2) Add 'icgc-viewer' to the array of plugins in the `jbrowse_conf.json`.
 
 ## 3. Install Reference Sequence Data
-Now setup the reference sequence used. ICGC requires the GRCh37 Human reference files, which can be found at http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/. You'll want to download the files of the form `Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz`.
+Now setup the reference sequence used. ICGC requires the GRCh37 Human reference files.
 
-Then you can use the `bin/prepare-refeqs.pl` command to generate the RefSeq information.
+Download the GRCh37 `.fa` and `.fa.fai` files online (ex. http://bioinfo.hpc.cam.ac.uk/downloads/datasets/fasta/grch37/). Then put the following in `./data/tracks.conf` (note files may be named something else).
 
-Below is an example of these two steps for Chr1.
-
-Ex. Chromosome 1
-1. Download Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz from the above site.
 ```
-wget http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
+refSeqs=GRCh37.genome.fa.fai
+  
+[tracks.refseqs]
+urlTemplate=GRCh37.genome.fa
 ```
-2. Setup refeq with the following command
-```
-bin/prepare-refseqs.pl --fasta Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
-```
-Note that you can specify multiple fast in one command by doing `--fasta fasta1.fa.gz --fasta fasta2.fa.gz ...`
 
 ## 4. Adding new tracks
 We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse. These are present in the menu under `ICGC`.
