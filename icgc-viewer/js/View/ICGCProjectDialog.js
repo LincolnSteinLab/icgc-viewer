@@ -265,7 +265,7 @@ function (
                 );
             }
 
-            console.log("Adding track of type " + trackType + " and store class " + storeClass + ": " + key + " (" + label + ")");
+            console.log("Adding track of type " + trackType + " and store class icgc-viewer/Store/SeqFeature/" + storeClass + ": " + key + " (" + label + ")");
 
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
