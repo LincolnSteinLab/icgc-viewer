@@ -52,7 +52,6 @@ define(
         _trackMenuOptions: function () {
             var track = this;
             var options = this.inherited(arguments);
-            console.log(track);
             options.push({
                 label: 'Share Track as URL',
                 action: "contentDialog",
@@ -64,7 +63,7 @@ define(
 
         _shareableLinkContent: function() {
             var track = this;
-            var details = domConstruct.create('div', { className: 'detail', style: 'display: flex; flex-direction: column;align-items: center; justify-content: center;' });
+            var details = domConstruct.create('div', { className: 'detail', style: 'display: flex; flex-direction: column; align-items: center; justify-content: center;' });
 
             // Create addTracks value
             var addTracksArray = [];
@@ -77,8 +76,10 @@ define(
             addTrackConf.unsafePopup = true;
             addTrackConf.filters = track.store.config.filters;
             addTrackConf.donor = track.store.config.donor;
+            addTrackConf.size = track.config.size;
+            addTrackConf.fmtDetailValue_annotations = function(value) { return '<div>Loading content...</div>';};
             addTracksArray.push(addTrackConf);
-            addTracksArray = JSON.stringify(addTracksArray);
+            addTracksArray = JSON.stringify(addTracksArray); // Stringify doesn't copy over fmtDetailValue
 
             // Create a shareable URL
             var params = new URLSearchParams(window.location.search);

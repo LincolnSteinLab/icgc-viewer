@@ -16,22 +16,22 @@ return declare( ExportBase,
    },
 
    _printHeader: function() {
-       var storeArray = (this.store.config.storeClass).split('/')
+       var storeArray = (this.store.config.type).split('/')
 
        var trackArray = [
             '[tracks.' + this.store.config.label + ']',
-            'storeClass=' + this.store.config.storeClass,
+            'storeClass=' + this.store.config.type,
             'type=' + this.track.config.type,
             'key=' + this.store.config.key,
             'metadata.datatype=' + storeArray[storeArray.length - 1],
             'unsafePopup=true',
         ]
 
-        if (this.store.config.storeClass === 'icgc-viewer/Store/SeqFeature/SimpleSomaticMutations') {
+        if (this.store.config.type === 'icgc-viewer/Store/SeqFeature/SimpleSomaticMutations') {
             trackArray.push('fmtDetailValue_projects=function(value) { return "<div id=\'projects-icgc-" + value +  "\'>Loading...</div>";}');
         }
 
-        if (this.store.config.storeClass === 'icgc-viewer/Store/SeqFeature/Genes') {
+        if (this.store.config.type === 'icgc-viewer/Store/SeqFeature/Genes') {
             trackArray.push('fmtDetailValue_annotations=function(value) { return "<div id=\'annotations-icgc-" + value +  "\'>Loading...</div>";}');
         }
 
