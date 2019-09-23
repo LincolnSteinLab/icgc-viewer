@@ -17,6 +17,7 @@ return declare( ExportBase,
 
    _printHeader: function() {
        var storeArray = (this.store.config.type).split('/')
+       console.log(this)
 
         var trackObject = {
             'label': this.store.config.label,
@@ -26,7 +27,9 @@ return declare( ExportBase,
             'metadata': {
                 'datatype': storeArray[storeArray.length - 1]
             },
-            'unsafePopup': true
+            'unsafePopup': true,
+            'donor': this.store.donor,
+            'size': this.store.size
         }
 
         if (this.store.filters) {

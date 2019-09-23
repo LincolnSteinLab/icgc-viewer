@@ -24,8 +24,16 @@ return declare( ExportBase,
             'type=' + this.track.config.type,
             'key=' + this.store.config.key,
             'metadata.datatype=' + storeArray[storeArray.length - 1],
-            'unsafePopup=true',
+            'unsafePopup=true'
         ]
+
+        if (this.store.size) {
+            trackArray.push('size=' + this.store.size)
+        }
+        
+        if (this.store.donor) {
+            trackArray.push('donor=' + this.store.donor)
+        }
 
         if (this.store.filters) {
             trackArray.push('filters=' + JSON.stringify(this.store.filters))
