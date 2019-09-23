@@ -66,7 +66,6 @@ define(
             var details = domConstruct.create('div', { className: 'detail', style: 'display: flex; flex-direction: column; align-items: center; justify-content: center;' });
 
             // Create addTracks value
-            console.log(track)
             var addTracksArray = [];
             var addTrackConf = {};
             addTrackConf.label = track.config.label;
