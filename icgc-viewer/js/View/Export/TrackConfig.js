@@ -19,10 +19,10 @@ return declare( ExportBase,
        var storeArray = (this.store.config.type).split('/')
 
        var trackArray = [
-            '[tracks.' + this.store.config.label + ']',
+            '[tracks.' + this.track.labelHTML + ']',
             'storeClass=' + this.store.config.type,
             'type=' + this.track.config.type,
-            'key=' + this.store.config.key,
+            'key=' + this.track.key,
             'metadata.datatype=' + storeArray[storeArray.length - 1],
             'unsafePopup=true'
         ]
