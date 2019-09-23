@@ -31,9 +31,9 @@ Note: You can run in the background using the detach mode (-d)
 `docker-compose up -d`
 
 ## Load refseq and tracks
-If you already have your tracks.conf and seq/, etc., you can simply put these files into your `./data` directory.
+If you already have your `tracks.conf` and `seq/`, etc., you can simply put these files into your `./data` directory.
 
-You will have to put the RefSeq data into the `./data` directory. Download the GRCH37 `.fa` and `.fa.fai` files from online (ex. http://bioinfo.hpc.cam.ac.uk/downloads/datasets/fasta/grch37/). Then put the following in `./data/tracks.conf` (note files may be named something else).
+You will have to put the RefSeq data into the `./data` directory. Download the GRCh37 `.fa` and `.fa.fai` files online (ex. http://bioinfo.hpc.cam.ac.uk/downloads/datasets/fasta/grch37/). Then put the following in `./data/tracks.conf` (note files may be named something else).
 
 ```
 refSeqs=GRCh37.genome.fa.fai

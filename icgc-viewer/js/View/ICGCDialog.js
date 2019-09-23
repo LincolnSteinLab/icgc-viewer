@@ -976,7 +976,6 @@ function (
             };
 
             if (storeClass === 'Genes') {
-                trackConf.fmtDetailValue_annotations = function(value) { return "<div id='annotations-icgc-" + value +  "'>Loading content...</div" };
                 trackConf.menuTemplate.push(
                     {   
                         label : "Highlight this Gene",
@@ -989,7 +988,6 @@ function (
                     }
                 );
             } else if (storeClass === 'SimpleSomaticMutations') {
-                trackConf.fmtDetailValue_projects = function(value) { return "<div id='projects-icgc-" + value +  "'>Loading content...</div" };
                 trackConf.menuTemplate.push(
                     {   
                         label : "Highlight this Simple Somatic Mutation",
@@ -1003,7 +1001,7 @@ function (
                 );
             }
 
-            console.log("Adding track of type " + trackType + " and store class " + storeClass + ": " + key + " (" + label + ")");
+            console.log("Adding track of type " + trackType + " and store class icgc-viewer/Store/SeqFeature/" + storeClass + ": " + key + " (" + label + ")");
 
             trackConf.store = storeName;
             this.browser.publish('/jbrowse/v1/v/tracks/new', [trackConf]);
