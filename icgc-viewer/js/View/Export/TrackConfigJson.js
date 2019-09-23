@@ -17,6 +17,7 @@ return declare( ExportBase,
 
    _printHeader: function() {
        var storeArray = (this.store.config.type).split('/')
+       console.log(this)
 
         var trackObject = {
             'label': this.store.config.label,
