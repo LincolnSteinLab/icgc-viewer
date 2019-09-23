@@ -66,6 +66,7 @@ define(
             var details = domConstruct.create('div', { className: 'detail', style: 'display: flex; flex-direction: column; align-items: center; justify-content: center;' });
 
             // Create addTracks value
+            console.log(track)
             var addTracksArray = [];
             var addTrackConf = {};
             addTrackConf.label = track.config.label;
@@ -77,9 +78,8 @@ define(
             addTrackConf.filters = track.store.config.filters;
             addTrackConf.donor = track.store.config.donor;
             addTrackConf.size = track.config.size;
-            addTrackConf.fmtDetailValue_annotations = function(value) { return '<div>Loading content...</div>';};
             addTracksArray.push(addTrackConf);
-            addTracksArray = JSON.stringify(addTracksArray); // Stringify doesn't copy over fmtDetailValue
+            addTracksArray = JSON.stringify(addTracksArray); 
 
             // Create a shareable URL
             var params = new URLSearchParams(window.location.search);

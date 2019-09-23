@@ -31,10 +31,6 @@ return declare( ExportBase,
             trackArray.push('fmtDetailValue_projects=function(value) { return "<div id=\'projects-icgc-" + value +  "\'>Loading...</div>";}');
         }
 
-        if (this.store.config.type === 'icgc-viewer/Store/SeqFeature/Genes') {
-            trackArray.push('fmtDetailValue_annotations=function(value) { return "<div id=\'annotations-icgc-" + value +  "\'>Loading...</div>";}');
-        }
-
         if (this.store.filters) {
             trackArray.push('filters=' + JSON.stringify(this.store.filters))
         }
