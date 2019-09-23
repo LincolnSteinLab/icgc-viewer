@@ -29,10 +29,6 @@ return declare( ExportBase,
             'unsafePopup': true
         }
 
-        if (this.store.config.type === 'icgc-viewer/Store/SeqFeature/SimpleSomaticMutations') {
-            trackObject['fmtDetailValue_projects'] = 'function(value) { return "<div id=\'projects-icgc-" + value +  "\'>Loading...</div>";}';
-        }
-
         if (this.store.filters) {
             trackObject['filters'] = JSON.stringify(this.store.filters);
         }

@@ -134,7 +134,6 @@ storeClass=icgc-viewer/Store/SeqFeature/SimpleSomaticMutations
 type=icgc-viewer/View/Track/CanvasVariants
 key=ICGC_Mutations
 unsafePopup=true
-fmtDetailValue_projects=function(value) { return "<div id='projects-icgc-" + value +  "'>Loading content...</div>";}
 ```
 
 ### Extra notes

@@ -74,10 +74,10 @@ get: function(name) {
                 handleAs: 'json'
             })
         }).then(function(response) {
-            document.getElementById('projects-icgc-' + mutationId).innerHTML = thisB.createProjectIncidenceTable(thisB.projects, response, mutationId);
+            document.getElementsByClassName('value projects')[0].innerHTML = thisB.createProjectIncidenceTable(thisB.projects, response, mutationId);
         }).catch(function(err) {
             console.log(err)
-            document.getElementById('projects-icgc-' + mutationId).innerHTML = 'Error creating projects table';
+            document.getElementsByClassName('value projects')[0].innerHTML = 'Error creating projects table';
         });
         return mutationId;
     } else {
