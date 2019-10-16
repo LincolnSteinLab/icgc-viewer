@@ -20,8 +20,8 @@ before_install:
   - mkdir docker/data
   - cp cypress/data/tracks.conf docker/data/tracks.conf
   - cd docker/data
-  - wget http://bioinfo.hpc.cam.ac.uk/downloads/datasets/fasta/grch37/GRCh37.p13.genome.fa
-  - wget http://bioinfo.hpc.cam.ac.uk/downloads/datasets/fasta/grch37/GRCh37.p13.genome.fa.fai
+  - curl -o GRCh37.p13.genome.fa  http://bioinfo.hpc.cam.ac.uk/downloads/datasets/fasta/grch37/GRCh37.p13.genome.fa
+  - curl -o GRCh37.p13.genome.fa.fai http://bioinfo.hpc.cam.ac.uk/downloads/datasets/fasta/grch37/GRCh37.p13.genome.fa.fai
   - cd ../
   - docker-compose build
   - docker-compose up -d
