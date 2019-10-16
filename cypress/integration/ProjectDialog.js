@@ -5,7 +5,7 @@ describe('Select tracks', function() {
     before(function() {
         cy.viewport('macbook-13')
         cy.visit('http://localhost:3000/?loc=1%3A1..248956422')
-        cy.wait(1000) // Wait for load
+        cy.wait(10000) // Wait for load
     })
 
     it('Should be able to view projects', function() {
