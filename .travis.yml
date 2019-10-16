@@ -1,0 +1,32 @@
+language: node_js
+
+node_js:
+  - 10
+
+addons:
+  apt:
+    packages:
+      - libgconf-2-4
+
+cache:
+  npm: true
+  directories:
+    - ~/.cache
+
+services:
+  - docker
+
+before_install:
+  - cp cypress/data/tracks.conf docker/data/tracks.conf
+  - cd docker/data
+  - wget http://bioinfo.hpc.cam.ac.uk/downloads/datasets/fasta/grch37/GRCh37.p13.genome.fa
+  - wget http://bioinfo.hpc.cam.ac.uk/downloads/datasets/fasta/grch37/GRCh37.p13.genome.fa.fai
+  - cd ../
+  - docker-compose build
+  - docker-compose up -d
+  - cd ../
+
+install:
+  - npm ci
+script:
+  - $(npm bin)/cypress run --record
