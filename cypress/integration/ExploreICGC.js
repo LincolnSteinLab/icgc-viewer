@@ -10,31 +10,54 @@ describe('Select tracks from explore', function() {
         cy.contains('Explore donors, genes and mutations').click()
     })
 
-    var selectFacetTab = function (tabIndex, optionIndex, checkBoxIndex) {
+    /**
+     * Selects a facet tab, an accordion in that tab, and an option in that accordion
+     * @param {number} tabIndex tab index (0-2)
+     * @param {number} accordionIndex accordionIndex(0-n)
+     * @param {number} optionIndex optionIndex (0-m)
+     */
+    var selectFacetTab = function (tabIndex, accordionIndex, optionIndex) {
         cy.get('.dijitTabListWrapper').eq(0).within(() => {
             cy.get('.dijitTab').eq(tabIndex).click()
         })
 
         cy.get('.dijitTabContainerTopChildWrapper.dijitVisible').eq(0).within(() => {
-            cy.get('.dijitAccordionTitle').eq(optionIndex).click()
-            cy.get('.dijitAccordionChildWrapper').eq(optionIndex).within(() => {
-                cy.get('.dijitCheckBox').eq(checkBoxIndex).click()
+            cy.get('.dijitAccordionTitle').eq(accordionIndex).click()
+            cy.get('.dijitAccordionChildWrapper').eq(accordionIndex).within(() => {
+                cy.get('.dijitCheckBox').eq(optionIndex).click()
             })
         })
     }
 
+    /**
+     * Select a results tab
+     * @param {number} tabIndex index of tab (0-2)
+     */
     var selectResultsTab = function (tabIndex) {
         cy.get('.dijitTabListWrapper').eq(1).within(() => {
             cy.get('.dijitTab').eq(tabIndex).click()
         })
     }
 
+    /**
+     * Checks the tab container for the existance of the given text
+     * @param {Array<String>} textValues array of text
+     */
     var checkResultsTab = function (textValues) {
         cy.get('.dijitTabContainer').eq(1).within(() => {
             for (var text of textValues) {
                 cy.contains(text)
             }
         })
+    }
+
+    var clearFilters = function() {
+        // Remove filters
+        cy.get('.dijitIconDelete').click()
+
+        // Check that filters are clear
+        selectResultsTab(0)
+        checkResultsTab(['Showing 1 to 20 of 24,289'])
     }
 
     it('Should be able to explore and apply facets', function() {
@@ -71,12 +94,8 @@ describe('Select tracks from explore', function() {
         selectResultsTab(2)
         checkResultsTab(['Showing 1 to 20 of 1,609,595', 'MU37643', 'MU11602977'])
 
-        // Remove filters
-        cy.get('.dijitIconDelete').click()
-
-        // Check that filters are clear
-        selectResultsTab(0)
-        checkResultsTab(['Showing 1 to 20 of 24,289'])
+        // Clear filters
+        clearFilters()
     })
 
     it('Should be able to apply filters across data types', function() {
@@ -129,26 +148,8 @@ describe('Select tracks from explore', function() {
         // Validate mutation results
         selectResultsTab(2)
         checkResultsTab(['Showing 1 to 20 of 445', 'MU3457350', 'MU33141830'])
+
+        // Clear filters
+        clearFilters()
     })
-
-    // it('Should be able to add filtered donor data', function() {
-    //     cy.get('.dijitDialog').within(() => {
-    //         // Check that explore dialog looks correct
-    //         cy.contains('Explore data available on the ICGC Data Portal')
-    //     })
-    // })
-
-    // it('Should be able to add filtered gene data', function() {
-    //     cy.get('.dijitDialog').within(() => {
-    //         // Check that explore dialog looks correct
-    //         cy.contains('Explore data available on the ICGC Data Portal')
-    //     })
-    // })
-
-    // it('Should be able to add filtered mutation data', function() {
-    //     cy.get('.dijitDialog').within(() => {
-    //         // Check that explore dialog looks correct
-    //         cy.contains('Explore data available on the ICGC Data Portal')
-    //     })
-    // })
 })
