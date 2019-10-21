@@ -5,7 +5,7 @@ describe('Select tracks', function() {
     before(function() {
         cy.viewport('macbook-13')
         cy.visit('http://localhost:3000/?loc=1%3A1..248956422')
-        cy.wait(10000) // Wait for load
+        cy.wait(1000) // Wait for load
     })
 
     it('Should be able to view projects', function() {
@@ -15,11 +15,10 @@ describe('Select tracks', function() {
 
         // Check that projects viewer is opened and has expected content
         cy.contains('View projects available on the ICGC Data Portal')
-        cy.contains('Showing 1 to 20 of')
         cy.contains('BRCA-US')
         cy.get('.results-table').should('be.visible')
 
-        // Add SSM and Gene track for project BRCA-US (assume first)
+        // Add SSM and Gene track for project BRCA-US (assume first in list)
         cy.get('#dijit_form_ComboButton_0_arrow').should('be.visible').type('{enter}')
         cy.contains('SSMs for Project').click()
 
@@ -40,7 +39,8 @@ describe('Select tracks', function() {
         
         cy.wait(1000)
 
-        // Check detail view (assume ENSG00000130940)
+        // Check detail view (assume MU4757886)
+        // NOTE: This is dependant on the screen size
         cy.get("canvas.static-canvas").eq(0).click(70, 75)
         cy.get('.popup-dialog').within(() => {
             cy.contains('MU4757886')
@@ -55,6 +55,7 @@ describe('Select tracks', function() {
         })
 
         // Check detail view (assume ENSG00000130940)
+        // NOTE: This is dependant on the screen size
         cy.get("canvas.static-canvas").eq(1).click(50, 75)
         cy.get('.popup-dialog').within(() => {
             cy.contains('The protein encoded by this gene is a zinc finger transcription factor.');
@@ -71,6 +72,5 @@ describe('Select tracks', function() {
             cy.contains('metal ion binding')
             cy.get('.dijitDialogCloseIcon').click()
         })
-
     })
 })

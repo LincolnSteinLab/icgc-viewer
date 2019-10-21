@@ -3,12 +3,11 @@ describe('Select tracks', function() {
     before(function() {
         cy.viewport('macbook-13')
         cy.visit('http://localhost:3000/?loc=1%3A1..248956422')
-        cy.wait(10000)
 
         // Open track menu
         cy.contains('Select').click()
 
-        // Add existing tracks
+        // Add existing SSM track (ICGC_Mutations)
         cy.get('#trackSelectGrid_rowSelector_2').click()
 
         // Close track menu
