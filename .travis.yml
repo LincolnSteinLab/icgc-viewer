@@ -23,7 +23,7 @@ before_install:
   - cp data/jbrowse.conf docker/data/jbrowse.conf
   - cd docker/data
   - curl -o Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
-  - gzip Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
+  - gzip -d Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz
   #- curl -o GRCh37.p13.genome.fa  http://bioinfo.hpc.cam.ac.uk/downloads/datasets/fasta/grch37/GRCh37.p13.genome.fa
   #- curl -o GRCh37.p13.genome.fa.fai http://bioinfo.hpc.cam.ac.uk/downloads/datasets/fasta/grch37/GRCh37.p13.genome.fa.fai
   - cd ../
