@@ -52,7 +52,7 @@ key=ICGC_Genes
 metadata.datatype=Genes
 unsafePopup=true
 size=1000
-filters={"gene":{"location":{"is":["1:0-248956422"]}}}`
+filters={"gene":{"location":{"is":["1:0-248899548"]}}}`
         ])
         testExport(7, 'Track Config JSON', 
         [
@@ -66,7 +66,7 @@ filters={"gene":{"location":{"is":["1:0-248956422"]}}}`
 \t},
 \t"unsafePopup": true,
 \t"size": 1000,
-\t"filters": "{\\"gene\\":{\\"location\\":{\\"is\\":[\\"1:0-248956422\\"]}}}"
+\t"filters": "{\\"gene\\":{\\"location\\":{\\"is\\":[\\"1:0-248899548\\"]}}}"
 }`
         ])
     })

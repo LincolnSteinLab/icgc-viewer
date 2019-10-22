@@ -52,7 +52,7 @@ key=ICGC_Mutations
 metadata.datatype=SimpleSomaticMutations
 unsafePopup=true
 size=500
-filters={"mutation":{"location":{"is":["1:0-248956422"]}}}`
+filters={"mutation":{"location":{"is":["1:0-248899548"]}}}`
         ])
         testExport(7, 'Track Config JSON', 
         [
@@ -66,7 +66,7 @@ filters={"mutation":{"location":{"is":["1:0-248956422"]}}}`
 \t},
 \t"unsafePopup": true,
 \t"size": 500,
-\t"filters": "{\\"mutation\\":{\\"location\\":{\\"is\\":[\\"1:0-248956422\\"]}}}"
+\t"filters": "{\\"mutation\\":{\\"location\\":{\\"is\\":[\\"1:0-248899548\\"]}}}"
 }`
         ])
     })
