@@ -6,9 +6,13 @@ describe('Select tracks from explore', function() {
         cy.viewport('macbook-13')
         cy.visit('http://localhost:3000/?loc=1%3A1..248956422')
         cy.wait(1000) // Wait for load
+        openExportDialog()
+    })
+
+    var openExportDialog = function () {
         cy.get('#dropdownbutton_icgc').type('{enter}')
         cy.contains('Explore donors, genes and mutations').click()
-    })
+    }
 
     /**
      * Selects a facet tab, an accordion in that tab, and an option in that accordion
@@ -26,6 +30,15 @@ describe('Select tracks from explore', function() {
             cy.get('.dijitAccordionChildWrapper').eq(accordionIndex).within(() => {
                 cy.get('.dijitCheckBox').eq(optionIndex).click()
             })
+        })
+    }
+
+    /**
+     * Close the popup window
+     */
+    var closePopup = function() {
+        cy.contains('ICGC Browser').parent().within(() => {
+            cy.get('.dijitDialogCloseIcon').click()
         })
     }
 
@@ -51,6 +64,9 @@ describe('Select tracks from explore', function() {
         })
     }
 
+    /**
+     * Clears all applied filters
+     */
     var clearFilters = function() {
         // Remove filters
         cy.get('.dijitIconDelete').click()
@@ -96,9 +112,26 @@ describe('Select tracks from explore', function() {
 
         // Clear filters
         clearFilters()
+
+        // Add tracks and check that they were added
+        cy.get('.dijitTabContainer').eq(1).within(() => {
+            cy.contains('All Genes for Donor').eq(0).click()
+            cy.contains('All SSMs for Donor').eq(0).click()
+        })
+
+        closePopup()
+
+        // Check that tracks are added
+        cy.contains('ICGC_Genes_DO232761')
+        cy.contains('ICGC_SimpleSomaticMutations_DO232761')
     })
 
     it('Should be able to apply filters across data types', function() {
+        openExportDialog()
+
+        // Clear filters
+        clearFilters()
+
         // Select study - PCAWG
         cy.get('.dijitDialog').within(() => {
             selectFacetTab(0, 4, 0)
