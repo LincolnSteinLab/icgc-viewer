@@ -169,3 +169,12 @@ The following export types are supported by both Genes and SSMs. To export, sele
 You do not need to add tracks directly from the ICGC Dialog. You can also define them in the `tracks.conf` file.
 
 See `data/advanced-tracks.conf` for some more complex usages, including filters.
+
+# Automated testing
+Cypress.io is used for testing this plugin. The following steps show how to run the tests locally.
+1. Install JBrowse and download chromosome files as described above.
+2. Install Cypress.io with `npm install`.
+3. Place `cypress/data/tracks.conf` into your `jbrowse/data/` directory. Make sure no other tracks are present.
+4. Run `./node_modules/cypress/bin/cypress open` or `./node_modules/cypress/bin/cypress run`
+
+**Note** that the tests are dependent on what is returned from the ICGC API and the order of the results. If these change some of the tests may fail.

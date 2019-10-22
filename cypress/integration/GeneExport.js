@@ -19,9 +19,9 @@ describe('Select tracks', function() {
 
     /**
      * Checks that export of a particular type works
-     * @param {*} radioIndex Index of export checkbox
-     * @param {*} exportType Name of export type
-     * @param {*} textValues Values to check for in export
+     * @param {number} radioIndex Index of export checkbox
+     * @param {string} exportType Name of export type
+     * @param {Array<string>} textValues Values to check for in export
      */
     var testExport = function (radioIndex, exportType, textValues) {
         cy.get('.track-menu-button').eq(1).click()
