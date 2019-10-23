@@ -172,9 +172,10 @@ See `data/advanced-tracks.conf` for some more complex usages, including filters.
 
 # Automated testing
 Cypress.io is used for testing this plugin. The following steps show how to run the tests locally.
-1. Install JBrowse and download chromosome files as described above.
-2. Install Cypress.io with `npm install`.
-3. Place `cypress/data/tracks.conf` into your `jbrowse/data/` directory. Make sure no other tracks are present.
-4. Run `./node_modules/cypress/bin/cypress open` or `./node_modules/cypress/bin/cypress run`
+1. Install JBrowse and but don't install chromosome files.
+2. Download Chr 1 fasta from `http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz`. There should be the fasta index file in `cypress/data/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.fai`. Put these files into `jbrowse/data/`.
+3. Install Cypress.io with `npm install`.
+4. Place `cypress/data/tracks.conf` into your `jbrowse/data/` directory. Make sure no other tracks are present.
+5. Run `./node_modules/cypress/bin/cypress open` or `./node_modules/cypress/bin/cypress run`
 
 **Note** that the tests are dependent on what is returned from the ICGC API and the order of the results. If these change some of the tests may fail.
