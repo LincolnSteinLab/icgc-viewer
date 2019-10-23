@@ -8,7 +8,7 @@ describe('Select tracks', function() {
         cy.contains('Select').click()
 
         // Add existing gene track (ICGC_Genes)
-        cy.get('#trackSelectGrid_rowSelector_1').click()
+        cy.get('#trackSelectGrid_rowSelector_0').click()
 
         // Close track menu
         cy.contains('Back to browser').click()

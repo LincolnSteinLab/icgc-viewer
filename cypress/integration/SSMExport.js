@@ -8,7 +8,7 @@ describe('Select tracks', function() {
         cy.contains('Select').click()
 
         // Add existing SSM track (ICGC_Mutations)
-        cy.get('#trackSelectGrid_rowSelector_2').click()
+        cy.get('#trackSelectGrid_rowSelector_1').click()
 
         // Close track menu
         cy.contains('Back to browser').click()
