@@ -1,6 +1,6 @@
 // Tests the exporting of gene tracks
 describe('Select tracks', function() {
-    before(function() {
+    beforeEach(function() {
         cy.viewport('macbook-13')
         cy.visit('http://localhost:3000/?loc=1%3A1..248956422')
 
