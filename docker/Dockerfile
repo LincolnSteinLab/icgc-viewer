@@ -19,7 +19,7 @@ WORKDIR /jbrowse/
 # Download ICGC Viewer
 RUN git clone https://github.com/agduncan94/icgc-viewer /icgc-viewer/ && \
     cd /icgc-viewer/ && \
-    git checkout 0.1.5 && \
+    git checkout 0.1.6 && \
     cp -r icgc-viewer /jbrowse/plugins/icgc-viewer && \
     cat ./data/jbrowse.conf > /jbrowse/jbrowse.conf
 
