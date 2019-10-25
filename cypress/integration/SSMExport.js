@@ -4,6 +4,14 @@ describe('Select tracks', function() {
         cy.viewport('macbook-13')
         cy.visit('http://localhost:3000/?loc=1%3A1..248956422')
 
+        cy
+            .server()
+            .route({
+                method: 'GET',
+                url: 'https://dcc.icgc.org/api/v1/mutations?filters=*',
+                response: 'fixture:ssm/track.json'
+              })
+
         // Open track menu
         cy.contains('Select').click()
 
@@ -37,7 +45,7 @@ describe('Select tracks', function() {
     }
 
     // Tests the exporting feature for ssms
-    // Assumption: loc=1%3A1..248956422
+    // Assumption: loc=1%3A1..248899548
     it('Should be able to export SSMs in various export formats', function() {
         testExport(2, 'GFF3', ['##gff-version 3', '##sequence-region', 'single base substitution'])
         testExport(3, 'BED', ['track name="ICGC_Mutations" useScore=0', '1	115256528	115256528	MU68272'])

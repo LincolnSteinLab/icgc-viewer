@@ -37,7 +37,7 @@ describe('Select tracks', function() {
     }
 
     // Tests the exporting feature for genes
-    // Assumption: loc=1%3A1..248956422
+    // Assumption: loc=1%3A1..248899548
     it('Should be able to export genes in various export formats', function() {
         testExport(2, 'GFF3', ['##gff-version 3', '##sequence-region', 'protein_coding'])
         testExport(3, 'BED', ['track name="ICGC_Genes" useScore=0', '1	103342022	103574051	ENSG00000060718		-'])
@@ -63,7 +63,7 @@ describe('Select tracks', function() {
         ])
     })
 
-    it('Should be able to export an Gene track', function() {
+    it('Should be able to export a URL Gene track', function() {
         cy.get('.track-menu-button').click()
         cy.contains('Share Track as URL').click()
         cy.get('textarea').should('have.value', 'http://localhost:3000/?loc=1%3A1..248899548&tracks=ICGC_Genes&highlight=&addTracks=%5B%7B%22label%22%3A%22ICGC_Genes%22%2C%22storeClass%22%3A%22icgc-viewer%2FStore%2FSeqFeature%2FGenes%22%2C%22type%22%3A%22icgc-viewer%2FView%2FTrack%2FGeneTrack%22%2C%22key%22%3A%22ICGC_Genes%22%2C%22metadata%22%3A%7B%22datatype%22%3A%22Gene%22%7D%2C%22unsafePopup%22%3Atrue%7D%5D')
