@@ -25,13 +25,7 @@ urlTemplate=GRCh37.genome.fa
 ```
 
 ## 4. Adding new tracks
-We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse. These are present in the menu under `ICGC`.
-
-### A. Explore donors, genes and mutations
-This dialog is similar to the Exploration section of the ICGC data portal. As you apply facets on the left-hand side, updated results will be shown on the right side. You can create donor specific SSM and Gene tracks, along with ICGC-wide SSM and Gene tracks.
-
-### B. View Projects
-This dialog shows the projects present on the ICGC Data Portal. You can add SSM and Gene tracks for each project.
+We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse. These are present in the menu under `ICGC`. See [Dynamic Track Generation](#dynamic-track-generation) for more details
 
 ## 5. Run JBrowse
 You'll have to run the following commands:
@@ -147,12 +141,12 @@ You can also set the `size` attribute (defaults to 500). This is the theoretical
 
 # Dynamic track generation
 ## Explore donors, genes and mutations
-In the tools menu there is an option to `Explore donors, genes and mutations`. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. This will create a filtered list of matching donors, genes and mutations.
+In the menubar there is an ICGC button with an option to `Explore donors, genes and mutations`. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. You can then create tracks based on the chosen facets.
 
 ![ICGC Explore](images/ICGC-Explore-Dialog.png)
 
 ## Explore projects
-There is also an options to search ICGC by projects. This allows you to see all of the associated SSMs and Genes per project in one track.
+There is also an options to search ICGC by projects. This allows you to see all of the associated SSMs and Genes per project in one track. If you want to apply additional facets to a project, you'll need to use the `Explore donors, genes and mutations` dialog.
 ![ICGC Projects](images/ICGC-Projects-Dialog.png)
 
 # Export Types
