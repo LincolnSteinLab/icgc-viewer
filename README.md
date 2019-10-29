@@ -90,12 +90,15 @@ filters={"gene":{"type":{"is":["protein_coding"]}}}
 
 Example Track:
 ```
-[tracks.ICGC_Genes]
+[tracks.ICGC_Genes_protein-coding]
 storeClass=icgc-viewer/Store/SeqFeature/Genes
 type=icgc-viewer/View/Track/GeneTrack
-key=ICGC_Genes
+key=ICGC_Genes_protein-coding
 unsafePopup=true
+filters={"gene":{"type":{"is":["protein_coding"]}}}
 ```
+
+![ICGC Genes](images/ICGC-Genes-protein-coding.png)
 
 ### Extra notes
 You can also set the `size` attribute (defaults to 1000). This is the theoretical maximum number of genes displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
@@ -129,32 +132,28 @@ filters={"mutation":{"functionalImpact":{"is":["High"]}}}
 
 Example Track:
 ```
-[tracks.ICGC_Mutations]
+[tracks.ICGC_Mutations_high-impact]
 storeClass=icgc-viewer/Store/SeqFeature/SimpleSomaticMutations
 type=icgc-viewer/View/Track/SSMTrack
-key=ICGC_Mutations
+key=ICGC_Mutations_high-impact
 unsafePopup=true
+filters={"mutation":{"functionalImpact":{"is":["High"]}}}
 ```
+
+![ICGC SSMs](images/ICGC-SSM-high-impact.png)
 
 ### Extra notes
 You can also set the `size` attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
 
 # Dynamic track generation
-In the tools menu there is an option to explore ICGC. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. This will create a filtered list of matching donors, genes and mutations.
+## Explore donors, genes and mutations
+In the tools menu there is an option to `Explore donors, genes and mutations`. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. This will create a filtered list of matching donors, genes and mutations.
 
-Donors Tab:
-* View donors that match the selected facets
-* For each donor
-    * Add track for mutated genes
-    * Add track for SSMs
+![ICGC Explore](images/ICGC-Explore-Dialog.png)
 
-Genes Tab:
-* View genes that match the selected facets
-
-Mutations Tab:
-* View mutations that match the selected facets
-
+## Explore projects
 There is also an options to search ICGC by projects. This allows you to see all of the associated SSMs and Genes per project in one track.
+![ICGC Projects](images/ICGC-Projects-Dialog.png)
 
 # Export Types
 The following export types are supported by both Genes and SSMs. To export, select `Save track data` in the track dropdown. Note that not all track information is carried over to the exported file.
@@ -178,4 +177,4 @@ Cypress.io is used for testing this plugin. The following steps show how to run 
 4. Place `cypress/data/tracks.conf` into your `jbrowse/data/` directory. Make sure no other tracks are present.
 5. Run `./node_modules/cypress/bin/cypress open` or `./node_modules/cypress/bin/cypress run`
 
-**Note** that the tests are dependent on what is returned from the ICGC API and the order of the results. If these change some of the tests may fail.
+**Note** while some tests have mocked endpoints, not all endpoints are mocked. This could lead to breakage of tests in the future.
