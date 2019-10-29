@@ -1,16 +1,16 @@
 define(
     [
         "dojo/_base/declare",
-        "JBrowse/View/Track/CanvasFeatures",
+        "JBrowse/View/Track/HTMLFeatures",
         'JBrowse/View/Track/_ExportMixin',
         'dojo/dom-construct'
     ],
    function(
        declare,
-       CanvasFeatures,
+       HTMLFeatures,
        ExportMixin,
        domConstruct) {
-   return declare([ CanvasFeatures, ExportMixin ], {
+   return declare([ HTMLFeatures, ExportMixin ], {
 
         _exportFormats: function() {
             return [
