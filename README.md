@@ -92,7 +92,7 @@ Example Track:
 ```
 [tracks.ICGC_Genes]
 storeClass=icgc-viewer/Store/SeqFeature/Genes
-type=icgc-viewer/View/Track/CanvasVariants
+type=icgc-viewer/View/Track/GeneTrack
 key=ICGC_Genes
 unsafePopup=true
 ```
@@ -131,7 +131,7 @@ Example Track:
 ```
 [tracks.ICGC_Mutations]
 storeClass=icgc-viewer/Store/SeqFeature/SimpleSomaticMutations
-type=icgc-viewer/View/Track/CanvasVariants
+type=icgc-viewer/View/Track/SSMTrack
 key=ICGC_Mutations
 unsafePopup=true
 ```

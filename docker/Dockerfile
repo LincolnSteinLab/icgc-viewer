@@ -26,6 +26,5 @@ RUN git clone https://github.com/agduncan94/icgc-viewer /icgc-viewer/ && \
 # Setup JBrowse
 RUN ./setup.sh
 
-
 # Expose port 3000
 EXPOSE 3000
