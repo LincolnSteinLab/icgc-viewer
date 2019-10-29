@@ -1,5 +1,5 @@
 // Tests the exporting of gene tracks
-describe('Select tracks', function() {
+describe('Select gene track', function() {
     beforeEach(function() {
         cy.viewport('macbook-13')
         cy.visit('http://localhost:3000/?loc=1%3A1..248956422')
@@ -19,6 +19,7 @@ describe('Select tracks', function() {
 
         // Open track menu
         cy.contains('Select').click()
+        cy.wait(1000)
 
         // Add existing gene track (ICGC_Genes)
         cy.get('#trackSelectGrid_rowSelector_0').click()
@@ -53,27 +54,27 @@ describe('Select tracks', function() {
     // Assumption: loc=1%3A1..248899548
     it('Should be able to export genes in various export formats', function() {
         testExport(2, 'GFF3', ['##gff-version 3', '##sequence-region', 'protein_coding'])
-//         testExport(3, 'BED', ['track name="ICGC_Genes" useScore=0', '1	103342022	103574051	ENSG00000060718		-'])
-//         testExport(4, 'CSV', ['type,start,end,strand,id,gene name,biotype,symbol,type', 'protein_coding,103342022,103574051,-1,,collagen, type XI, alpha 1,,COL11A1,protein_coding'])
-//         testExport(5, 'Sequin Table', ['>Feature 1', '237205505	237997287	protein_coding'])
-//         cy.fixture('gene/track-conf-export.conf').then((json) => {
-//             testExport(6, 'Track Config', [json])
-//         })
-//         testExport(7, 'Track Config JSON', 
-//         [
-// `{
-// \t"label": "ICGC_Genes",
-// \t"storeClass": "icgc-viewer/Store/SeqFeature/Genes",
-// \t"type": "icgc-viewer/View/Track/GeneTrack",
-// \t"key": "ICGC_Genes",
-// \t"metadata": {
-// \t\t"datatype": "Genes"
-// \t},
-// \t"unsafePopup": true,
-// \t"size": 1000,
-// \t"filters": "{\\"gene\\":{\\"location\\":{\\"is\\":[\\"1:0-248899548\\"]}}}"
-// }`
-//         ])
+        testExport(3, 'BED', ['track name="ICGC_Genes" useScore=0', '1	237205504	237997287	ENSG00000198626		+'])
+        testExport(4, 'CSV', ['type,start,end,strand,id,gene name,biotype,symbol,type', 'protein_coding,237205504,237997287,1,,ryanodine receptor 2 (cardiac),,RYR2,protein_coding'])
+        testExport(5, 'Sequin Table', ['>Feature 1', '237205505	237997287	protein_coding'])
+        cy.fixture('gene/track-conf-export.conf').then((json) => {
+            testExport(6, 'Track Config', [json])
+        })
+        testExport(7, 'Track Config JSON', 
+        [
+`{
+\t"label": "ICGC_Genes",
+\t"storeClass": "icgc-viewer/Store/SeqFeature/Genes",
+\t"type": "icgc-viewer/View/Track/GeneTrack",
+\t"key": "ICGC_Genes",
+\t"metadata": {
+\t\t"datatype": "Genes"
+\t},
+\t"unsafePopup": true,
+\t"size": 1000,
+\t"filters": "{\\"gene\\":{\\"location\\":{\\"is\\":[\\"1:0-248899548\\"]}}}"
+}`
+        ])
     })
 
     it('Should be able to export a URL Gene track', function() {

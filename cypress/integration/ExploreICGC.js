@@ -153,48 +153,48 @@ describe('Select tracks from explore', function() {
         cy.contains('ICGC_SimpleSomaticMutations_DO232761')
     })
 
-    // it('Should be able to apply filters across data types', function() {
-    //     openExploreDialog()
+    it('Should be able to apply filters across data types', function() {
+        openExploreDialog()
 
-    //     // Clear filters
-    //     clearFilters()
+        // Clear filters
+        clearFilters()
 
-    //     // Select study - PCAWG
-    //     cy.get('.dijitDialog').within(() => {
-    //         selectFacetTab(0, 4, 0)
-    //     })
+        // Select study - PCAWG
+        cy.get('.dijitDialog').within(() => {
+            selectFacetTab(0, 4, 0)
+        })
 
-    //     checkAllResultsTab(
-    //         ['Showing 1 to 20 of 2,809', 'DO220886', 'DO220877'],
-    //         ['Showing 1 to 20 of 57,402', 'CSMD1', 'LRP1B'],
-    //         ['Showing 1 to 20 of 25,129,453', 'MU37643', 'MU12519']
-    //     )
+        checkAllResultsTab(
+            ['Showing 1 to 20 of 2,809', 'DO220886', 'DO220877'],
+            ['Showing 1 to 20 of 57,402', 'CSMD1', 'LRP1B'],
+            ['Showing 1 to 20 of 25,129,453', 'MU37643', 'MU12519']
+        )
 
-    //     // Apply gene filter - type rRNA
-    //     selectResultsTab(0)
-    //     cy.get('.dijitDialog').within(() => {
-    //         selectFacetTab(1, 1, 24)
-    //     })
+        // Apply gene filter - type rRNA
+        selectResultsTab(0)
+        cy.get('.dijitDialog').within(() => {
+            selectFacetTab(1, 1, 24)
+        })
 
-    //     checkAllResultsTab(
-    //         ['Showing 1 to 20 of 1,974', 'DO220877', 'DO220906'],
-    //         ['Showing 1 to 20 of 517', 'RNA5-8SP2', 'RNA5SP272'],
-    //         ['Showing 1 to 20 of 39,868', 'MU9416907', 'MU51522486']
-    //     )
+        checkAllResultsTab(
+            ['Showing 1 to 20 of 1,974', 'DO220877', 'DO220906'],
+            ['Showing 1 to 20 of 517', 'RNA5-8SP2', 'RNA5SP272'],
+            ['Showing 1 to 20 of 39,868', 'MU9416907', 'MU51522486']
+        )
 
-    //     // Apply mutation filter - consequence type exon variant
-    //     selectResultsTab(0)
-    //     cy.get('.dijitDialog').within(() => {
-    //         selectFacetTab(2, 5, 1)
-    //     })
+        // Apply mutation filter - consequence type exon variant
+        selectResultsTab(0)
+        cy.get('.dijitDialog').within(() => {
+            selectFacetTab(2, 5, 1)
+        })
 
-    //     checkAllResultsTab(
-    //         ['Showing 1 to 20 of 312', 'DO220903', 'DO220913'],
-    //         ['Showing 1 to 20 of 260', 'RNA5SP406', 'RNA5SP26'],
-    //         ['Showing 1 to 20 of 445', 'MU3457350', 'MU33141830']
-    //     )
+        checkAllResultsTab(
+            ['Showing 1 to 20 of 312', 'DO220903', 'DO220913'],
+            ['Showing 1 to 20 of 260', 'RNA5SP406', 'RNA5SP26'],
+            ['Showing 1 to 20 of 445', 'MU3457350', 'MU33141830']
+        )
 
-    //     // Clear filters
-    //     clearFilters()
-    // })
+        // Clear filters
+        clearFilters()
+    })
 })
