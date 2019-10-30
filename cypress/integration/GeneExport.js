@@ -1,5 +1,5 @@
 // Tests the exporting of gene tracks
-describe('Select gene track', function() {
+describe('Gene track', function() {
     beforeEach(function() {
         cy.viewport('macbook-13')
         cy.visit('http://localhost:3000/?loc=1%3A1..248956422')
@@ -48,11 +48,19 @@ describe('Select gene track', function() {
 
         cy.get('.dijitIconTask').click()
 
-        cy.wait('@getGene.all').then(() => {
-            for (var text of textValues) {
-                cy.get('textarea').should('to.include.value', text)
-            }
-        })
+        if (radioIndex === 2) {
+            cy.wait(['@getGene.all', '@getGenes']).then(() => {
+                for (var text of textValues) {
+                    cy.get('textarea').should('to.include.value', text)
+                }
+            })
+        } else {
+            cy.wait('@getGenes').then(() => {
+                for (var text of textValues) {
+                    cy.get('textarea').should('to.include.value', text)
+                }
+            })
+        }
         cy.contains('Close').click()
     }
 

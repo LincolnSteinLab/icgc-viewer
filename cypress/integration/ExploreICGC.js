@@ -1,7 +1,7 @@
 /**
  * Tests the explore dialog
  */
-describe('Select tracks from explore', function() {
+describe('Explore ICGC', function() {
     before(function() {
         cy.viewport('macbook-13')
         cy.visit('http://localhost:3000/?loc=1%3A1..248956422')
