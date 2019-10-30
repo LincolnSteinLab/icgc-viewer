@@ -8,16 +8,20 @@ describe('Select tracks from explore', function() {
 
         cy
             .server()
+
+        cy
             .route({
                 method: 'GET',
                 url: 'api/v1/donors/DO232761/genes?filters=*',
                 response: 'fixture:explore/genes.json'
-              })
-              .route({
+              }).as('getGenes')
+
+        cy
+            .route({
                 method: 'GET',
                 url: 'api/v1/donors/DO232761/mutations?filters=*',
                 response: 'fixture:explore/mutations.json'
-              })
+            }).as('getMutations')
 
         cy.wait(1000) // Wait for load
         openExploreDialog()
@@ -147,6 +151,8 @@ describe('Select tracks from explore', function() {
         })
 
         closePopup()
+
+        cy.wait(['@getMutations', '@getGenes'])
 
         // Check that tracks are added
         cy.contains('ICGC_Genes_DO232761')

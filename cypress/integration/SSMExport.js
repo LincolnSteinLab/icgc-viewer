@@ -6,21 +6,27 @@ describe('Select SSM track', function() {
 
         cy
             .server()
+        
+        cy
             .route({
                 method: 'GET',
                 url: 'api/v1/mutations?filters=*',
                 response: 'fixture:ssm/mutations.json'
-              })
+              }).as('getMutations')
+
+        cy
             .route({
                 method: 'GET',
                 url: 'api/v1/mutations/MU*',
                 response: 'fixture:ssm/mutation.json'
-            })
+            }).as('getMutation')
+        
+        cy
             .route({
                 method: 'GET',
                 url: 'api/v1/projects/LMS-FR/mutations/*/donors/counts',
                 response: 'fixture:ssm/project.json'
-            })
+            }).as('getProject')
 
         // Open track menu
         cy.contains('Select').click()
@@ -28,6 +34,7 @@ describe('Select SSM track', function() {
 
         // Add existing SSM track (ICGC_Mutations)
         cy.get('#trackSelectGrid_rowSelector_1').click()
+        cy.wait('@getMutations')
 
         // Close track menu
         cy.contains('Back to browser').click()
@@ -49,8 +56,7 @@ describe('Select SSM track', function() {
         cy.get('.dijitCheckBoxInput').eq(radioIndex).click()
 
         cy.get('.dijitIconTask').click()
-
-        cy.wait(1000)
+        cy.wait('@getMutation')
         for (var text of textValues) {
             cy.get('textarea').should('to.include.value', text)
         }
