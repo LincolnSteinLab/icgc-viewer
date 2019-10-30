@@ -34,7 +34,7 @@ describe('Select SSM track', function() {
 
         // Add existing SSM track (ICGC_Mutations)
         cy.get('#trackSelectGrid_rowSelector_1').click()
-        cy.wait('@getMutations')
+        cy.wait('@getMutations.all')
 
         // Close track menu
         cy.contains('Back to browser').click()
@@ -56,8 +56,11 @@ describe('Select SSM track', function() {
         cy.get('.dijitCheckBoxInput').eq(radioIndex).click()
 
         cy.get('.dijitIconTask').click()
-        cy.wait('@getMutation')
-        cy.wait(3000) // To deal with export file generation
+        if (radioIndex === 2) {
+            cy.wait(['@getMutations', '@getMutation.all', '@getProject.all'])
+        } else {
+            cy.wait('@getMutation')
+        }
         for (var text of textValues) {
             cy.get('textarea').should('to.include.value', text)
         }

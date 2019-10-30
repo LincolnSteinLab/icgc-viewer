@@ -25,7 +25,7 @@ describe('Select gene track', function() {
 
         // Add existing gene track (ICGC_Genes)
         cy.get('#trackSelectGrid_rowSelector_0').click()
-        cy.wait('@getGenes')
+        cy.wait('@getGenes.all')
 
         // Close track menu
         cy.contains('Back to browser').click()
@@ -48,8 +48,7 @@ describe('Select gene track', function() {
 
         cy.get('.dijitIconTask').click()
 
-        cy.wait('@getGene')
-        cy.wait(3000) // To deal with export file generation
+        cy.wait('@getGene.all')
         for (var text of textValues) {
             cy.get('textarea').should('to.include.value', text)
         }

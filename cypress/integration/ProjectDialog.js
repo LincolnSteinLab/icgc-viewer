@@ -65,7 +65,7 @@ describe('Select tracks', function() {
         })
 
         // Tracks should be added for project BRCA-US
-        cy.wait(['@getMutations', '@getGenes'])
+        cy.wait(['@getMutations.all', '@getGenes.all'])
         cy.contains('ICGC_SimpleSomaticMutations_BRCA-US')
         cy.contains('ICGC_Genes_BRCA-US')
 
