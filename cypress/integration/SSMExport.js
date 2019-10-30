@@ -57,6 +57,7 @@ describe('Select SSM track', function() {
 
         cy.get('.dijitIconTask').click()
         cy.wait('@getMutation')
+        cy.wait(3000) // To deal with export file generation
         for (var text of textValues) {
             cy.get('textarea').should('to.include.value', text)
         }
