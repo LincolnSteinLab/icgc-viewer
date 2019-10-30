@@ -48,10 +48,11 @@ describe('Select gene track', function() {
 
         cy.get('.dijitIconTask').click()
 
-        cy.wait('@getGene.all')
-        for (var text of textValues) {
-            cy.get('textarea').should('to.include.value', text)
-        }
+        cy.wait('@getGene.all').then(() => {
+            for (var text of textValues) {
+                cy.get('textarea').should('to.include.value', text)
+            }
+        })
         cy.contains('Close').click()
     }
 

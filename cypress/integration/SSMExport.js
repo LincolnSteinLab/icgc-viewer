@@ -57,12 +57,17 @@ describe('Select SSM track', function() {
 
         cy.get('.dijitIconTask').click()
         if (radioIndex === 2) {
-            cy.wait(['@getMutations', '@getMutation.all', '@getProject.all'])
+            cy.wait(['@getMutations', '@getMutation.all', '@getProject.all']).then(() => {
+                for (var text of textValues) {
+                    cy.get('textarea').should('to.include.value', text)
+                }
+            })
         } else {
-            cy.wait('@getMutation')
-        }
-        for (var text of textValues) {
-            cy.get('textarea').should('to.include.value', text)
+            cy.wait('@getMutation').then(() => {
+                for (var text of textValues) {
+                    cy.get('textarea').should('to.include.value', text)
+                }
+            })
         }
         cy.contains('Close').click()
     }

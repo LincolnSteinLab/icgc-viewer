@@ -1,12 +1,12 @@
 {
-  "name": "icgc-viewer",
+  "name": "icgc-viewer-jbrowse-plugin",
   "version": "0.1.7",
   "description": "A JBrowse plugin for viewing ICGC data",
   "main": "index.js",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "cypress": "^3.4.1"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/agduncan94/icgc-viewer/issues"
   },
-  "homepage": "https://github.com/agduncan94/icgc-viewer#readme"
+  "jbrowsePlugin": {
+    "name": "ICGCViewer"
+  },
+  "homepage": "https://agduncan94.github.io/icgc-viewer/"
 }
