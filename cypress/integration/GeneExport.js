@@ -57,6 +57,9 @@ describe('Gene track', function() {
         } else {
             cy.wait('@getGenes').then(() => {
                 cy.wait(3000) // Give time to process results
+                if (radioIndex === 3) {
+                    cy.wait(3000) // Wait extra long for BED file
+                }
                 for (var text of textValues) {
                     cy.get('textarea').should('to.include.value', text)
                 }
