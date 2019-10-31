@@ -3,7 +3,6 @@
  */
 describe('Project dialog', function() {
     before(function() {
-        cy.viewport('macbook-13')
         cy.visit('http://localhost:3000/?loc=1%3A1..248956422')
         cy
             .server()
@@ -105,8 +104,6 @@ describe('Project dialog', function() {
             cy.contains('603929')
             cy.contains('O43432')
             cy.contains('The protein encoded by this gene is thought to be part of the eIF4F protein complex')
-
-            cy.get('.dijitDialogPaneContent').scrollTo('bottom')
 
             cy.contains('Immune System')
             cy.contains('ISG15 antiviral mechanism')

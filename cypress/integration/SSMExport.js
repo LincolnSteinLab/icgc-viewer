@@ -1,7 +1,6 @@
 // Tests the exporting of SSM tracks
 describe('SSM track', function() {
     beforeEach(function() {
-        cy.viewport('macbook-13')
         cy.visit('http://localhost:3000/?loc=1%3A1..248956422')
 
         cy
@@ -97,7 +96,7 @@ describe('SSM track', function() {
 \t},
 \t"unsafePopup": true,
 \t"size": 500,
-\t"filters": "{\\"mutation\\":{\\"location\\":{\\"is\\":[\\"1:0-248899548\\"]}}}"
+\t"filters": "{\\"mutation\\":{\\"location\\":{\\"is\\":[\\"1:0-249012431\\"]}}}"
 }`
         ])
     })
@@ -105,6 +104,6 @@ describe('SSM track', function() {
     it('Should be able to export an SSM track', function() {
         cy.get('.track-menu-button').click()
         cy.contains('Share Track as URL').click()
-        cy.get('textarea').should('have.value', 'http://localhost:3000/?loc=1%3A1..248899548&tracks=ICGC_Mutations&highlight=&addTracks=%5B%7B%22label%22%3A%22ICGC_Mutations%22%2C%22storeClass%22%3A%22icgc-viewer%2FStore%2FSeqFeature%2FSimpleSomaticMutations%22%2C%22type%22%3A%22icgc-viewer%2FView%2FTrack%2FSSMTrack%22%2C%22key%22%3A%22ICGC_Mutations%22%2C%22metadata%22%3A%7B%22datatype%22%3A%22SSM%22%7D%2C%22unsafePopup%22%3Atrue%7D%5D')
+        cy.get('textarea').should('have.value', 'http://localhost:3000/?loc=1%3A1..249012431&tracks=ICGC_Mutations&highlight=&addTracks=%5B%7B%22label%22%3A%22ICGC_Mutations%22%2C%22storeClass%22%3A%22icgc-viewer%2FStore%2FSeqFeature%2FSimpleSomaticMutations%22%2C%22type%22%3A%22icgc-viewer%2FView%2FTrack%2FSSMTrack%22%2C%22key%22%3A%22ICGC_Mutations%22%2C%22metadata%22%3A%7B%22datatype%22%3A%22SSM%22%7D%2C%22unsafePopup%22%3Atrue%7D%5D')
     })
 })
