@@ -3,6 +3,7 @@ FROM node:latest
 LABEL maintainer="andrew.duncan@oicr.on.ca"
 
 ENV JBROWSE_VERSION 1.16.6
+ENV PLUGIN_VERSION=0.1.7
 
 # Install dependencies
 RUN apt-get -qq update --fix-missing
@@ -19,17 +20,12 @@ WORKDIR /jbrowse/
 # Download ICGC Viewer
 RUN git clone https://github.com/agduncan94/icgc-viewer /icgc-viewer/ && \
     cd /icgc-viewer/ && \
-    git checkout 0.1.5 && \
+    git checkout ${PLUGIN_VERSION} && \
     cp -r icgc-viewer /jbrowse/plugins/icgc-viewer && \
     cat ./data/jbrowse.conf > /jbrowse/jbrowse.conf
 
 # Setup JBrowse
-RUN ./setup.sh && \
-    ./bin/cpanm --force JSON Hash::Merge PerlIO::gzip Devel::Size \
-    Heap::Simple Heap::Simple::XS List::MoreUtils Exception::Class Test::Warn Bio::Perl \
-    Bio::DB::SeqFeature::Store File::Next Bio::DB::Das::Chado && \
-    rm -rf /root/.cpan/
-
+RUN ./setup.sh
 
 # Expose port 3000
 EXPOSE 3000

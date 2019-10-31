@@ -25,13 +25,7 @@ urlTemplate=GRCh37.genome.fa
 ```
 
 ## 4. Adding new tracks
-We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse. These are present in the menu under `ICGC`.
-
-### A. Explore donors, genes and mutations
-This dialog is similar to the Exploration section of the ICGC data portal. As you apply facets on the left-hand side, updated results will be shown on the right side. You can create donor specific SSM and Gene tracks, along with ICGC-wide SSM and Gene tracks.
-
-### B. View Projects
-This dialog shows the projects present on the ICGC Data Portal. You can add SSM and Gene tracks for each project.
+We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse. These are present in the menu under `ICGC`. See [Dynamic Track Generation](#dynamic-track-generation) for more details
 
 ## 5. Run JBrowse
 You'll have to run the following commands:
@@ -90,12 +84,15 @@ filters={"gene":{"type":{"is":["protein_coding"]}}}
 
 Example Track:
 ```
-[tracks.ICGC_Genes]
+[tracks.ICGC_Genes_protein-coding]
 storeClass=icgc-viewer/Store/SeqFeature/Genes
 type=icgc-viewer/View/Track/GeneTrack
-key=ICGC_Genes
+key=ICGC_Genes_protein-coding
 unsafePopup=true
+filters={"gene":{"type":{"is":["protein_coding"]}}}
 ```
+
+![ICGC Genes](images/ICGC-Genes-protein-coding.png)
 
 ### Extra notes
 You can also set the `size` attribute (defaults to 1000). This is the theoretical maximum number of genes displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
@@ -129,32 +126,28 @@ filters={"mutation":{"functionalImpact":{"is":["High"]}}}
 
 Example Track:
 ```
-[tracks.ICGC_Mutations]
+[tracks.ICGC_Mutations_high-impact]
 storeClass=icgc-viewer/Store/SeqFeature/SimpleSomaticMutations
 type=icgc-viewer/View/Track/SSMTrack
-key=ICGC_Mutations
+key=ICGC_Mutations_high-impact
 unsafePopup=true
+filters={"mutation":{"functionalImpact":{"is":["High"]}}}
 ```
+
+![ICGC SSMs](images/ICGC-SSM-high-impact.png)
 
 ### Extra notes
 You can also set the `size` attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
 
 # Dynamic track generation
-In the tools menu there is an option to explore ICGC. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. This will create a filtered list of matching donors, genes and mutations.
+## Explore donors, genes and mutations
+In the menubar there is an ICGC button with an option to `Explore donors, genes and mutations`. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. You can then create tracks based on the chosen facets.
 
-Donors Tab:
-* View donors that match the selected facets
-* For each donor
-    * Add track for mutated genes
-    * Add track for SSMs
+![ICGC Explore](images/ICGC-Explore-Dialog.png)
 
-Genes Tab:
-* View genes that match the selected facets
-
-Mutations Tab:
-* View mutations that match the selected facets
-
-There is also an options to search ICGC by projects. This allows you to see all of the associated SSMs and Genes per project in one track.
+## Explore projects
+There is also an options to search ICGC by projects. This allows you to see all of the associated SSMs and Genes per project in one track. If you want to apply additional facets to a project, you'll need to use the `Explore donors, genes and mutations` dialog.
+![ICGC Projects](images/ICGC-Projects-Dialog.png)
 
 # Export Types
 The following export types are supported by both Genes and SSMs. To export, select `Save track data` in the track dropdown. Note that not all track information is carried over to the exported file.
@@ -169,3 +162,13 @@ The following export types are supported by both Genes and SSMs. To export, sele
 You do not need to add tracks directly from the ICGC Dialog. You can also define them in the `tracks.conf` file.
 
 See `data/advanced-tracks.conf` for some more complex usages, including filters.
+
+# Automated testing
+Cypress.io is used for testing this plugin. The following steps show how to run the tests locally.
+1. Install JBrowse and but don't install chromosome files.
+2. Download Chr 1 fasta from `http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz`. There should be the fasta index file in `cypress/data/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.fai`. Put these files into `jbrowse/data/`.
+3. Install Cypress.io with `npm install`.
+4. Place `cypress/data/tracks.conf` into your `jbrowse/data/` directory. Make sure no other tracks are present.
+5. Run `./node_modules/cypress/bin/cypress open` or `./node_modules/cypress/bin/cypress run`
+
+**Note** while some tests have mocked endpoints, not all endpoints are mocked. This could lead to breakage of tests in the future.
