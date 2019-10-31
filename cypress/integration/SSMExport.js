@@ -58,12 +58,14 @@ describe('SSM track', function() {
         cy.get('.dijitIconTask').click()
         if (radioIndex === 2) {
             cy.wait(['@getMutations', '@getMutation.all', '@getProject.all']).then(() => {
+                cy.wait(3000) // Give time to process results
                 for (var text of textValues) {
                     cy.get('textarea').should('to.include.value', text)
                 }
             })
         } else {
             cy.wait('@getMutation').then(() => {
+                cy.wait(3000) // Give time to process results
                 for (var text of textValues) {
                     cy.get('textarea').should('to.include.value', text)
                 }

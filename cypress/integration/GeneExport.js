@@ -50,12 +50,14 @@ describe('Gene track', function() {
 
         if (radioIndex === 2) {
             cy.wait(['@getGene.all', '@getGenes']).then(() => {
+                cy.wait(3000) // Give time to process results
                 for (var text of textValues) {
                     cy.get('textarea').should('to.include.value', text)
                 }
             })
         } else {
             cy.wait('@getGenes').then(() => {
+                cy.wait(3000) // Give time to process results
                 for (var text of textValues) {
                     cy.get('textarea').should('to.include.value', text)
                 }
