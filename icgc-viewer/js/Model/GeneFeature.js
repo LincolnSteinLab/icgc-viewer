@@ -57,10 +57,10 @@ get: function(name) {
             headers: { 'X-Requested-With': null },
             handleAs: 'json'
         }).then(function(gene) {
-            document.getElementById('annotations-icgc-' + geneId).innerHTML = thisB.createProjectIncidenceTable(gene.sets);
+            document.getElementsByClassName('value annotations')[0].innerHTML = thisB.createProjectIncidenceTable(gene.sets);
         }).catch(function(err) {
             console.log(err)
-            document.getElementById('annotations-icgc-' + geneId).innerHTML = 'Error creating annotations table';
+            document.getElementsByClassName('value annotations')[0].innerHTML = 'Error creating annotations table';
         });
         return geneId;
     } else {
