@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/agduncan94/icgc-viewer.svg?branch=develop)](https://travis-ci.org/agduncan94/icgc-viewer)
 # ICGC JBrowse Plugin
 A plugin for [JBrowse](https://jbrowse.org/) for viewing [ICGC](https://icgc.org/) data. For any bugs, issues, or feature recommendations please create an issue through GitHub.
 
@@ -25,7 +26,7 @@ urlTemplate=GRCh37.genome.fa
 ```
 
 ## 4. Adding new tracks
-We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse. These are present in the menu under `ICGC`. See [Dynamic Track Generation](#dynamic-track-generation) for more details
+We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse. These are present in the menu under `ICGC`. See [Dynamic Track Generation](#dynamic-track-generation) for more details.
 
 ## 5. Run JBrowse
 You'll have to run the following commands:
