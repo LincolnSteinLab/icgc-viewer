@@ -3,13 +3,15 @@ define(
         "dojo/_base/declare",
         "JBrowse/View/Track/HTMLFeatures",
         'JBrowse/View/Track/_ExportMixin',
-        'dojo/dom-construct'
+        'dojo/dom-construct',
+        'dijit/form/Button'
     ],
    function(
        declare,
        HTMLFeatures,
        ExportMixin,
-       domConstruct) {
+       domConstruct,
+       Button) {
    return declare([ HTMLFeatures, ExportMixin ], {
 
         _exportFormats: function() {
