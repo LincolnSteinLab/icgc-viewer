@@ -55,6 +55,8 @@ displayColumns =
 ## A note on filters
 All SeqFeatures support filters as they are used in the ICGC API Documentation.
 
+You can view/edit the filters associated with a track by clicking the down arrow for the track menu and selecting `View Applied Filters`. Be careful, there are currently no checks to see if the filters are valid before applying them.
+
 ## Genes
 A simple view of all genes returned by the ICGC portal for a given range of the chromosome you are looking at.
 
