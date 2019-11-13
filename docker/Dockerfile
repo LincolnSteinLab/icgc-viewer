@@ -2,7 +2,7 @@ FROM node:latest
 
 LABEL maintainer="andrew.duncan@oicr.on.ca"
 
-ARG plugin_version=develop
+ARG plugin_version=master
 
 ENV JBROWSE_VERSION 1.16.6
 ENV PLUGIN_VERSION=$plugin_version
