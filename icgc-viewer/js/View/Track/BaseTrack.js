@@ -4,14 +4,18 @@ define(
         "JBrowse/View/Track/HTMLFeatures",
         'JBrowse/View/Track/_ExportMixin',
         'dojo/dom-construct',
-        'dijit/form/Button'
+        'dijit/form/Button',
+        'dijit/form/TextBox',
+        'dijit/form/NumberSpinner'
     ],
    function(
        declare,
        HTMLFeatures,
        ExportMixin,
        domConstruct,
-       Button) {
+       Button,
+       TextBox,
+       NumberSpinner) {
    return declare([ HTMLFeatures, ExportMixin ], {
 
         _exportFormats: function() {
@@ -46,11 +50,19 @@ define(
         _appliedFilters: function() {
             var track = this;
             var details = domConstruct.create('div', { className: 'detail', style: 'display: flex; flex-direction: column; align-items: center; justify-content: center;' });
+            
+            var headerString = '<h1 style="width: 80%">Track Filters</h1>';
+            var headerElement = domConstruct.toDom(headerString);
+            domConstruct.place(headerElement, details);
 
             // Create help text
-            var helpString = '<p>The following filters have been applied to the track.</p>';
+            var helpString = '<span style="width: 80%">The following filters have been applied to the track. You can update the filters here, though no validation is done on the input.</span>';
             var helpElement = domConstruct.toDom(helpString);
             domConstruct.place(helpElement, details);
+
+            var filterString = '<div style="width: 80%"><h3>Filters</h3></div>';
+            var filterElement = domConstruct.toDom(filterString);
+            domConstruct.place(filterElement, details);
 
             // Get filtered text
             var filteredText = JSON.stringify(track.store.filters, null, 2)
@@ -64,15 +76,40 @@ define(
                     id: "filterTextArea"
                 }, details );
 
+            var donorString = '<div style="width: 80%"><h3>Donor ID</h3></div>';
+            var donorElement = domConstruct.toDom(donorString);
+            domConstruct.place(donorElement, details);
+
+            var donorIdTextBox = new TextBox({
+                value: track.store.config.donor,
+                style: "width: 80%",
+                id: "donorTextBox"
+            }).placeAt(details);
+
+            var sizeHeader = '<div style="width: 80%"><h3>Size</h3></div>';
+            var sizeElement = domConstruct.toDom(sizeHeader);
+            domConstruct.place(sizeElement, details);
+
+            var sizeTextBox = new NumberSpinner({
+                value: track.store.size,
+                style: "width: 80%",
+                id: "sizeTextBox",
+                constraints: { min: 1, max: 1000, places: 0 },
+                smallDelta: 10
+            }).placeAt(details);
+
             var updateTrackButton = new Button({
                 label: 'Update track',
                 onClick: function() {
                     let trackString = document.getElementById("filterTextArea").value;
+                    let donorString = document.getElementById("donorTextBox").value;
+                    let sizeString = document.getElementById("sizeTextBox").value;
                     var storeConf = {
                         browser: track.browser,
                         refSeq: track.browser.refSeq,
                         type: track.store.config.type,
-                        case: track.store.config.case,
+                        donor: donorString,
+                        size: sizeString,
                         filters: trackString
                     };
                     var storeName = track.browser.addStoreConfig(null, storeConf);
