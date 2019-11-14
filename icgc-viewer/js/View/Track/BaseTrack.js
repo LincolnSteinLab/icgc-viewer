@@ -5,8 +5,8 @@ define(
         'JBrowse/View/Track/_ExportMixin',
         'dojo/dom-construct',
         'dijit/form/Button',
-        'dijit/form/TextBox',
-        'dijit/form/NumberSpinner'
+        'dijit/form/NumberSpinner',
+        'dijit/form/ValidationTextBox'
     ],
    function(
        declare,
@@ -14,8 +14,8 @@ define(
        ExportMixin,
        domConstruct,
        Button,
-       TextBox,
-       NumberSpinner) {
+       NumberSpinner,
+       ValidationTextBox) {
    return declare([ HTMLFeatures, ExportMixin ], {
 
         _exportFormats: function() {
@@ -54,19 +54,19 @@ define(
             var headerString = '<h1 style="width: 80%">Track Filters</h1>';
             var headerElement = domConstruct.toDom(headerString);
             domConstruct.place(headerElement, details);
-
+    
             // Create help text
             var helpString = '<span style="width: 80%">The following filters have been applied to the track. You can update the filters here, though no validation is done on the input.</span>';
             var helpElement = domConstruct.toDom(helpString);
             domConstruct.place(helpElement, details);
-
+    
             var filterString = '<div style="width: 80%"><h3>Filters</h3></div>';
             var filterElement = domConstruct.toDom(filterString);
             domConstruct.place(filterElement, details);
-
+    
             // Get filtered text
             var filteredText = JSON.stringify(track.store.filters, null, 2)
-
+    
             var textArea = domConstruct.create(
                 'textarea',{
                     rows: 20,
@@ -75,21 +75,24 @@ define(
                     readOnly: false,
                     id: "filterTextArea"
                 }, details );
-
+    
             var donorString = '<div style="width: 80%"><h3>Donor ID</h3></div>';
             var donorElement = domConstruct.toDom(donorString);
             domConstruct.place(donorElement, details);
-
-            var donorIdTextBox = new TextBox({
+    
+            var donorIdTextBox = new ValidationTextBox({
                 value: track.store.config.donor,
                 style: "width: 80%",
-                id: "donorTextBox"
+                id: "donorTextBox",
+                regExp: "^DO[0-9]+$",
+                invalidMessage: "Invalid Donor ID - Must be of the form DOxxxx, where xxxx is some number greater than 0.",
+                trim: true
             }).placeAt(details);
-
+    
             var sizeHeader = '<div style="width: 80%"><h3>Size</h3></div>';
             var sizeElement = domConstruct.toDom(sizeHeader);
             domConstruct.place(sizeElement, details);
-
+    
             var sizeTextBox = new NumberSpinner({
                 value: track.store.size,
                 style: "width: 80%",
@@ -97,9 +100,10 @@ define(
                 constraints: { min: 1, max: 1000, places: 0 },
                 smallDelta: 10
             }).placeAt(details);
-
+    
             var updateTrackButton = new Button({
-                label: 'Update track',
+                label: 'Apply New Filters',
+                iconClass: 'dijitIconSave',
                 onClick: function() {
                     let trackString = document.getElementById("filterTextArea").value;
                     let donorString = document.getElementById("donorTextBox").value;
@@ -124,6 +128,10 @@ define(
             var track = this;
             var details = domConstruct.create('div', { className: 'detail', style: 'display: flex; flex-direction: column; align-items: center; justify-content: center;' });
 
+            var headerString = '<h1 style="width: 80%">Shareable Link</h1>';
+            var headerElement = domConstruct.toDom(headerString);
+            domConstruct.place(headerElement, details);
+
             // Create addTracks value
             var addTracksArray = [];
             var addTrackConf = {};
@@ -145,7 +153,7 @@ define(
             var shareableLink = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params.toString();
 
             // Create help text
-            var helpString = '<p>Use the following link to share the selected track at the current location.</p>';
+            var helpString = '<span style="width: 80%">Use the following link to share the selected track at the current location.</span>';
             var helpElement = domConstruct.toDom(helpString);
             domConstruct.place(helpElement, details);
 
