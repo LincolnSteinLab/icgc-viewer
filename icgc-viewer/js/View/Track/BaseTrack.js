@@ -6,7 +6,8 @@ define(
         'dojo/dom-construct',
         'dijit/form/Button',
         'dijit/form/NumberSpinner',
-        'dijit/form/ValidationTextBox'
+        'dijit/form/ValidationTextBox',
+        './ValidationTextArea'
     ],
    function(
        declare,
@@ -15,7 +16,8 @@ define(
        domConstruct,
        Button,
        NumberSpinner,
-       ValidationTextBox) {
+       ValidationTextBox,
+       ValidationTextArea) {
    return declare([ HTMLFeatures, ExportMixin ], {
 
         _exportFormats: function() {
@@ -47,6 +49,10 @@ define(
             return options;
         },
 
+        /**
+         * Create dialog showing applied filters for the given track.
+         * User can apply new filters here too.
+         */
         _appliedFilters: function() {
             var track = this;
             var details = domConstruct.create('div', { className: 'detail', style: 'display: flex; flex-direction: column; align-items: center; justify-content: center;' });
@@ -67,16 +73,25 @@ define(
             // Get filtered text
             var filteredText = JSON.stringify(track.store.filters, null, 2)
     
-            var textArea = domConstruct.create(
-                'textarea',{
-                    rows: 20,
-                    value: filteredText,
-                    style: "width: 80%",
-                    readOnly: false,
-                    id: "filterTextArea"
-                }, details );
+            var textArea = new ValidationTextArea({
+                rows: 20,
+                value: filteredText,
+                style: "width: 80%",
+                readOnly: false,
+                id: "filterTextArea",
+                invalidMessage: "Invalid JSON filter - must be a valid JSON",
+                isValid: function() {
+                    var value = this.attr('value')
+                    try {
+                      JSON.parse(value)
+                    } catch (e) {
+                        return false;
+                    }
+                    return true;
+                  }
+            }).placeAt(details);
     
-            var donorString = '<div style="width: 80%"><h3>Donor ID</h3></div>';
+            var donorString = '<div style="width: 80%"><h3>Donor UUID</h3></div>';
             var donorElement = domConstruct.toDom(donorString);
             domConstruct.place(donorElement, details);
     
@@ -105,9 +120,9 @@ define(
                 label: 'Apply New Filters',
                 iconClass: 'dijitIconSave',
                 onClick: function() {
-                    let trackString = document.getElementById("filterTextArea").value;
-                    let donorString = document.getElementById("donorTextBox").value;
-                    let sizeString = document.getElementById("sizeTextBox").value;
+                    const trackString = document.getElementById("filterTextArea").value;
+                    const donorString = document.getElementById("donorTextBox").value;
+                    const sizeString = document.getElementById("sizeTextBox").value;
                     var storeConf = {
                         browser: track.browser,
                         refSeq: track.browser.refSeq,
@@ -121,6 +136,19 @@ define(
                     track.browser.publish( '/jbrowse/v1/v/tracks/replace', [track.config] );
                 }
             }).placeAt(details);
+    
+            donorIdTextBox.on('change', function(e) {
+                updateTrackButton.set('disabled', !donorIdTextBox.validate() || !sizeTextBox.validate() || !textArea.validate())
+            });
+    
+            sizeTextBox.on('change', function(e) {
+                updateTrackButton.set('disabled', !donorIdTextBox.validate() || !sizeTextBox.validate() || !textArea.validate())
+            });
+    
+            textArea.on('change', function(e) {
+                updateTrackButton.set('disabled', !donorIdTextBox.validate() || !sizeTextBox.validate() || !textArea.validate())
+            });
+    
             return details;
         },
 
