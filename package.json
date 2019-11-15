@@ -1,6 +1,6 @@
 {
   "name": "icgc-viewer-jbrowse-plugin",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "A JBrowse plugin for viewing ICGC data",
   "main": "index.js",
   "dependencies": {},
