@@ -98,7 +98,7 @@ filters={"gene":{"type":{"is":["protein_coding"]}}}
 ![ICGC Genes](images/ICGC-Genes-protein-coding.png)
 
 ### Extra notes
-You can also set the `size` attribute (defaults to 1000). This is the theoretical maximum number of genes displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
+You can also set the `size` attribute (defaults to 1000). This is the theoretical maximum number of genes displayed at a time in JBrowse (per panel). The smaller the value, the faster JBrowse will be.
 
 ## SimpleSomaticMutations
 A simple view of all the simple somatic mutations across all donors in the ICGC portal. 
@@ -140,7 +140,7 @@ filters={"mutation":{"functionalImpact":{"is":["High"]}}}
 ![ICGC SSMs](images/ICGC-SSM-high-impact.png)
 
 ### Extra notes
-You can also set the `size` attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
+You can also set the `size` attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse(per panel). The smaller the value, the faster JBrowse will be.
 
 # Dynamic track generation
 ## Explore donors, genes and mutations
@@ -172,6 +172,6 @@ Cypress.io is used for testing this plugin. The following steps show how to run 
 2. Download Chr 1 fasta from `http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz`. There should be the fasta index file in `cypress/data/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.fai`. Put these files into `jbrowse/data/`.
 3. Install Cypress.io with `npm install`.
 4. Place `cypress/data/tracks.conf` into your `jbrowse/data/` directory. Make sure no other tracks are present.
-5. Run `./node_modules/cypress/bin/cypress open` or `./node_modules/cypress/bin/cypress run`
+5. Run `npx cypress open` or `npx cypress run` or `npm run e2e`
 
 **Note** while some tests have mocked endpoints, not all endpoints are mocked. This could lead to breakage of tests in the future.
