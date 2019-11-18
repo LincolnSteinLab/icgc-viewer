@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/agduncan94/icgc-viewer.svg?branch=develop)](https://travis-ci.org/agduncan94/icgc-viewer)
 # ICGC JBrowse Plugin
 A plugin for [JBrowse](https://jbrowse.org/) for viewing [ICGC](https://icgc.org/) data. For any bugs, issues, or feature recommendations please create an issue through GitHub.
 
@@ -25,7 +26,7 @@ urlTemplate=GRCh37.genome.fa
 ```
 
 ## 4. Adding new tracks
-We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse. These are present in the menu under `ICGC`. See [Dynamic Track Generation](#dynamic-track-generation) for more details
+We have some basic example tracks in `data/tracks.conf`. You can also add new tracks by using the ICGC Dialog accessible within JBrowse. These are present in the menu under `ICGC`. See [Dynamic Track Generation](#dynamic-track-generation) for more details.
 
 ## 5. Run JBrowse
 You'll have to run the following commands:
@@ -54,6 +55,8 @@ displayColumns =
 # Available Store SeqFeature
 ## A note on filters
 All SeqFeatures support filters as they are used in the ICGC API Documentation.
+
+You can view/edit the filters associated with a track by clicking the down arrow for the track menu and selecting `View Applied Filters`. Be careful, there are currently no checks to see if the filters are valid before applying them.
 
 ## Genes
 A simple view of all genes returned by the ICGC portal for a given range of the chromosome you are looking at.
@@ -95,7 +98,7 @@ filters={"gene":{"type":{"is":["protein_coding"]}}}
 ![ICGC Genes](images/ICGC-Genes-protein-coding.png)
 
 ### Extra notes
-You can also set the `size` attribute (defaults to 1000). This is the theoretical maximum number of genes displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
+You can also set the `size` attribute (defaults to 1000). This is the theoretical maximum number of genes displayed at a time in JBrowse (per panel). The smaller the value, the faster JBrowse will be.
 
 ## SimpleSomaticMutations
 A simple view of all the simple somatic mutations across all donors in the ICGC portal. 
@@ -137,7 +140,7 @@ filters={"mutation":{"functionalImpact":{"is":["High"]}}}
 ![ICGC SSMs](images/ICGC-SSM-high-impact.png)
 
 ### Extra notes
-You can also set the `size` attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse. The smaller the value, the faster JBrowse will be.
+You can also set the `size` attribute (defaults to 500). This is the theoretical maximum number of mutations displayed at a time in JBrowse(per panel). The smaller the value, the faster JBrowse will be.
 
 # Dynamic track generation
 ## Explore donors, genes and mutations
@@ -169,6 +172,6 @@ Cypress.io is used for testing this plugin. The following steps show how to run 
 2. Download Chr 1 fasta from `http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.gz`. There should be the fasta index file in `cypress/data/Homo_sapiens.GRCh37.75.dna.chromosome.1.fa.fai`. Put these files into `jbrowse/data/`.
 3. Install Cypress.io with `npm install`.
 4. Place `cypress/data/tracks.conf` into your `jbrowse/data/` directory. Make sure no other tracks are present.
-5. Run `./node_modules/cypress/bin/cypress open` or `./node_modules/cypress/bin/cypress run`
+5. Run `npx cypress open` or `npx cypress run` or `npm run e2e`
 
 **Note** while some tests have mocked endpoints, not all endpoints are mocked. This could lead to breakage of tests in the future.
