@@ -76,8 +76,18 @@ function(
             return list && list.length > 0 ? list : 'n/a';
         },
 
+        /**
+         * Converts an int to strand 1 -> +, -1 -> -
+         * @param {number} strand 
+         */
         convertIntToStrand: function(strand) {
-            return strand == 1 ? '+' : '-'
+            if (strand == 1) {
+                return '+'
+            } else if (strand == -1) {
+                return '-'
+            } else {
+                return 'n/a'
+            }
         },
 
         /**

@@ -29,6 +29,20 @@ function(
         },
 
         /**
+         * Converts an int to strand 1 -> +, -1 -> -
+         * @param {number} strand 
+         */
+        convertIntToStrand: function(strand) {
+            if (strand == 1) {
+                return '+'
+            } else if (strand == -1) {
+                return '-'
+            } else {
+                return 'n/a'
+            }
+        },
+
+        /**
          * Given an array of IDs and a link, creates a comma-separated list of links to the ids
          * @param {string} link Base URL for link
          * @param {array} ids IDs to append to base URL
@@ -121,7 +135,8 @@ function(
                                 'gene name': thisB.prettyValue(gene.name),
                                 'symbol': thisB.prettyValue(gene.symbol),
                                 'type': thisB.prettyValue(gene.type),
-                                'id': thisB.prettyValue(gene.id)
+                                'id': thisB.prettyValue(gene.id),
+                                'strand': thisB.convertIntToStrand(gene.strand)
                             },
                             'references': {
                                 'icgc': thisB.createLinkWithId(ICGC_LINK, gene.id),
