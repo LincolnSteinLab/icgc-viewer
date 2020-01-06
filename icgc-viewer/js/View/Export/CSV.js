@@ -44,9 +44,9 @@ return declare( ExportBase,
             this.fullHeader = [...this.ssmHeader];
         }
 
-        var headerString = (this.defaultHeader.concat(this.fullHeader)).join(',') + '\n'
+        var headerString = (this.defaultHeader.concat(this.fullHeader)).join(',')
         this.print('id,')
-        this.print(headerString)
+        this.print(headerString + '\n')
    },
 
    formatFeature: function( feature ) {
