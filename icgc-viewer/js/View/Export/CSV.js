@@ -17,17 +17,15 @@ return declare( ExportBase,
 
    defaultHeader: [
         'type',
+        'chromosome',
         'start',
-        'end',
-        'strand',
-        'id'
+        'end'
    ],
 
    geneHeader: [
+        'strand',
         'gene name',
-        'biotype',
-        'symbol',
-        'type'
+        'symbol'
    ],
 
    ssmHeader: [
@@ -39,20 +37,27 @@ return declare( ExportBase,
     fullHeader: [],
 
    _printHeader: function() {
-        if (this.store.config.storeClass === 'icgc-viewer/Store/SeqFeature/Genes') {
-            this.fullHeader = this.geneHeader
-        } else if (this.store.config.storeClass === 'icgc-viewer/Store/SeqFeature/SimpleSomaticMutations') {
-            this.fullHeader = this.ssmHeader
+        this.fullHeader = []
+        if (this.store.config.type === 'icgc-viewer/Store/SeqFeature/Genes' || this.store.config.storeClass === 'icgc-viewer/Store/SeqFeature/Genes') {
+            this.fullHeader = [...this.geneHeader];
+        } else if (this.store.config.type === 'icgc-viewer/Store/SeqFeature/SimpleSomaticMutations' || this.store.config.storeClass === 'icgc-viewer/Store/SeqFeature/SimpleSomaticMutations') {
+            this.fullHeader = [...this.ssmHeader];
         }
 
         var headerString = (this.defaultHeader.concat(this.fullHeader)).join(',') + '\n'
+        this.print('id,')
         this.print(headerString)
    },
 
    formatFeature: function( feature ) {
        var featureArray = []
-       this.defaultHeader.forEach(field => featureArray.push(feature.get(field)))
        var about = feature.get('about')
+
+       featureArray.push(about['id'])
+       this.defaultHeader.forEach(field => featureArray.push(feature.get(field)))
+       if (this.store.config.type === 'icgc-viewer/Store/SeqFeature/Genes' || this.store.config.storeClass === 'icgc-viewer/Store/SeqFeature/Genes') {
+            featureArray.push(feature.get('strand'))
+        }
        this.fullHeader.forEach(field => featureArray.push(about[field]))
        return featureArray.join(",") + "\n"
     }
