@@ -78,7 +78,7 @@ describe('SSM track', function() {
     it('Should be able to export SSMs in various export formats', function() {
         testExport(2, 'GFF3', ['##gff-version 3', '##sequence-region', 'single base substitution'])
         testExport(3, 'BED', ['track name="ICGC_Mutations" useScore=0', '1	115256528	115256528	MU68272'])
-        testExport(4, 'CSV', ['type,start,end,strand,id,allele in the reference assembly,mutation,reference genome assembly', 'single base substitution,115256528,115256528,,,T,T>C,GRCh37'])
+        testExport(4, 'CSV', ['id,type,chromosome,start,end,allele in the reference assembly,mutation,reference genome assembly', 'MU68272,single base substitution,1,115256528,115256528,T,T>C,GRCh37'])
         testExport(5, 'Sequin Table', ['>Feature 1', '115256529	115256528	single base substitution'])
 
         cy.fixture('ssm/track-conf-export.conf').then((json) => {
