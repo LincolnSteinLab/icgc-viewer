@@ -181,14 +181,15 @@ function (
 
         /**
          * Compare function used for sorting facets
-         * @param {*} a Object with a string field called 'term'
-         * @param {*} b Object with a string field called 'term'
+         * @param {*} a Object with a number field called 'count'
+         * @param {*} b Object with a number field called 'count'
          */
         compareTermElements: function(a, b) {
-            if (a.term < b.term) {
-                return -1;
-            } else if (a.term > b.term) {
+            console.log(a)
+            if (a.count < b.count) {
                 return 1;
+            } else if (a.count > b.count) {
+                return -1;
             } else {
                 return 0;
             }
