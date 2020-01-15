@@ -185,7 +185,6 @@ function (
          * @param {*} b Object with a number field called 'count'
          */
         compareTermElements: function(a, b) {
-            console.log(a)
             if (a.count < b.count) {
                 return 1;
             } else if (a.count > b.count) {
@@ -232,7 +231,7 @@ function (
                                 }
                                 // If facet has at least one term
                                 if (facetsJsonResponse.facets[facet].terms) {
-                                    // Sort in ascending alphabetical order
+                                    // Sort in descending order of counts
                                     facetsJsonResponse.facets[facet].terms.sort(thisB.compareTermElements);
 
                                     // Create a checkbox for each term
@@ -266,10 +265,7 @@ function (
                                                 }
                                                 
                                                 // Update with newly applied filter
-                                                for (var type of thisB.types) {
-                                                    thisB.updateAccordion(type);
-                                                    thisB.updateSearchResults(type);
-                                                }
+                                                thisB.updateAccordionAndResults();
                                             }
                                         }, 'checkbox').placeAt(facetCheckbox);
                                         
@@ -1065,6 +1061,14 @@ function (
             thisB.donorFilters = {};
             thisB.mutationFilters = {};
             thisB.geneFilters = {};
+            thisB.updateAccordionAndResults();
+        },
+
+        /**
+         * For all types, will update the accordion and search results
+         */
+        updateAccordionAndResults: function() {
+            var thisB = this;
             for (var type of thisB.types) {
                 thisB.updateAccordion(type);
                 thisB.updateSearchResults(type);
