@@ -178,7 +178,7 @@ describe('Explore ICGC', function() {
         // Apply gene filter - type rRNA
         selectResultsTab(0)
         cy.get('.dijitDialog').within(() => {
-            selectFacetTab(1, 1, 24)
+            selectFacetTab(1, 1, 9)
         })
 
         checkAllResultsTab(
@@ -190,7 +190,7 @@ describe('Explore ICGC', function() {
         // Apply mutation filter - consequence type exon variant
         selectResultsTab(0)
         cy.get('.dijitDialog').within(() => {
-            selectFacetTab(2, 5, 1)
+            selectFacetTab(2, 5, 2)
         })
 
         checkAllResultsTab(
