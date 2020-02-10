@@ -145,8 +145,8 @@ describe('Explore ICGC', function() {
 
         // Add tracks and check that they were added
         cy.get('.dijitTabContainer').eq(1).within(() => {
-            cy.contains('All Genes for Donor').eq(0).click()
-            cy.contains('All SSMs for Donor').eq(0).click()
+            cy.contains('All Genes').eq(0).click()
+            cy.contains('All Mutations').eq(0).click()
         })
 
         closePopup()

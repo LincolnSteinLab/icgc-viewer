@@ -331,6 +331,7 @@ function (
                             if (!facetsJsonResponse.code) {
                                 if (facetsJsonResponse.pagination.from && facetsJsonResponse.pagination.count && facetsJsonResponse.pagination.total) {
                                     var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count - 1;
+                                    var donorsExplanation = dom.create('div', { innerHTML: "Add mutation and gene tracks for a given donor. Optionally apply the selected filters when adding tracks.", style: "font-size: 14px; margin-bottom: 5px; padding: 5px;" }, thisB.donorResultsTab.containerNode);
                                     var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.donorResultsTab.containerNode);
                                     thisB.createDonorsTable(facetsJsonResponse.hits, thisB.donorResultsTab.containerNode, combinedFacetObject);
                                     thisB.createPaginationButtons(thisB.donorResultsTab.containerNode, facetsJsonResponse.pagination, type, thisB.donorPage);
@@ -357,31 +358,33 @@ function (
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
                                 if (facetsJsonResponse.pagination.from && facetsJsonResponse.pagination.count && facetsJsonResponse.pagination.total) {
+                                    var mutationExplanation = dom.create('div', { innerHTML: "Add mutation tracks for all mutations available on the ICGC portal. Optionally apply the selected filters when adding tracks.", style: "font-size: 14px; margin-bottom: 5px; padding: 5px;" }, thisB.mutationResultsTab.containerNode);
+                                    
                                     var ssmMenu = new Menu({ style: "display: none;"});
                                     var menuItemSSMFiltered = new MenuItem({
-                                        label: "Filtered SSMs form ICGC",
+                                        label: "Filtered Mutations",
                                         iconClass: "dijitIconNewTask",
                                         onClick: function() {
                                             thisB.addTrack('SimpleSomaticMutations', undefined, combinedFacetObject, 'icgc-viewer/View/Track/SSMTrack');
-                                            alert("Adding track with all SSMs from the ICGC, with current filters applied");
+                                            alert("Adding track with all mutations from the ICGC, with current filters applied");
                                         }
                                     });
                                     ssmMenu.addChild(menuItemSSMFiltered);
                                     ssmMenu.startup();
 
                                     var buttonAllSSMs = new ComboButton({
-                                        label: "All SSMs from ICGC",
+                                        label: "All Mutations",
                                         iconClass: "dijitIconNewTask",
                                         dropDown: ssmMenu,
                                         onClick: function() {
                                             thisB.addTrack('SimpleSomaticMutations', undefined, undefined, 'icgc-viewer/View/Track/SSMTrack');
-                                            alert("Add track with all SSMs from the ICGC");
+                                            alert("Add track with all mutations from the ICGC");
                                         }
                                     });
                                     buttonAllSSMs.placeAt(thisB.mutationResultsTab.containerNode);
                                     buttonAllSSMs.startup();
-                                    thisB.addTooltipToButton(menuItemSSMFiltered, "Add track with all SSMs from the ICGC, with current filters applied");
-                                    thisB.addTooltipToButton(buttonAllSSMs, "Add track with all SSMs from the ICGC");
+                                    thisB.addTooltipToButton(menuItemSSMFiltered, "Add track with all mutations from the ICGC, with current filters applied");
+                                    thisB.addTooltipToButton(buttonAllSSMs, "Add track with all mutations from the ICGC");
 
                                     var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count - 1;
                                     var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.mutationResultsTab.containerNode);
@@ -411,9 +414,11 @@ function (
                     facetsResponse.json().then(function (facetsJsonResponse) {
                             if (!facetsJsonResponse.code) {
                                 if (facetsJsonResponse.pagination.from && facetsJsonResponse.pagination.count && facetsJsonResponse.pagination.total) {
+                                    var geneExplanation = dom.create('div', { innerHTML: "Add gene tracks for all genes available on the ICGC portal. Optionally apply the selected filters when adding tracks.", style: "font-size: 14px; margin-bottom: 5px; padding: 5px;" }, thisB.geneResultsTab.containerNode);
+
                                     var geneMenu = new Menu({ style: "display: none;"});
                                     var menuItemGeneFiltered = new MenuItem({
-                                        label: "Filtered Genes from ICGC",
+                                        label: "Filtered Genes",
                                         iconClass: "dijitIconNewTask",
                                         onClick: function() {
                                             thisB.addTrack('Genes', undefined, combinedFacetObject, 'icgc-viewer/View/Track/GeneTrack');
@@ -424,7 +429,7 @@ function (
                                     geneMenu.startup();
 
                                     var buttonAllGenes = new ComboButton({
-                                        label: "All Genes from ICGC",
+                                        label: "All Genes",
                                         iconClass: "dijitIconNewTask",
                                         dropDown: geneMenu,
                                         style: "padding-right: 8px;",
@@ -658,7 +663,7 @@ function (
 
                 var geneMenu = new Menu({ style: "display: none;"});
                 var menuItemGeneFiltered = new MenuItem({
-                    label: "Filtered Genes for Donor",
+                    label: "Filtered Genes",
                     iconClass: "dijitIconNewTask",
                     onClick: (function(hit, combinedFacetObject) {
                         return function() {
@@ -671,7 +676,7 @@ function (
                 geneMenu.startup();
 
                 var buttonAllGenes = new ComboButton({
-                    label: "All Genes for Donor",
+                    label: "All Genes",
                     iconClass: "dijitIconNewTask",
                     dropDown: geneMenu,
                     onClick: (function(hit) {
@@ -694,7 +699,7 @@ function (
 
                 var ssmMenu = new Menu({ style: "display: none;"});
                 var menuItemSsmFiltered = new MenuItem({
-                    label: "Filtered SSMs for Donor",
+                    label: "Filtered Mutations",
                     iconClass: "dijitIconNewTask",
                     onClick: (function(hit, combinedFacetObject) {
                         return function() {
@@ -707,7 +712,7 @@ function (
                 ssmMenu.startup();
 
                 var buttonAllSsms = new ComboButton({
-                    label: "All SSMs for Donor",
+                    label: "All Mutations",
                     iconClass: "dijitIconNewTask",
                     dropDown: ssmMenu,
                     onClick: (function(hit) {
@@ -719,7 +724,7 @@ function (
                 });
                 buttonAllSsms.placeAt(ssmButtonNode);
                 buttonAllSsms.startup();
-                thisB.addTooltipToButton(menuItemSsmFiltered, "Add track with all SSMs for the given donor, with current filters applied");
+                thisB.addTooltipToButton(menuItemSsmFiltered, "Add track with all mutations for the given donor, with current filters applied");
                 thisB.addTooltipToButton(buttonAllSsms, "Add track with all SSMS for the given donor");
 
                 // Place buttons in table
@@ -990,7 +995,7 @@ function (
                         label : "Highlight this Simple Somatic Mutation",
                     },
                     {
-                        label : "View SSM on ICGC",
+                        label : "View Mutation on ICGC",
                         iconClass : "dijitIconSearch",
                         action: "newWindow",
                         url : function(track, feature) { return "https://dcc.icgc.org/mutations/" + feature.get('about')['id'] }
