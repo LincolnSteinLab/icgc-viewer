@@ -145,7 +145,7 @@ function (
                     var geneMenu = new Menu({ style: "display: none;"});
 
                     var menuItemSSM = new MenuItem({
-                        label: "Mutations",
+                        label: "All Mutations",
                         iconClass: "dijitIconNewTask",
                         onClick: (function(hit) {
                             return function() {
@@ -157,7 +157,7 @@ function (
                     geneMenu.addChild(menuItemSSM);
 
                     var menuItemGene = new MenuItem({
-                        label: "Genes",
+                        label: "All Genes",
                         iconClass: "dijitIconNewTask",
                         onClick: (function(hit) {
                             return function() {
