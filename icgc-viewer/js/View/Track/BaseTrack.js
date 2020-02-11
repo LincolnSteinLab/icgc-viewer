@@ -62,7 +62,7 @@ define(
             domConstruct.place(headerElement, details);
     
             // Create help text
-            var helpString = '<span style="width: 80%">The following filters have been applied to the track. You can update the filters here, though no validation is done on the input.</span>';
+            var helpString = '<span style="width: 80%; font-size: 14px;">The following filters have been applied to the track. You can update the filters here, though no validation is done on the input.</span>';
             var helpElement = domConstruct.toDom(helpString);
             domConstruct.place(helpElement, details);
     
