@@ -66,7 +66,7 @@ define(
             var helpElement = domConstruct.toDom(helpString);
             domConstruct.place(helpElement, details);
     
-            var filterString = '<div style="width: 80%"><h3>Filters</h3></div>';
+            var filterString = '<div style="width: 80%"><h3>Filters</h3><span>Filters narrow down the features displayed on the track. We use the same format as the ICGC API.</span></div>';
             var filterElement = domConstruct.toDom(filterString);
             domConstruct.place(filterElement, details);
     
@@ -91,7 +91,7 @@ define(
                   }
             }).placeAt(details);
     
-            var donorString = '<div style="width: 80%"><h3>Donor UUID</h3></div>';
+            var donorString = '<div style="width: 80%"><h3>Donor UUID</h3><span>UUID for a donor in the form of DOxxxx.</span></div>';
             var donorElement = domConstruct.toDom(donorString);
             domConstruct.place(donorElement, details);
     
@@ -104,7 +104,7 @@ define(
                 trim: true
             }).placeAt(details);
     
-            var sizeHeader = '<div style="width: 80%"><h3>Size</h3></div>';
+            var sizeHeader = '<div style="width: 80%"><h3>Size</h3><span>This is the maximum number of results to return per panel.</span></div>';
             var sizeElement = domConstruct.toDom(sizeHeader);
             domConstruct.place(sizeElement, details);
     
