@@ -90,7 +90,7 @@ describe('Gene track', function() {
 \t},
 \t"unsafePopup": true,
 \t"size": 1000,
-\t"filters": "{\\"gene\\":{\\"location\\":{\\"is\\":[\\"1:0-249012431\\"]}}}"
+\t"filters": "{}"
 }`
         ])
     })

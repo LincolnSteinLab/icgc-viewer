@@ -188,7 +188,7 @@ define(
             // Create text area with shareable link
             var textArea = domConstruct.create(
                 'textarea',{
-                    rows: 10,
+                    rows: 1,
                     value: shareableLink,
                     style: "width: 80%",
                     readOnly: true
