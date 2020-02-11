@@ -145,19 +145,19 @@ function (
                     var geneMenu = new Menu({ style: "display: none;"});
 
                     var menuItemSSM = new MenuItem({
-                        label: "SSMs for Project",
+                        label: "All Mutations",
                         iconClass: "dijitIconNewTask",
                         onClick: (function(hit) {
                             return function() {
                                 thisB.addTrack('SimpleSomaticMutations', hit.id, 'icgc-viewer/View/Track/SSMTrack');
-                                alert("Adding SSM track for project " + hit.id);
+                                alert("Adding Mutation track for project " + hit.id);
                             }
                         })(hit)
                     });
                     geneMenu.addChild(menuItemSSM);
 
                     var menuItemGene = new MenuItem({
-                        label: "Genes for Project",
+                        label: "All Genes",
                         iconClass: "dijitIconNewTask",
                         onClick: (function(hit) {
                             return function() {
@@ -179,7 +179,7 @@ function (
 
                     // Add  tooltips
                     thisB.addTooltipToButton(menuItemGene, "Add track with all genes for the given project");
-                    thisB.addTooltipToButton(menuItemSSM, "Add track with all SSMs for the given project");
+                    thisB.addTooltipToButton(menuItemSSM, "Add track with all mutations for the given project");
 
                     // Place buttons in table
                     dom.place(projectButtonNode, projectRowContentNode);
@@ -255,7 +255,7 @@ function (
                         label : "Highlight this Simple Somatic Mutation",
                     },
                     {
-                        label : "View SSM on ICGC",
+                        label : "View Mutations on ICGC",
                         iconClass : "dijitIconSearch",
                         action: "newWindow",
                         url : function(track, feature) { return "https://dcc.icgc.org/mutations/" + feature.get('about')['id'] }

@@ -96,7 +96,7 @@ describe('SSM track', function() {
 \t},
 \t"unsafePopup": true,
 \t"size": 500,
-\t"filters": "{\\"mutation\\":{\\"location\\":{\\"is\\":[\\"1:0-249012431\\"]}}}"
+\t"filters": "{}"
 }`
         ])
     })

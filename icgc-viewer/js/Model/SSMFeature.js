@@ -2,44 +2,13 @@
  * Simple implementation of an SSM feature object.
  */
 define([
-    'JBrowse/Util',
+    'JBrowse/Model/SimpleFeature',
+    'dojo/_base/declare',
     'dojo/request'
    ],
-   function( Util, request ) {
+   function( SimpleFeature, declare, request ) {
 
-var counter = 0;
-
-var SSMFeature = Util.fastDeclare({
-
-/**
- * @param args.data {Object} key-value data, must include 'start' and 'end'
- * @param args.parent {Feature} optional parent feature
- * @param args.id {String} optional unique identifier.  can also be in data.uniqueID.
- *
- * Note: args.data.subfeatures can be an array of these same args,
- * which will be inflated to more instances of this class.
- */
-constructor: function( args ) {
-    args = args || {};
-    this.data = args.data || {};
-    this._parent = args.parent;
-    this._uniqueID = args.id || this.data.uniqueID || (
-        this._parent ? this._parent.id()+'_'+(counter++) : 'SSMFeature_'+(counter++)
-    );
-
-    // inflate any subfeatures that are not already feature objects
-    var subfeatures;
-    if(( subfeatures = this.data.subfeatures )) {
-        for( var i = 0; i < subfeatures.length; i++ ) {
-            if( typeof subfeatures[i].get != 'function' ) {
-                subfeatures[i] = new SSMFeature(
-                    { data: subfeatures[i],
-                      parent: this
-                    });
-            }
-        }
-    }
-},
+return declare(SimpleFeature, {
 
 projects: undefined,
 
@@ -147,56 +116,5 @@ createLinkWithId: function(link, id) {
     return id ? "<a href='" + link + id + "' target='_blank'>" + id + "</a>" : "n/a";
 },
 
-/**
- * Set an item of data.
- */
-set: function( name, val ) {
-    this.data[ name ] = val;
-},
-
-/**
- * Get an array listing which data keys are present in this feature.
- */
-tags: function() {
-    var t = [];
-    var d = this.data;
-    for( var k in d ) {
-        if( d.hasOwnProperty( k ) )
-            t.push( k );
-    }
-    return t;
-},
-
-/**
- * Get the unique ID of this feature.
- */
-id: function( newid ) {
-    if( newid )
-        this._uniqueID = newid;
-    return this._uniqueID;
-},
-
-/**
- * Get this feature's parent feature, or undefined if none.
- */
-parent: function() {
-    return this._parent;
-},
-
-/**
- * Get an array of child features, or undefined if none.
- */
-children: function() {
-    return this.get('subfeatures');
-},
-
-toJSON: function() {
-    const d = Object.assign({},this)
-    delete d._parent
-    return d
-}
-
 });
-
-return SSMFeature;
 });
