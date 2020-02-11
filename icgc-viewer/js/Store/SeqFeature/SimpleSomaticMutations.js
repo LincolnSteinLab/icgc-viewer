@@ -144,14 +144,15 @@ function(
          */
         getFilterQuery: function(ref, start, end) {
             var thisB = this;
+            let filtersCopy = JSON.parse(JSON.stringify(thisB.filters))
 
             // If empty need to create skeleton
-            if (Object.keys(thisB.filters).length === 0 || thisB.filters.mutation == undefined) {
-                thisB.filters.mutation = {};
+            if (Object.keys(filtersCopy).length === 0 || filtersCopy.mutation == undefined) {
+                filtersCopy.mutation = {};
             }
 
-            thisB.filters.mutation.location = { "is": [ ref + ':' + start + '-' + end ]};
-            return JSON.stringify(thisB.filters);
+            filtersCopy.mutation.location = { "is": [ ref + ':' + start + '-' + end ]};
+            return JSON.stringify(filtersCopy);
         },
 
         /**

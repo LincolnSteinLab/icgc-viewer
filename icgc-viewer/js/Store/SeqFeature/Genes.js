@@ -67,14 +67,15 @@ function(
          */
         getFilterQuery: function(ref, start, end) {
             var thisB = this;
+            let filtersCopy = JSON.parse(JSON.stringify(thisB.filters))
 
             // If empty need to create skeleton
-            if (Object.keys(thisB.filters).length === 0 || thisB.filters.gene == undefined) {
-                thisB.filters.gene = {};
+            if (Object.keys(filtersCopy).length === 0 || filtersCopy.gene == undefined) {
+                filtersCopy.gene = {};
             }
 
-            thisB.filters.gene.location = { "is": [ ref + ':' + start + '-' + end ]};
-            return JSON.stringify(thisB.filters);
+            filtersCopy.gene.location = { "is": [ ref + ':' + start + '-' + end ]};
+            return JSON.stringify(filtersCopy);
         },
 
         /**
