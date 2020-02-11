@@ -149,11 +149,11 @@ In the menubar there is an ICGC button with an option to `Explore donors, genes 
 ![ICGC Explore](images/ICGC-Explore-Dialog.png)
 
 ## Explore projects
-There is also an options to search ICGC by projects. This allows you to see all of the associated SSMs and Genes per project in one track. If you want to apply additional facets to a project, you'll need to use the `Explore donors, genes and mutations` dialog.
+There is also an options to search ICGC by projects. This allows you to see all of the associated Mutations and Genes per project in one track. If you want to apply additional facets to a project, you'll need to use the `Explore donors, genes and mutations` dialog.
 ![ICGC Projects](images/ICGC-Projects-Dialog.png)
 
 # Export Types
-The following export types are supported by both Genes and SSMs. To export, select `Save track data` in the track dropdown. Note that not all track information is carried over to the exported file.
+The following export types are supported by both Genes and Mutations. To export, select `Save track data` in the track dropdown. Note that not all track information is carried over to the exported file.
 * BED
 * GFF3
 * Sequin Table
