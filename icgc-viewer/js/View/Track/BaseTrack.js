@@ -91,7 +91,7 @@ define(
                   }
             }).placeAt(details);
     
-            var donorString = '<div style="width: 80%"><h3>Donor UUID</h3><span>UUID for a donor in the form of DOxxxx.</span></div>';
+            var donorString = '<div style="width: 80%"><h3>Donor UUID</h3><span>UUID for a donor in the form of DOxxxx. Multiple UUIDs supported using commas.</span></div>';
             var donorElement = domConstruct.toDom(donorString);
             domConstruct.place(donorElement, details);
     
@@ -99,7 +99,7 @@ define(
                 value: track.store.config.donor,
                 style: "width: 80%",
                 id: "donorTextBox",
-                regExp: "^DO[0-9]+$",
+                regExp: "^DO[0-9]+(,DO[0-9]+)*$",
                 invalidMessage: "Invalid Donor ID - Must be of the form DOxxxx, where xxxx is some number greater than 0.",
                 trim: true
             }).placeAt(details);

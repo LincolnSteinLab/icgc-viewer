@@ -61,7 +61,7 @@ You can view/edit the filters associated with a track by clicking the down arrow
 ## Genes
 A simple view of all genes returned by the ICGC portal for a given range of the chromosome you are looking at.
 
-If you specify a donor ID (donor field) in the track config file, only genes related to that donor will appear.
+If you specify a donor ID (donor field) in the track config file, only genes related to that donor will appear. This field supports multiple IDs at a time using by using commas.
 ```
 donor: DO229446
 ```
