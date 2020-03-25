@@ -73,7 +73,7 @@ describe('Gene track', function() {
     it('Should be able to export genes in various export formats', function() {
         testExport(2, 'GFF3', ['##gff-version 3', '##sequence-region', 'protein_coding'])
         testExport(3, 'BED', ['track name="ICGC_Genes" useScore=0', '1	237205504	237997287	ENSG00000198626		+'])
-        testExport(4, 'CSV', ['type,start,end,strand,id,gene name,biotype,symbol,type', 'protein_coding,237205504,237997287,1,,ryanodine receptor 2 (cardiac),,RYR2,protein_coding'])
+        testExport(4, 'CSV', ['id,type,chromosome,start,end,strand,gene name,symbol', 'ENSG00000198626,protein_coding,1,237205504,237997287,1,+,ryanodine receptor 2 (cardiac),RYR2'])
         testExport(5, 'Sequin Table', ['>Feature 1', '237205505	237997287	protein_coding'])
         cy.fixture('gene/track-conf-export.conf').then((json) => {
             testExport(6, 'Track Config', [json])
@@ -90,7 +90,7 @@ describe('Gene track', function() {
 \t},
 \t"unsafePopup": true,
 \t"size": 1000,
-\t"filters": "{\\"gene\\":{\\"location\\":{\\"is\\":[\\"1:0-249012431\\"]}}}"
+\t"filters": "{}"
 }`
         ])
     })

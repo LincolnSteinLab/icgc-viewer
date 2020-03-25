@@ -76,8 +76,18 @@ function(
             return list && list.length > 0 ? list : 'n/a';
         },
 
+        /**
+         * Converts an int to strand 1 -> +, -1 -> -
+         * @param {number} strand 
+         */
         convertIntToStrand: function(strand) {
-            return strand == 1 ? '+' : '-'
+            if (strand == 1) {
+                return '+'
+            } else if (strand == -1) {
+                return '-'
+            } else {
+                return 'n/a'
+            }
         },
 
         /**
@@ -134,14 +144,15 @@ function(
          */
         getFilterQuery: function(ref, start, end) {
             var thisB = this;
+            let filtersCopy = JSON.parse(JSON.stringify(thisB.filters))
 
             // If empty need to create skeleton
-            if (Object.keys(thisB.filters).length === 0 || thisB.filters.mutation == undefined) {
-                thisB.filters.mutation = {};
+            if (Object.keys(filtersCopy).length === 0 || filtersCopy.mutation == undefined) {
+                filtersCopy.mutation = {};
             }
 
-            thisB.filters.mutation.location = { "is": [ ref + ':' + start + '-' + end ]};
-            return JSON.stringify(thisB.filters);
+            filtersCopy.mutation.location = { "is": [ ref + ':' + start + '-' + end ]};
+            return JSON.stringify(filtersCopy);
         },
 
         /**
@@ -191,6 +202,7 @@ function(
                             'end': variant.end - 1,
                             'type': thisB.prettyValue(variant.type),
                             'entity_name': variant.id,
+                            'chromosome': variant.chromosome,
                             'about': {
                                 'mutation': thisB.prettyValue(variant.mutation),
                                 'allele in the reference assembly': thisB.prettyValue(variant.referenceGenomeAllele),

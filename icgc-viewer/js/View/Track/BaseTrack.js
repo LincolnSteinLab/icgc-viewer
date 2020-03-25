@@ -62,11 +62,11 @@ define(
             domConstruct.place(headerElement, details);
     
             // Create help text
-            var helpString = '<span style="width: 80%">The following filters have been applied to the track. You can update the filters here, though no validation is done on the input.</span>';
+            var helpString = '<span style="width: 80%; font-size: 14px;">The following filters have been applied to the track. You can update the filters here, though no validation is done on the input.</span>';
             var helpElement = domConstruct.toDom(helpString);
             domConstruct.place(helpElement, details);
     
-            var filterString = '<div style="width: 80%"><h3>Filters</h3></div>';
+            var filterString = '<div style="width: 80%"><h3>Filters</h3><span>Filters narrow down the features displayed on the track. We use the same format as the ICGC API.</span></div>';
             var filterElement = domConstruct.toDom(filterString);
             domConstruct.place(filterElement, details);
     
@@ -91,7 +91,7 @@ define(
                   }
             }).placeAt(details);
     
-            var donorString = '<div style="width: 80%"><h3>Donor UUID</h3></div>';
+            var donorString = '<div style="width: 80%"><h3>Donor UUID</h3><span>UUID for a donor in the form of DOxxxx. Multiple UUIDs supported using commas.</span></div>';
             var donorElement = domConstruct.toDom(donorString);
             domConstruct.place(donorElement, details);
     
@@ -99,12 +99,12 @@ define(
                 value: track.store.config.donor,
                 style: "width: 80%",
                 id: "donorTextBox",
-                regExp: "^DO[0-9]+$",
+                regExp: "^DO[0-9]+(,DO[0-9]+)*$",
                 invalidMessage: "Invalid Donor ID - Must be of the form DOxxxx, where xxxx is some number greater than 0.",
                 trim: true
             }).placeAt(details);
     
-            var sizeHeader = '<div style="width: 80%"><h3>Size</h3></div>';
+            var sizeHeader = '<div style="width: 80%"><h3>Size</h3><span>This is the maximum number of results to return per panel.</span></div>';
             var sizeElement = domConstruct.toDom(sizeHeader);
             domConstruct.place(sizeElement, details);
     
@@ -188,7 +188,7 @@ define(
             // Create text area with shareable link
             var textArea = domConstruct.create(
                 'textarea',{
-                    rows: 10,
+                    rows: 1,
                     value: shareableLink,
                     style: "width: 80%",
                     readOnly: true

@@ -145,8 +145,8 @@ describe('Explore ICGC', function() {
 
         // Add tracks and check that they were added
         cy.get('.dijitTabContainer').eq(1).within(() => {
-            cy.contains('All Genes for Donor').eq(0).click()
-            cy.contains('All SSMs for Donor').eq(0).click()
+            cy.contains('All Genes').eq(0).click()
+            cy.contains('All Mutations').eq(0).click()
         })
 
         closePopup()
@@ -178,7 +178,7 @@ describe('Explore ICGC', function() {
         // Apply gene filter - type rRNA
         selectResultsTab(0)
         cy.get('.dijitDialog').within(() => {
-            selectFacetTab(1, 1, 24)
+            selectFacetTab(1, 1, 9)
         })
 
         checkAllResultsTab(
@@ -190,7 +190,7 @@ describe('Explore ICGC', function() {
         // Apply mutation filter - consequence type exon variant
         selectResultsTab(0)
         cy.get('.dijitDialog').within(() => {
-            selectFacetTab(2, 5, 1)
+            selectFacetTab(2, 5, 2)
         })
 
         checkAllResultsTab(

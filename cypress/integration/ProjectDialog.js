@@ -41,7 +41,7 @@ describe('Project dialog', function() {
     it('Should be able to view projects', function() {
         // Open track menu
         cy.get('#dropdownbutton_icgc').type('{enter}')
-        cy.contains('Explore Projects').click()
+        cy.contains('Explore projects').click()
 
         // Check that projects viewer is opened and has expected content
         cy.contains('View projects available on the ICGC Data Portal')
@@ -50,10 +50,10 @@ describe('Project dialog', function() {
 
         // Add SSM and Gene track for project BRCA-US (assume first in list)
         cy.get('#dijit_form_ComboButton_0_arrow').should('be.visible').type('{enter}')
-        cy.contains('SSMs for Project').click()
+        cy.contains('All Mutations').click()
 
         cy.get('#dijit_form_ComboButton_0_arrow').should('be.visible').type('{enter}')
-        cy.contains('Genes for Project').click()
+        cy.contains('All Genes').click()
 
         // Go to next page and ensure pagination works (assume PRAD-CA on second page)
         cy.contains('Next').click()
