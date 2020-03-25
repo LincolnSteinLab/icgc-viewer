@@ -60,7 +60,7 @@ unsafePopup=true
 filters={"gene":{"type":{"is":["protein_coding"]}}}
 ```
 
-![ICGC Genes](images/ICGC-Genes-protein-coding.png)
+![ICGC Genes]({{ site.url }}/assets/images/ICGC-Genes-protein-coding.png)
 
 ### Extra notes
 {: .no_toc }
@@ -103,7 +103,7 @@ unsafePopup=true
 filters={"mutation":{"functionalImpact":{"is":["High"]}}}
 ```
 
-![ICGC SSMs](images/ICGC-SSM-high-impact.png)
+![ICGC SSMs]({{ site.url }}/assets/images/ICGC-SSM-high-impact.png)
 
 ### Extra notes
 {: .no_toc }
@@ -113,11 +113,13 @@ You can also set the `size` attribute (defaults to 500). This is the theoretical
 ## Explore donors, genes and mutations
 In the menubar there is an ICGC button with an option to `Explore donors, genes and mutations`. This will bring up a dialog similar to the [advanced search page](https://dcc.icgc.org/search) on the ICGC portal. Here you can apply facets related to donor, gene and mutation. You can then create tracks based on the chosen facets.
 
-![ICGC Explore](images/ICGC-Explore-Dialog.png)
+![ICGC Explore]({{ site.url }}/assets/images/ICGC-Explore-Dialog.png)
+
 
 ## Explore projects
 There is also an options to search ICGC by projects. This allows you to see all of the associated Mutations and Genes per project in one track. If you want to apply additional facets to a project, you'll need to use the `Explore donors, genes and mutations` dialog.
-![ICGC Projects](images/ICGC-Projects-Dialog.png)
+
+![ICGC Projects]({{ site.url }}/assets/images/ICGC-Projects-Dialog.png)
 
 # Export Types
 The following export types are supported by both Genes and Mutations. To export, select `Save track data` in the track dropdown. Note that not all track information is carried over to the exported file.
