@@ -312,7 +312,6 @@ function (
                         thisB.clearFacets()
                     }
                 }, "clearFacets").placeAt(thisB.prettyFacetHolder);
-                thisB.addTooltipToButton(clearFacetButton, "Clears all facets");
             }
 
             // Pretty print filters
@@ -383,8 +382,6 @@ function (
                                     });
                                     buttonAllSSMs.placeAt(thisB.mutationResultsTab.containerNode);
                                     buttonAllSSMs.startup();
-                                    thisB.addTooltipToButton(menuItemSSMFiltered, "Add track with all mutations from the ICGC, with current filters applied");
-                                    thisB.addTooltipToButton(buttonAllSSMs, "Add track with all mutations from the ICGC");
 
                                     var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count - 1;
                                     var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.mutationResultsTab.containerNode);
@@ -440,8 +437,6 @@ function (
                                     });
                                     buttonAllGenes.placeAt(thisB.geneResultsTab.containerNode);
                                     buttonAllGenes.startup();
-                                    thisB.addTooltipToButton(menuItemGeneFiltered, "Add track with all genes from the ICGC, with current filters applied");
-                                    thisB.addTooltipToButton(buttonAllGenes, "Add track with all genes from the ICGC");
 
                                     var endResult = facetsJsonResponse.pagination.from + facetsJsonResponse.pagination.count - 1;
                                     var resultsInfo = dom.create('div', { innerHTML: "Showing " + (facetsJsonResponse.pagination.from).toLocaleString() + " to " + endResult.toLocaleString() + " of " + (facetsJsonResponse.pagination.total).toLocaleString() }, thisB.geneResultsTab.containerNode);
@@ -688,8 +683,6 @@ function (
                 });
                 buttonAllGenes.placeAt(geneButtonNode);
                 buttonAllGenes.startup();
-                thisB.addTooltipToButton(menuItemGeneFiltered, "Add track with all genes for the given donor, with current filters applied");
-                thisB.addTooltipToButton(buttonAllGenes, "Add track with all genes for the given donor");
 
                 // Place buttons in table
                 dom.place(geneButtonNode, donorRowContentNode);
@@ -724,8 +717,6 @@ function (
                 });
                 buttonAllSsms.placeAt(ssmButtonNode);
                 buttonAllSsms.startup();
-                thisB.addTooltipToButton(menuItemSsmFiltered, "Add track with all mutations for the given donor, with current filters applied");
-                thisB.addTooltipToButton(buttonAllSsms, "Add track with all SSMS for the given donor");
 
                 // Place buttons in table
                 dom.place(ssmButtonNode, donorRowContentNode);
