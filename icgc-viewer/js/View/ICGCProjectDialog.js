@@ -177,10 +177,6 @@ function (
                     buttonAllGenes.placeAt(projectButtonNode);
                     buttonAllGenes.startup();
 
-                    // Add  tooltips
-                    thisB.addTooltipToButton(menuItemGene, "Add track with all genes for the given project");
-                    thisB.addTooltipToButton(menuItemSSM, "Add track with all mutations for the given project");
-
                     // Place buttons in table
                     dom.place(projectButtonNode, projectRowContentNode);
 
