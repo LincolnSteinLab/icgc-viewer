@@ -933,6 +933,7 @@ function (
          * @param {*} trackType the JBrowse track type
          */
         addTrack: function (storeClass, donorId, combinedFacetObject, trackType) {
+            var thisB = this;
             var storeConf = {
                 browser: this.browser,
                 refSeq: this.browser.refSeq,
@@ -951,15 +952,25 @@ function (
                 label += '_' + donorId
             }
 
+            var metadataObject = {
+                datatype: storeClass,
+                donor: donorId
+            }
+
+            if (combinedFacetObject !== undefined) {
+                var combinedFilters = Object.assign({}, thisB.donorFilters, thisB.mutationFilters, thisB.geneFilters);
+                Object.keys(combinedFilters).map(function(key, index) {
+                    combinedFilters[key] = combinedFilters[key].join(', ');
+                });
+                metadataObject = Object.assign(metadataObject, combinedFilters)
+            }
+
             var trackConf = {
                 type: trackType,
                 store: storeName,
                 label: label,
                 key: key,
-                metadata: {
-                    datatype: storeClass,
-                    donor: donorId
-                },
+                metadata: metadataObject,
                 unsafePopup: true,
                 menuTemplate : [ 
                     {   
