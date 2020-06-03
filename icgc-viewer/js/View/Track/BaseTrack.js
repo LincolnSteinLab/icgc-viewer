@@ -188,11 +188,22 @@ define(
             // Create text area with shareable link
             var textArea = domConstruct.create(
                 'textarea',{
-                    rows: 1,
+                    rows: 3,
                     value: shareableLink,
                     style: "width: 80%",
                     readOnly: true
                 }, details );
+
+            // Create a copy button for text
+            var copyButton = new Button({
+                label: 'Copy',
+                iconClass: 'dijitIconCopy',
+                onClick: function() {
+                    textArea.focus();
+                    textArea.select();
+                    document.execCommand("copy");
+                }
+            }).placeAt(details);
 
             // Create a DOM element for the link
             var linkString = '<a target="_blank" href="' + shareableLink + '">Open in New Tab</a>';
