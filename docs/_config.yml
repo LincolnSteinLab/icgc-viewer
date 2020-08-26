@@ -17,7 +17,7 @@ title: ICGC Viewer
 description: >- # this means to ignore newlines until "baseurl:"
   A JBrowse plugin for interacting with the ICGC portal
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://agduncan94.github.io/icgc-viewer" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://lincolnsteinlab.github.io/icgc-viewer" # the base hostname & protocol for your site, e.g. http://example.com
 
 # Build settings
 markdown: kramdown
@@ -28,7 +28,7 @@ plugins:
 
 aux_links:
   "ICGC Viewer on GitHub":
-    - "//github.com/agduncan94/icgc-viewer"
+    - "//github.com/LincolnSteinLab/icgc-viewer"
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
