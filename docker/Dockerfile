@@ -20,7 +20,7 @@ RUN mkdir -p /jbrowse/ && \
 WORKDIR /jbrowse/
 
 # Download ICGC Viewer
-RUN git clone https://github.com/agduncan94/icgc-viewer /icgc-viewer/ && \
+RUN git clone https://github.com/LincolnSteinLab/icgc-viewer /icgc-viewer/ && \
     cd /icgc-viewer/ && \
     git checkout ${PLUGIN_VERSION} && \
     cp -r icgc-viewer /jbrowse/plugins/icgc-viewer && \

@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/agduncan94/icgc-viewer.git"
+    "url": "git+https://github.com/LincolnSteinLab/icgc-viewer.git"
   },
   "keywords": [
     "icgc",
@@ -25,10 +25,10 @@
   "author": "Andrew Duncan",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/agduncan94/icgc-viewer/issues"
+    "url": "https://github.com/LincolnSteinLab/icgc-viewer/issues"
   },
   "jbrowsePlugin": {
     "name": "ICGCViewer"
   },
-  "homepage": "https://agduncan94.github.io/icgc-viewer/"
+  "homepage": "https://lincolnsteinlab.github.io/icgc-viewer/"
 }
