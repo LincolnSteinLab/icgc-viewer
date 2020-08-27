@@ -15,7 +15,7 @@ A plugin for [JBrowse](https://jbrowse.org/) for viewing [ICGC](https://icgc.org
 # Overview
 This plugin provides the ability to create mutation and gene tracks on JBrowse based on complex query filters. These filters are the same as those used in the ICGC API.
 
-[See the tracks page]({{ site.baseurl }}{% link tracks.md %}) for some examples of what this plugin is capable of. 
+[See the tracks page]({{ site.url }}{% link tracks.md %}) for some examples of what this plugin is capable of. 
 
 # Features
 * Create Mutation and Gene tracks with rich metadata
