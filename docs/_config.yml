@@ -16,15 +16,15 @@
 title: ICGC Viewer
 description: >- # this means to ignore newlines until "baseurl:"
   A JBrowse plugin for interacting with the ICGC portal
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://lincolnsteinlab.github.io/icgc-viewer" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/icgc-viewer" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
 
 # Build settings
 markdown: kramdown
-theme: just-the-docs
 remote_theme: pmarsceill/just-the-docs
 plugins:
   - jekyll-feed
+  - jekyll-remote-theme
 
 aux_links:
   "ICGC Viewer on GitHub":
