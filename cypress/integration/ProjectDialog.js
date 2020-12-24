@@ -41,6 +41,7 @@ describe('Project dialog', function() {
     it('Should be able to view projects', function() {
         // Open track menu
         cy.get('#dropdownbutton_icgc').type('{enter}')
+        cy.contains('Exploration').click()
         cy.contains('Explore projects').click()
 
         // Check that projects viewer is opened and has expected content

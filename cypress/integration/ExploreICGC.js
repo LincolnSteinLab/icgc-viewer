@@ -31,6 +31,7 @@ describe('Explore ICGC', function() {
      */
     var openExploreDialog = function () {
         cy.get('#dropdownbutton_icgc').type('{enter}')
+        cy.contains('Exploration').click()
         cy.contains('Explore donors, genes and mutations').click()
     }
 
